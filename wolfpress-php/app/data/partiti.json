@@ -1,0 +1,34 @@
+[
+    {
+        "id": "alleanza-valdora",
+        "nome": "Alleanza Valdora",
+        "sezione": "Sezione regionale",
+        "descrizione": "Notizie, circoli e appuntamenti di una sezione regionale. Esplora i modelli di candidatura e mandato, dal Comune al Parlamento europeo.",
+        "notizie": [
+            {
+                "titolo": "Come funziona la rete territoriale",
+                "categoria": "Organizzazione",
+                "data": "2026-11-04",
+                "testo": "La segreteria regionale coordina tre presidi: ogni circolo raccoglie le segnalazioni del proprio territorio e le porta al coordinamento mensile. Testo dimostrativo."
+            },
+            {
+                "titolo": "Un tavolo sulle aree interne",
+                "categoria": "Territorio",
+                "data": "2026-11-02",
+                "testo": "A Rocca Alta si apre un tavolo di lavoro su trasporti e servizi nei piccoli centri, aperto ad amministratori e associazioni. Testo dimostrativo."
+            }
+        ],
+        "rete_intro": "La segreteria regionale coordina tre presidi di esempio.",
+        "rete": [
+            {"nome": "Valleverde", "descrizione": "Circolo cittadino · coordinamento regionale"},
+            {"nome": "Rocca Alta", "descrizione": "Circolo di montagna · aree interne"},
+            {"nome": "Piana del Noce", "descrizione": "Circolo di pianura · agricoltura e lavoro"}
+        ],
+        "appuntamenti": [
+            {"data": "2026-11-18", "titolo": "Coordinamento dei circoli", "dettaglio": "Valleverde · ore 18:00"},
+            {"data": "2026-11-26", "titolo": "Tavolo sulle aree interne", "dettaglio": "Rocca Alta · ore 17:30"}
+        ],
+        "orari": "Orari di esempio: lunedì e giovedì, 16:00–18:00.",
+        "email": "segreteria@valdora.example"
+    }
+]

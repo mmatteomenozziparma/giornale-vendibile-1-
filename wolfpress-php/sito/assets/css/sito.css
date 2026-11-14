@@ -1,0 +1,463 @@
+/* ==========================================================================
+   WolfPress · sito pubblico
+   Carta color crema, titoli con le grazie, verde scuro e terracotta
+   (stile delle schermate "Atlante Civico").
+   ========================================================================== */
+
+.wp-sito {
+  --wp-paper: #f4f2e7;
+  --wp-card: #fffdf7;
+  --wp-line: #e1ddcd;
+  --wp-soft: #ebeede;
+  --bs-body-bg: var(--wp-paper);
+  --bs-border-color: var(--wp-line);
+}
+
+.wp-sito .wp-occhiello { color: var(--wp-terra-text); }
+.wp-sito .wp-occhiello a { color: inherit; }
+
+.wp-contenuto {
+  max-width: 68rem;
+  padding-top: 1.25rem;
+  padding-bottom: 3rem;
+  outline: none;
+}
+.wp-contenuto > section { margin-top: 2.25rem; }
+.wp-contenuto > section:first-child { margin-top: 0; }
+
+/* --- Testata e menu --------------------------------------------------------- */
+.wp-testata {
+  background: var(--wp-card);
+  border-bottom: 1px solid var(--wp-line);
+}
+.wp-testata .navbar {
+  max-width: 68rem;
+  gap: 1rem;
+  padding-top: 0.8rem;
+  padding-bottom: 0.8rem;
+}
+.wp-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--wp-ink);
+  text-decoration: none;
+}
+.wp-logo-segno {
+  display: inline-grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--wp-forest-2);
+  color: #fff;
+  font-family: var(--wp-serif);
+  font-style: italic;
+  font-size: 1.3rem;
+}
+.wp-logo strong { display: block; font-family: var(--wp-serif); font-size: 1.35rem; line-height: 1.1; }
+.wp-logo small { display: block; font-size: 0.68rem; font-weight: 700; color: var(--wp-muted); }
+
+.navbar-toggler {
+  border: 1px solid var(--wp-line);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--wp-ink);
+}
+.wp-voci { gap: 0.2rem 1.1rem; }
+.wp-voci .nav-link {
+  padding: 0.25rem 0;
+  color: var(--wp-ink);
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+}
+.wp-voci .nav-link:hover,
+.wp-voci .nav-link.attiva {
+  color: var(--wp-terra-text);
+  text-decoration-thickness: 2px;
+}
+.wp-cerca { display: flex; gap: 0.35rem; }
+.wp-cerca .form-control { width: 15rem; max-width: 100%; }
+.wp-demo {
+  display: inline-block;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  background: #efdfcf;
+  color: var(--wp-terra);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.wp-sezioni {
+  border-top: 1px solid var(--wp-line);
+  background: var(--wp-paper);
+  font-size: 0.78rem;
+}
+.wp-sezioni .container {
+  max-width: 68rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+.wp-sezioni span {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--wp-muted);
+  align-self: center;
+}
+.wp-sezioni a { color: var(--wp-ink); font-weight: 600; text-decoration: none; }
+.wp-sezioni a:hover { text-decoration: underline; }
+
+/* --- Elementi comuni delle pagine ---------------------------------------------- */
+.wp-briciole { margin-bottom: 0.9rem; font-size: 0.78rem; color: var(--wp-muted); }
+.wp-briciole a { color: var(--wp-muted); }
+
+.wp-intestazione-pagina { margin-bottom: 1.5rem; }
+.wp-intestazione-pagina h1 { margin-bottom: 0.6rem; }
+.wp-intestazione-pagina p { max-width: 40rem; color: var(--wp-muted); }
+
+.wp-titolo-sezione {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--wp-line);
+}
+.wp-titolo-sezione h2 { margin: 0; font-size: 1.6rem; }
+.wp-titolo-sezione a { font-size: 0.82rem; font-weight: 700; white-space: nowrap; }
+
+.wp-testo-breve { max-width: 36rem; color: var(--wp-muted); }
+.wp-conteggio { font-size: 0.78rem; color: var(--wp-muted); }
+.wp-recapito { font-family: var(--wp-mono); font-size: 0.86rem; }
+
+.wp-sito .wp-scheda { padding: 1.5rem 1.5rem 1.4rem; }
+.wp-sito .wp-scheda h2 { font-size: 1.9rem; margin-bottom: 0.8rem; }
+.wp-sito .wp-scheda h3 { font-size: 1.3rem; }
+
+.btn-wp-terra {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--wp-terra);
+  --bs-btn-border-color: var(--wp-terra);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #54291f;
+  --bs-btn-hover-border-color: #54291f;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #54291f;
+  --bs-btn-active-border-color: #54291f;
+}
+
+/* --- Home: apertura con la notizia in primo piano -------------------------------- */
+.wp-apertura {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 1px solid var(--wp-line);
+}
+.wp-apertura-testo {
+  padding: 3rem 2.8rem 2.4rem;
+  background: var(--wp-forest-2);
+  color: #fff;
+}
+.wp-apertura-testo .wp-occhiello { color: var(--wp-lime); }
+.wp-apertura-testo h1 {
+  margin: 0.4rem 0 1rem;
+  font-size: clamp(2.4rem, 5.4vw, 4rem);
+  line-height: 0.98;
+}
+.wp-apertura-testo h1 a { color: #fffdf7; text-decoration: none; }
+.wp-apertura-testo h1 a:hover { text-decoration: underline; text-decoration-thickness: 2px; }
+.wp-apertura-testo p { max-width: 30rem; margin-bottom: 1.4rem; }
+.wp-apertura-testo small { display: block; margin-top: 1.5rem; color: rgba(255, 255, 255, 0.78); font-size: 0.76rem; }
+
+.wp-apertura-lato {
+  padding: 2.4rem 2rem;
+  background-color: #e0e9da;
+  background-image:
+    linear-gradient(#d2ddcd 1px, transparent 1px),
+    linear-gradient(90deg, #d2ddcd 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+.wp-apertura-lato ol { margin: 0.6rem 0 0; padding: 0; list-style: none; counter-reset: letti; }
+.wp-apertura-lato li {
+  position: relative;
+  counter-increment: letti;
+  padding: 0.9rem 0 0.9rem 2.6rem;
+  border-top: 1px solid #c4d1bf;
+}
+.wp-apertura-lato li::before {
+  content: counter(letti);
+  position: absolute;
+  left: 0;
+  top: 0.7rem;
+  font-family: var(--wp-serif);
+  font-size: 1.9rem;
+  line-height: 1;
+  color: var(--wp-terra-text);
+}
+.wp-apertura-lato a {
+  display: block;
+  font-family: var(--wp-serif);
+  font-size: 1.2rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--wp-ink);
+  text-decoration: none;
+}
+.wp-apertura-lato a:hover { text-decoration: underline; }
+.wp-apertura-lato small { font-size: 0.72rem; font-weight: 700; color: #48564d; }
+
+/* --- Ricerca grande ----------------------------------------------------------------- */
+.wp-cerca-grande h2 { font-size: 1.6rem; margin-bottom: 0.7rem; }
+.wp-cerca-grande form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 12rem auto;
+  gap: 0.5rem;
+  padding: 0.8rem;
+  border: 1px solid var(--wp-line);
+  border-radius: 0.6rem;
+  background: var(--wp-card);
+}
+.wp-cerca-grande .form-control { font-size: 1rem; }
+
+/* --- Riquadro di una notizia ---------------------------------------------------------- */
+.wp-notizia { display: flex; flex-direction: column; }
+.wp-sito .wp-notizia h3 { margin-bottom: 0.5rem; font-size: 1.45rem; line-height: 1.1; }
+.wp-notizia h3 a { color: var(--wp-ink); text-decoration: none; }
+.wp-notizia h3 a:hover { text-decoration: underline; text-decoration-thickness: 1px; }
+.wp-notizia p { color: var(--wp-muted); font-size: 0.88rem; }
+.wp-notizia small { margin-top: auto; font-size: 0.72rem; color: var(--wp-muted); }
+
+/* --- Filtri dell'elenco notizie --------------------------------------------------------- */
+.wp-filtri {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem;
+  margin-bottom: 1.25rem;
+}
+.wp-etichette { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.wp-etichette a {
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--wp-line);
+  border-radius: 999px;
+  background: var(--wp-card);
+  color: var(--wp-ink);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+.wp-etichette a:hover { border-color: var(--wp-forest-2); }
+.wp-etichette a.attiva { background: var(--wp-forest-2); border-color: var(--wp-forest-2); color: #fff; }
+.wp-filtro-testata { display: flex; align-items: center; gap: 0.5rem; }
+.wp-filtro-testata .form-select { width: 12rem; }
+
+/* --- Articolo ------------------------------------------------------------------------------ */
+.wp-articolo { max-width: 44rem; }
+.wp-articolo h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); margin-bottom: 0.9rem; }
+.wp-sommario { font-size: 1.15rem; color: var(--wp-muted); }
+.wp-firma {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 1.25rem 0;
+  padding: 0.9rem 0;
+  border-top: 1px solid var(--wp-line);
+  border-bottom: 1px solid var(--wp-line);
+}
+.wp-firma strong { display: block; font-size: 0.88rem; }
+.wp-firma small { color: var(--wp-muted); font-size: 0.76rem; }
+.wp-corpo-articolo { font-family: var(--wp-serif); font-size: 1.14rem; line-height: 1.7; }
+.wp-corpo-articolo p { margin-bottom: 1.2rem; }
+.wp-articolo footer { margin-top: 2rem; }
+
+/* --- Testate --------------------------------------------------------------------------------- */
+.wp-testata-link { display: block; color: inherit; text-decoration: none; transition: border-color 0.15s; }
+.wp-testata-link:hover { border-color: var(--wp-forest-2); }
+.wp-testata-link strong { display: block; margin-bottom: 0.3rem; font-family: var(--wp-serif); font-size: 1.3rem; letter-spacing: -0.02em; }
+.wp-testata-link span { font-size: 0.82rem; color: var(--wp-muted); }
+.wp-ultimo { padding: 0.8rem 0; border-top: 1px solid var(--wp-line); }
+.wp-ultimo small { display: block; font-size: 0.7rem; font-weight: 700; color: var(--wp-muted); }
+.wp-ultimo a { font-weight: 700; }
+
+/* --- Politica: partiti e persone ---------------------------------------------------------------- */
+.wp-partito {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.6rem;
+  min-height: 11rem;
+  padding: 1.6rem 1.5rem;
+  border-radius: 0.5rem;
+  background: var(--wp-forest-2);
+  color: #fff;
+  text-decoration: none;
+}
+.wp-partito .wp-occhiello { color: var(--wp-lime); }
+.wp-partito strong {
+  font-family: var(--wp-serif);
+  font-weight: 400;
+  font-size: 2.3rem;
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+.wp-partito span:last-child { font-size: 0.84rem; font-weight: 700; }
+.wp-partito:hover { color: #fff; background: #1d4a3e; }
+
+.wp-persone { list-style: none; margin: 0; padding: 0; }
+.wp-persone li {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.9rem;
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--wp-line);
+}
+.wp-persone li:first-child { border-top: 0; }
+.wp-persone strong { display: block; font-size: 0.92rem; }
+.wp-persone small { color: var(--wp-muted); font-size: 0.74rem; }
+.wp-persone a { font-size: 0.8rem; font-weight: 700; }
+
+.wp-persona { display: flex; flex-direction: column; gap: 0.9rem; }
+.wp-persona p { margin: 0; font-size: 0.86rem; color: var(--wp-muted); }
+
+/* --- Copertina del partito con la mappa -------------------------------------------------------------- */
+.wp-copertina-partito {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  border: 1px solid var(--wp-line);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+.wp-copertina-testo {
+  padding: 3.2rem 2.8rem;
+  background: var(--wp-forest-2);
+  color: #fff;
+}
+.wp-copertina-testo .wp-occhiello { color: var(--wp-lime); }
+.wp-copertina-testo h1 {
+  margin: 0.6rem 0 1.2rem;
+  color: #fffdf7;
+  font-size: clamp(3rem, 8vw, 5.4rem);
+  line-height: 0.95;
+}
+.wp-copertina-testo p { max-width: 26rem; margin-bottom: 1.4rem; font-size: 0.9rem; }
+.wp-copertina-mappa { position: relative; background: #dfe9da; }
+.wp-mappa { display: block; width: 100%; height: 100%; object-fit: cover; }
+.wp-mappa-nota {
+  position: absolute;
+  right: 0.7rem;
+  bottom: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  background: var(--wp-card);
+  font-size: 0.66rem;
+  font-weight: 700;
+}
+
+/* --- Copertina della persona (candidatura o mandato) ---------------------------------------------------- */
+.wp-copertina-persona {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 3.2rem 2.8rem;
+  border-radius: 0.5rem;
+  background: var(--wp-terra);
+  color: #fff;
+}
+.wp-copertina-mandato { background: var(--wp-forest-2); }
+.wp-copertina-persona .wp-occhiello { color: #f1e4c3; }
+.wp-copertina-mandato .wp-occhiello { color: var(--wp-lime); }
+.wp-copertina-persona h1 {
+  margin: 0.5rem 0 1rem;
+  color: #fffdf7;
+  font-size: clamp(2.8rem, 8vw, 5rem);
+  line-height: 0.95;
+}
+.wp-copertina-persona p { margin-bottom: 0.7rem; font-size: 0.86rem; }
+.wp-copertina-persona .wp-ruolo { font-size: 1.15rem; font-weight: 700; }
+.wp-copertina-persona .wp-incarico { max-width: 24rem; font-size: 0.78rem; }
+.wp-copertina-persona .d-flex { margin-top: 1.2rem; }
+.wp-cerchio {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 10rem;
+  height: 10rem;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+  font-family: var(--wp-serif);
+  font-style: italic;
+  font-size: 3.4rem;
+}
+
+.wp-ancore {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.2rem;
+  margin: 1.1rem 0 1.1rem;
+  padding-bottom: 1.1rem;
+  border-bottom: 1px solid var(--wp-line);
+}
+.wp-ancore a { color: var(--wp-ink); font-size: 0.8rem; font-weight: 700; }
+.wp-sito [id] { scroll-margin-top: 1rem; }
+
+/* --- Piè di pagina ---------------------------------------------------------------------------------------- */
+.wp-fondo {
+  padding: 2.5rem 0 1.5rem;
+  background: var(--wp-forest);
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 0.84rem;
+}
+.wp-fondo .container { max-width: 68rem; }
+.wp-fondo-nome { display: block; margin-bottom: 0.5rem; color: #fff; font-family: var(--wp-serif); font-size: 1.5rem; }
+.wp-fondo h2 {
+  margin-bottom: 0.7rem;
+  color: rgba(255, 255, 255, 0.75);
+  font-family: var(--wp-sans);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+.wp-fondo ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.35rem; }
+.wp-fondo a { color: #fff; }
+.wp-fondo-nota {
+  margin: 2rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 0.74rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* --- Schermi piccoli ---------------------------------------------------------------------------------------- */
+@media (max-width: 991.98px) {
+  .wp-voci { margin: 0.8rem 0; }
+  .wp-cerca { margin-bottom: 0.8rem; }
+  .wp-cerca .form-control { width: 100%; }
+  .wp-apertura,
+  .wp-copertina-partito { grid-template-columns: 1fr; }
+  .wp-apertura-testo,
+  .wp-copertina-testo,
+  .wp-copertina-persona { padding: 2rem 1.4rem; }
+  .wp-copertina-mappa { max-height: 20rem; }
+}
+@media (max-width: 767.98px) {
+  .wp-cerca-grande form { grid-template-columns: 1fr; }
+  .wp-cerchio { display: none; }
+  .wp-filtro-testata .form-select { width: auto; flex: 1; }
+}

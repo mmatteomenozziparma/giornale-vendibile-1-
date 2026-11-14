@@ -1,0 +1,55 @@
+[
+    {
+        "id": "T-6438DAB71F",
+        "testata": "wolfpress",
+        "oggetto": "Prova console tecnica",
+        "priorita": "Normale",
+        "stato": "In lavorazione",
+        "mittente": "Nome non registrato",
+        "ruolo_mittente": "Editore",
+        "assegnatario": "Team tecnico",
+        "descrizione": "Verifica del passaggio al team tecnico.",
+        "ultima_risposta": "Risposta tecnica di prova ricevuta in chat.",
+        "video": "",
+        "aperto_il": "2026-11-04",
+        "messaggi": [
+            {"autore": "Nome non registrato", "ruolo": "editore", "testo": "Verifica del passaggio al team tecnico.", "quando": "2026-11-04 10:15"},
+            {"autore": "Team tecnico", "ruolo": "tecnico", "testo": "Risposta tecnica di prova ricevuta in chat.", "quando": "2026-11-04 10:40"}
+        ]
+    },
+    {
+        "id": "T-101",
+        "testata": "wolfpress",
+        "oggetto": "Verifica caricamento delle copertine",
+        "priorita": "Normale",
+        "stato": "Aperto",
+        "mittente": "Laura Monti",
+        "ruolo_mittente": "Editore",
+        "assegnatario": "",
+        "descrizione": "Le copertine di prova si caricano lentamente dalla redazione.",
+        "ultima_risposta": "",
+        "video": "",
+        "aperto_il": "2026-11-05",
+        "messaggi": [
+            {"autore": "Laura Monti", "ruolo": "editore", "testo": "Le copertine di prova si caricano lentamente dalla redazione.", "quando": "2026-11-05 11:05"}
+        ]
+    },
+    {
+        "id": "T-102",
+        "testata": "cronache",
+        "oggetto": "Libreria immagini lenta",
+        "priorita": "Alta",
+        "stato": "In lavorazione",
+        "mittente": "Redazione Cronache",
+        "ruolo_mittente": "Editore",
+        "assegnatario": "Marco Bellori",
+        "descrizione": "L'archivio delle immagini impiega molto tempo ad aprirsi nelle ore di punta.",
+        "ultima_risposta": "Stiamo controllando il nodo NODE-EU-02.",
+        "video": "",
+        "aperto_il": "2026-11-05",
+        "messaggi": [
+            {"autore": "Redazione Cronache", "ruolo": "editore", "testo": "L'archivio delle immagini impiega molto tempo ad aprirsi nelle ore di punta.", "quando": "2026-11-05 08:50"},
+            {"autore": "Marco Bellori", "ruolo": "tecnico", "testo": "Stiamo controllando il nodo NODE-EU-02.", "quando": "2026-11-05 09:10"}
+        ]
+    }
+]

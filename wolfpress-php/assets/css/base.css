@@ -1,0 +1,344 @@
+/* ==========================================================================
+   WolfPress · stile di base condiviso dal portale e dal sito pubblico.
+   Si appoggia a Bootstrap 5 e ne ridefinisce colori, caratteri e componenti.
+   ========================================================================== */
+
+:root {
+  /* Colori */
+  --wp-ink: #17241c;            /* testo */
+  --wp-forest: #152a20;         /* verde molto scuro: barra laterale, pulsanti */
+  --wp-forest-2: #173d33;       /* verde scuro delle copertine */
+  --wp-primary: #286347;        /* colore principale (modificabile dal configuratore) */
+  --wp-lime: #d9ecb5;           /* accento chiaro */
+  --wp-lime-strong: #c9e19d;
+  --wp-paper: #f5f6f1;          /* sfondo pagina */
+  --wp-card: #ffffff;
+  --wp-soft: #ecf0e6;           /* sfondo morbido per note e intestazioni di tabella */
+  --wp-line: #dde2d7;
+  --wp-muted: #56615a;
+  --wp-terra: #6a372c;          /* terracotta: candidature */
+  --wp-terra-text: #7b3a2b;
+
+  /* Caratteri */
+  --wp-serif: Georgia, "Times New Roman", Times, serif;
+  --wp-sans: "Noto Sans", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --wp-mono: ui-monospace, "DejaVu Sans Mono", Menlo, Consolas, monospace;
+
+  /* Variabili di Bootstrap */
+  --bs-body-font-family: var(--wp-sans);
+  --bs-body-font-size: 0.95rem;
+  --bs-body-color: var(--wp-ink);
+  --bs-body-bg: var(--wp-paper);
+  --bs-border-color: var(--wp-line);
+  --bs-border-radius: 0.5rem;
+  --bs-link-color: var(--wp-forest-2);
+  --bs-link-color-rgb: 23, 61, 51;
+  --bs-link-hover-color: var(--wp-primary);
+  --bs-link-hover-color-rgb: 40, 99, 71;
+  --bs-secondary-color: var(--wp-muted);
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, .wp-titolo {
+  font-family: var(--wp-serif);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  color: var(--wp-ink);
+}
+
+h1 { font-size: clamp(2rem, 4vw, 2.9rem); line-height: 1.05; }
+h2 { font-size: 1.45rem; line-height: 1.15; }
+h3 { font-size: 1.15rem; }
+
+a { text-underline-offset: 0.2em; }
+
+:focus-visible {
+  outline: 3px solid #e0902b;
+  outline-offset: 2px;
+  box-shadow: none !important;
+}
+
+.wp-salta {
+  position: absolute;
+  left: 0.75rem;
+  top: -5rem;
+  z-index: 2000;
+  padding: 0.6rem 0.9rem;
+  background: #fff;
+  border-radius: 0.5rem;
+  font-weight: 600;
+}
+.wp-salta:focus { top: 0.5rem; }
+
+/* --- Piccole etichette sopra i titoli ------------------------------------ */
+.wp-occhiello {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--wp-primary);
+}
+
+.wp-sottotitolo {
+  color: var(--wp-muted);
+  font-size: 0.82rem;
+}
+
+/* --- Schede --------------------------------------------------------------- */
+.wp-scheda {
+  background: var(--wp-card);
+  border: 1px solid var(--wp-line);
+  border-radius: 0.8rem;
+  padding: 1.25rem 1.25rem 1.35rem;
+}
+.wp-scheda > h2 { margin-bottom: 0.2rem; }
+.wp-scheda-testa {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.wp-scheda-testa .bi { font-size: 1rem; color: var(--wp-ink); }
+
+/* --- Riquadri con i numeri ------------------------------------------------ */
+.wp-numero {
+  background: var(--wp-card);
+  border: 1px solid var(--wp-line);
+  border-radius: 0.8rem;
+  padding: 0.95rem 1rem 0.8rem;
+  height: 100%;
+}
+.wp-numero span { display: block; font-size: 0.74rem; color: var(--wp-muted); }
+.wp-numero strong {
+  display: block;
+  font-family: var(--wp-serif);
+  font-weight: 400;
+  font-size: 1.75rem;
+  line-height: 1.25;
+}
+
+/* --- Pulsanti ------------------------------------------------------------- */
+.btn {
+  --bs-btn-font-size: 0.82rem;
+  --bs-btn-font-weight: 700;
+  --bs-btn-padding-x: 0.85rem;
+  --bs-btn-padding-y: 0.5rem;
+  --bs-btn-border-radius: 0.5rem;
+}
+.btn-sm {
+  --bs-btn-font-size: 0.74rem;
+  --bs-btn-padding-x: 0.6rem;
+  --bs-btn-padding-y: 0.3rem;
+}
+.btn-wp {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--wp-forest);
+  --bs-btn-border-color: var(--wp-forest);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--wp-primary);
+  --bs-btn-hover-border-color: var(--wp-primary);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--wp-primary);
+  --bs-btn-active-border-color: var(--wp-primary);
+}
+.btn-wp-chiaro {
+  --bs-btn-color: var(--wp-forest);
+  --bs-btn-bg: var(--wp-lime);
+  --bs-btn-border-color: var(--wp-lime);
+  --bs-btn-hover-color: var(--wp-forest);
+  --bs-btn-hover-bg: var(--wp-lime-strong);
+  --bs-btn-hover-border-color: var(--wp-lime-strong);
+  --bs-btn-active-color: var(--wp-forest);
+  --bs-btn-active-bg: var(--wp-lime-strong);
+  --bs-btn-active-border-color: var(--wp-lime-strong);
+}
+.btn-wp-bordo {
+  --bs-btn-color: var(--wp-ink);
+  --bs-btn-bg: #fff;
+  --bs-btn-border-color: var(--wp-line);
+  --bs-btn-hover-color: var(--wp-ink);
+  --bs-btn-hover-bg: var(--wp-soft);
+  --bs-btn-hover-border-color: #c3ccbd;
+  --bs-btn-active-color: var(--wp-ink);
+  --bs-btn-active-bg: var(--wp-soft);
+  --bs-btn-active-border-color: #c3ccbd;
+}
+.btn-wp-vetro {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: rgba(255, 255, 255, 0.65);
+  --bs-btn-hover-color: var(--wp-forest);
+  --bs-btn-hover-bg: #fff;
+  --bs-btn-hover-border-color: #fff;
+  --bs-btn-active-color: var(--wp-forest);
+  --bs-btn-active-bg: #fff;
+  --bs-btn-active-border-color: #fff;
+}
+
+/* --- Campi dei form ------------------------------------------------------- */
+.form-label {
+  margin-bottom: 0.3rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.form-control,
+.form-select {
+  background-color: #fff;
+  font-size: 0.86rem;
+  border-color: #b9c2b4;
+  border-radius: 0.4rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--wp-primary);
+  box-shadow: 0 0 0 0.2rem rgba(40, 99, 71, 0.18);
+}
+.form-control::placeholder { color: #8a948c; }
+.form-check-input:checked {
+  background-color: var(--wp-forest);
+  border-color: var(--wp-forest);
+}
+.form-text { font-size: 0.74rem; color: var(--wp-muted); }
+
+/* --- Bollini di stato ----------------------------------------------------- */
+.wp-stato {
+  display: inline-block;
+  padding: 0.18rem 0.45rem;
+  border-radius: 0.3rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+.wp-stato-ok { background: #e2ecdc; color: #214c36; }
+.wp-stato-attenzione { background: #fbe5c2; color: #63440f; }
+.wp-stato-neutro { background: #e6e9e3; color: #37413a; }
+.wp-stato-errore { background: #f7d6d1; color: #86271f; }
+
+.wp-pillola {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+  background: var(--wp-soft);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--wp-forest);
+  white-space: nowrap;
+}
+.wp-pillola::before {
+  content: "";
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--wp-primary);
+}
+
+/* --- Nota informativa ----------------------------------------------------- */
+.wp-nota {
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--wp-line);
+  border-radius: 0.5rem;
+  background: var(--wp-soft);
+  font-size: 0.78rem;
+  color: var(--wp-forest);
+}
+
+/* --- Avatar con le iniziali ---------------------------------------------- */
+.wp-avatar {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background: var(--wp-lime);
+  color: var(--wp-forest);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.wp-avatar-grande {
+  width: 3.6rem;
+  height: 3.6rem;
+  font-family: var(--wp-serif);
+  font-size: 1.35rem;
+}
+
+/* --- Riquadro della data in agenda ---------------------------------------- */
+.wp-data {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 2.5rem;
+  padding: 0.25rem 0;
+  border-radius: 0.3rem;
+  background: var(--wp-soft);
+  line-height: 1.1;
+}
+.wp-data b { font-size: 0.9rem; }
+.wp-data small { font-size: 0.62rem; text-transform: uppercase; font-weight: 700; color: var(--wp-muted); }
+
+/* --- Elenchi con righe separate ------------------------------------------ */
+.wp-righe { list-style: none; margin: 0; padding: 0; }
+.wp-righe > li {
+  padding: 0.8rem 0;
+  border-top: 1px solid var(--wp-line);
+}
+.wp-righe > li:last-child { padding-bottom: 0.2rem; }
+
+/* --- Tabelle -------------------------------------------------------------- */
+.wp-tabella {
+  --bs-table-bg: transparent;
+  margin-bottom: 0;
+  font-size: 0.82rem;
+}
+.wp-tabella thead th {
+  background: var(--wp-soft);
+  font-size: 0.74rem;
+  color: var(--wp-forest);
+  border-bottom: 0;
+  white-space: nowrap;
+}
+.wp-tabella td, .wp-tabella th { padding: 0.7rem 0.55rem; vertical-align: top; }
+.wp-tabella td small { display: block; color: var(--wp-muted); font-size: 0.7rem; }
+
+/* --- Fisarmonica (proposte, atti, notizie) -------------------------------- */
+.wp-fisarmonica details { border-top: 1px solid var(--wp-line); }
+.wp-fisarmonica summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  cursor: pointer;
+  list-style: none;
+}
+.wp-fisarmonica summary::-webkit-details-marker { display: none; }
+.wp-fisarmonica summary strong { display: block; font-size: 0.9rem; }
+.wp-fisarmonica summary small { display: block; font-size: 0.7rem; font-weight: 700; color: var(--wp-muted); }
+.wp-fisarmonica summary::after {
+  content: "+";
+  flex: none;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--wp-terra-text);
+}
+.wp-fisarmonica details[open] summary::after { content: "–"; }
+.wp-fisarmonica details p { margin: 0 0 0.9rem; font-size: 0.86rem; color: var(--wp-muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

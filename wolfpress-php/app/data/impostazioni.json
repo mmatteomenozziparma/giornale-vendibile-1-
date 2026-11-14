@@ -1,0 +1,30 @@
+{
+    "testata": "WolfPress",
+    "cliente": "Redazione WolfPress",
+    "benvenuto": "Qui trovi i contenuti in lavorazione e gli strumenti del tuo giornale.",
+    "colore": "#286347",
+    "email_assistenza": "",
+    "logo": "",
+    "moduli": {
+        "articoli": true,
+        "lettori": true,
+        "redazione": true,
+        "assistenza": true
+    },
+    "letture": {
+        "Lun": 1650,
+        "Mar": 1980,
+        "Mer": 1840,
+        "Gio": 2420,
+        "Ven": 2700,
+        "Sab": 2210,
+        "Dom": 2040
+    },
+    "ruoli_redazione": [
+        ["Responsabile editoriale", "approvazione contenuti"],
+        ["Redattore", "stesura e aggiornamento bozze"],
+        ["Referente tecnico", "supporto alla piattaforma"]
+    ],
+    "canali": ["Redazione generale", "Attualità", "Territorio", "Cultura"],
+    "video": {}
+}

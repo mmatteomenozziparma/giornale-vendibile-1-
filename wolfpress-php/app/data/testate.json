@@ -1,0 +1,62 @@
+[
+    {
+        "id": "wolfpress",
+        "nome": "WolfPress",
+        "descrizione": "Il quotidiano digitale della piattaforma: attualità, territorio, lavoro e politica.",
+        "dominio": "wolfpress.example",
+        "nodo": "NODE-EU-01",
+        "stato": "Operativo",
+        "backup": "Completato · 05:40",
+        "incidente": "",
+        "cliente": "Wolf Media",
+        "email": "redazione@wolfpress.example",
+        "piano": "Professionale",
+        "referente": "o2",
+        "social": {"instagram": "", "facebook": "", "linkedin": "", "youtube": ""}
+    },
+    {
+        "id": "cronache",
+        "nome": "Cronache di Città",
+        "descrizione": "Cronaca locale, sport e vita dei quartieri.",
+        "dominio": "cronache.example",
+        "nodo": "NODE-EU-02",
+        "stato": "Degradato",
+        "backup": "Completato · 05:55",
+        "incidente": "Rallentamenti nella libreria immagini",
+        "cliente": "Città Editoriale",
+        "email": "redazione@cronache.example",
+        "piano": "Professionale",
+        "referente": "o2",
+        "social": {"instagram": "", "facebook": "", "linkedin": "", "youtube": ""}
+    },
+    {
+        "id": "impresa",
+        "nome": "Impresa Oggi",
+        "descrizione": "Economia, lavoro e innovazione per le imprese del territorio.",
+        "dominio": "impresa-oggi.example",
+        "nodo": "NODE-EU-01",
+        "stato": "Operativo",
+        "backup": "Completato · 05:42",
+        "incidente": "",
+        "cliente": "Rete Imprese",
+        "email": "redazione@impresa-oggi.example",
+        "piano": "Essenziale",
+        "referente": "o1",
+        "social": {"instagram": "", "facebook": "", "linkedin": "", "youtube": ""}
+    },
+    {
+        "id": "quaderno",
+        "nome": "Quaderno Cultura",
+        "descrizione": "Libri, mostre, musica e progetti culturali.",
+        "dominio": "quaderno.example",
+        "nodo": "NODE-EU-03",
+        "stato": "Manutenzione",
+        "backup": "In corso",
+        "incidente": "Manutenzione programmata del nodo",
+        "cliente": "Studio Quaderno",
+        "email": "redazione@quaderno.example",
+        "piano": "Essenziale",
+        "referente": "o3",
+        "social": {"instagram": "", "facebook": "", "linkedin": "", "youtube": ""}
+    }
+]
