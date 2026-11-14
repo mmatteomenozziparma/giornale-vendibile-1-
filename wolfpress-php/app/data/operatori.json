@@ -1,0 +1,5 @@
+[
+    {"id": "o1", "nome": "Marco Bellori", "ruolo": "Sistemista", "turno": "08:00–16:00", "stato": "Attivo"},
+    {"id": "o2", "nome": "Nadia Venturi", "ruolo": "Supporto tecnico", "turno": "09:00–17:00", "stato": "Attivo"},
+    {"id": "o3", "nome": "Davide Marini", "ruolo": "Responsabile tecnico", "turno": "Reperibilità", "stato": "Attivo"}
+]

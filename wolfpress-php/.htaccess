@@ -1,0 +1,12 @@
+# WolfPress · regole per Apache (XAMPP, MAMP, hosting condiviso)
+
+Options -Indexes
+DirectoryIndex index.php
+
+# Le cartelle interne non devono essere raggiungibili dal browser.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(app|storage)(/|$) - [F,L,NC]
+    RewriteRule (^|/)\. - [F,L]
+    RewriteRule ^router\.php$ - [F,L]
+</IfModule>

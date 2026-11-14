@@ -1,0 +1,182 @@
+[
+    {
+        "id": "comune",
+        "nome": "Ada Valleri",
+        "partito": "alleanza-valdora",
+        "partito_nome": "Alleanza Valdora",
+        "bio": "Urbanista, ha coordinato laboratori di quartiere su mobilità quotidiana e uso degli spazi pubblici.",
+        "candidatura": {
+            "ruolo": "Candidata al Consiglio comunale",
+            "luogo": "Valleverde · città di medie dimensioni",
+            "voci": [
+                {"titolo": "Attraversamenti davanti alle scuole", "testo": "Mappare gli ingressi scolastici e rendere più visibili e sicuri gli attraversamenti negli orari di entrata e uscita. Proposta dimostrativa."},
+                {"titolo": "Spazi di quartiere aperti", "testo": "Aprire sale civiche e cortili pubblici ad associazioni e gruppi di vicinato con un calendario condiviso. Proposta dimostrativa."}
+            ],
+            "agenda": [
+                {"data": "2026-11-18", "titolo": "Passeggiata di quartiere", "dettaglio": "Piazza del Tiglio · ore 18:00"}
+            ],
+            "contatto": "Segreteria candidatura comunale",
+            "email": "campagna.comune@valdora.example"
+        },
+        "mandato": {
+            "ruolo": "Consigliera comunale",
+            "luogo": "Valleverde · città di medie dimensioni",
+            "incarico": "Componente della commissione consiliare Territorio e mobilità",
+            "voci": [
+                {"titolo": "Mappa degli attraversamenti scolastici", "tipo": "Mozione", "stato": "Depositata", "testo": "Chiede alla Giunta una ricognizione degli attraversamenti vicini alle scuole e un piano di interventi. Atto dimostrativo."},
+                {"titolo": "Orari e accessibilità delle sale civiche", "tipo": "Interrogazione", "stato": "Risposta ricevuta", "testo": "Domanda quali sale civiche siano accessibili e con quali orari di apertura. Atto dimostrativo."}
+            ],
+            "agenda": [
+                {"data": "2026-11-18", "titolo": "Commissione Territorio", "dettaglio": "Municipio di Valleverde · ore 18:00"}
+            ],
+            "contatto": "Segreteria del gruppo consiliare",
+            "email": "ufficio.comune@valdora.example",
+            "link_etichetta": "",
+            "link_url": ""
+        }
+    },
+    {
+        "id": "regione",
+        "nome": "Elio Selvani",
+        "partito": "alleanza-valdora",
+        "partito_nome": "Alleanza Valdora",
+        "bio": "Si occupa di pianificazione dei servizi territoriali e di collegamenti tra centri urbani e aree interne.",
+        "candidatura": {
+            "ruolo": "Candidato al Consiglio regionale",
+            "luogo": "Regione della Valdora",
+            "voci": [
+                {"titolo": "Assistenza sanitaria di prossimità", "testo": "Rafforzare gli ambulatori di distretto e i servizi a domicilio nei piccoli centri. Proposta dimostrativa."},
+                {"titolo": "Coincidenze per i pendolari", "testo": "Coordinare gli orari di treni e autobus regionali nelle stazioni di scambio. Proposta dimostrativa."}
+            ],
+            "agenda": [
+                {"data": "2026-11-18", "titolo": "Incontro su trasporti regionali", "dettaglio": "Casa civica · ore 18:00"}
+            ],
+            "contatto": "Segreteria candidatura regionale",
+            "email": "campagna.regione@valdora.example"
+        },
+        "mandato": {
+            "ruolo": "Consigliere regionale",
+            "luogo": "Regione della Valdora",
+            "incarico": "Componente della commissione consiliare Sanità e servizi territoriali",
+            "voci": [
+                {"titolo": "Tempi di accesso alle visite nei distretti", "tipo": "Interrogazione alla Giunta", "stato": "In attesa di risposta", "testo": "Chiede i tempi medi di attesa per le visite specialistiche in ogni distretto. Atto dimostrativo."},
+                {"titolo": "Integrazione degli orari del trasporto regionale", "tipo": "Risoluzione", "stato": "In discussione", "testo": "Impegna la Giunta a coordinare gli orari tra gestori diversi nelle stazioni di scambio. Atto dimostrativo."}
+            ],
+            "agenda": [
+                {"data": "2026-11-18", "titolo": "Audizione sui servizi sanitari", "dettaglio": "Aula regionale · ore 18:00"}
+            ],
+            "contatto": "Ufficio del consigliere regionale",
+            "email": "ufficio.regione@valdora.example",
+            "link_etichetta": "",
+            "link_url": ""
+        }
+    },
+    {
+        "id": "camera",
+        "nome": "Irene Rovesi",
+        "partito": "alleanza-valdora",
+        "partito_nome": "Alleanza Valdora",
+        "bio": "Ha lavorato su servizi digitali e formazione professionale, seguendo progetti di semplificazione amministrativa.",
+        "candidatura": {
+            "ruolo": "Candidata alla Camera dei deputati",
+            "luogo": "Collegio dimostrativo di Valdora Centro",
+            "voci": [
+                {"titolo": "Procedure digitali più semplici per le imprese", "testo": "Un solo sportello online per le pratiche più frequenti delle piccole imprese. Proposta dimostrativa."},
+                {"titolo": "Apprendistato e formazione tecnica", "testo": "Percorsi di apprendistato collegati agli istituti tecnici del territorio. Proposta dimostrativa."}
+            ],
+            "agenda": [
+                {"data": "2026-11-18", "titolo": "Incontro con artigiani e imprese", "dettaglio": "Valleverde · ore 18:00"}
+            ],
+            "contatto": "Segreteria candidatura Camera",
+            "email": "campagna.camera@valdora.example"
+        },
+        "mandato": {
+            "ruolo": "Deputata della Repubblica",
+            "luogo": "Collegio dimostrativo di Valdora Centro",
+            "incarico": "Componente della commissione parlamentare Attività produttive",
+            "voci": [
+                {"titolo": "Interoperabilità degli sportelli per le imprese", "tipo": "Proposta di legge", "stato": "Assegnata", "testo": "Prevede che gli sportelli digitali per le imprese condividano dati e moduli. Atto dimostrativo."},
+                {"titolo": "Monitoraggio dei percorsi di apprendistato", "tipo": "Interrogazione al Governo", "stato": "Presentata", "testo": "Chiede dati aggiornati sull'esito dei percorsi di apprendistato. Atto dimostrativo."}
+            ],
+            "agenda": [
+                {"data": "2026-11-18", "titolo": "Lavori della commissione", "dettaglio": "Montecitorio · ore 18:00"}
+            ],
+            "contatto": "Ufficio parlamentare della deputata",
+            "email": "ufficio.camera@valdora.example",
+            "link_etichetta": "Sito della Camera dei deputati",
+            "link_url": "https://www.camera.it/"
+        }
+    },
+    {
+        "id": "senato",
+        "nome": "Dario Fontelvi",
+        "partito": "alleanza-valdora",
+        "partito_nome": "Alleanza Valdora",
+        "bio": "Ha seguito progetti di manutenzione delle infrastrutture e di coordinamento tra piccoli Comuni.",
+        "candidatura": {
+            "ruolo": "Candidato al Senato",
+            "luogo": "Collegio dimostrativo della Valdora",
+            "voci": [
+                {"titolo": "Programmazione contro il dissesto", "testo": "Un piano pluriennale di manutenzione di versanti, argini e strade minori. Proposta dimostrativa."},
+                {"titolo": "Supporto tecnico ai piccoli Comuni", "testo": "Uffici tecnici condivisi per aiutare i piccoli Comuni a progettare e partecipare ai bandi. Proposta dimostrativa."}
+            ],
+            "agenda": [
+                {"data": "2026-11-18", "titolo": "Tavolo con amministratori locali", "dettaglio": "Rocca Alta · ore 18:00"}
+            ],
+            "contatto": "Segreteria candidatura Senato",
+            "email": "campagna.senato@valdora.example"
+        },
+        "mandato": {
+            "ruolo": "Senatore della Repubblica",
+            "luogo": "Collegio dimostrativo della Valdora",
+            "incarico": "Componente della commissione parlamentare Ambiente e lavori pubblici",
+            "voci": [
+                {"titolo": "Supporto alla progettazione nei piccoli Comuni", "tipo": "Disegno di legge", "stato": "In commissione", "testo": "Istituisce nuclei tecnici condivisi tra Comuni sotto una certa soglia di abitanti. Atto dimostrativo."},
+                {"titolo": "Avanzamento dei programmi contro il dissesto", "tipo": "Interrogazione al Governo", "stato": "Presentata", "testo": "Chiede lo stato di avanzamento degli interventi finanziati contro il dissesto. Atto dimostrativo."}
+            ],
+            "agenda": [
+                {"data": "2026-11-18", "titolo": "Audizione in commissione", "dettaglio": "Palazzo Madama · ore 18:00"}
+            ],
+            "contatto": "Ufficio parlamentare del senatore",
+            "email": "ufficio.senato@valdora.example",
+            "link_etichetta": "Sito del Senato della Repubblica",
+            "link_url": "https://www.senato.it/"
+        }
+    },
+    {
+        "id": "europa",
+        "nome": "Marta Silvori",
+        "partito": "alleanza-valdora",
+        "partito_nome": "Alleanza Valdora",
+        "bio": "Ha lavorato su cooperazione transfrontaliera e accessibilità dei programmi europei per gli enti locali.",
+        "candidatura": {
+            "ruolo": "Candidata al Parlamento europeo",
+            "luogo": "Circoscrizione europea dimostrativa",
+            "voci": [
+                {"titolo": "Bandi europei accessibili ai piccoli enti", "testo": "Moduli più semplici e assistenza tecnica per i Comuni che partecipano ai bandi europei. Proposta dimostrativa."},
+                {"titolo": "Collegamenti ferroviari transfrontalieri", "testo": "Più collegamenti regionali tra territori di confine, con biglietti integrati. Proposta dimostrativa."}
+            ],
+            "agenda": [
+                {"data": "2026-11-18", "titolo": "Incontro sui fondi europei", "dettaglio": "Valleverde · ore 18:00"}
+            ],
+            "contatto": "Segreteria candidatura europea",
+            "email": "campagna.europa@valdora.example"
+        },
+        "mandato": {
+            "ruolo": "Deputata al Parlamento europeo",
+            "luogo": "Circoscrizione europea dimostrativa",
+            "incarico": "Componente della commissione Sviluppo regionale",
+            "voci": [
+                {"titolo": "Assistenza tecnica ai piccoli beneficiari", "tipo": "Interrogazione alla Commissione europea", "stato": "Presentata", "testo": "Chiede quali strumenti di assistenza siano previsti per i piccoli enti beneficiari. Atto dimostrativo."},
+                {"titolo": "Informazioni accessibili nei servizi transfrontalieri", "tipo": "Emendamento", "stato": "In esame", "testo": "Propone informazioni multilingue e accessibili nei servizi di trasporto transfrontalieri. Atto dimostrativo."}
+            ],
+            "agenda": [
+                {"data": "2026-11-18", "titolo": "Riunione di commissione", "dettaglio": "Bruxelles · ore 18:00"}
+            ],
+            "contatto": "Ufficio della deputata europea",
+            "email": "ufficio.europa@valdora.example",
+            "link_etichetta": "Sito del Parlamento europeo",
+            "link_url": "https://www.europarl.europa.eu/"
+        }
+    }
+]

@@ -1,0 +1,3 @@
+# Le modifiche fatte nella demo restano sul computer e non finiscono su GitHub.
+*.json
+*.tmp

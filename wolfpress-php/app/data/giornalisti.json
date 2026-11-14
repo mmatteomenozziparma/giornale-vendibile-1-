@@ -1,0 +1,38 @@
+[
+    {
+        "id": "g1",
+        "nome": "Giulia Serra",
+        "ruolo": "Caporedattore",
+        "sezione": "Attualità",
+        "stato": "Attivo",
+        "email": "giulia.serra@wolfpress.example",
+        "bio": "Coordina la redazione e cura il riepilogo settimanale delle notizie."
+    },
+    {
+        "id": "g2",
+        "nome": "Andrea Villa",
+        "ruolo": "Giornalista",
+        "sezione": "Territorio",
+        "stato": "Attivo",
+        "email": "andrea.villa@wolfpress.example",
+        "bio": "Segue i quartieri, i servizi locali e le istituzioni del territorio."
+    },
+    {
+        "id": "g3",
+        "nome": "Elena Riva",
+        "ruolo": "Giornalista",
+        "sezione": "Cultura",
+        "stato": "Attivo",
+        "email": "elena.riva@wolfpress.example",
+        "bio": "Racconta mostre, libri e progetti culturali."
+    },
+    {
+        "id": "g4",
+        "nome": "Luca Fontana",
+        "ruolo": "Fotogiornalista",
+        "sezione": "Eventi",
+        "stato": "Sospeso",
+        "email": "luca.fontana@wolfpress.example",
+        "bio": "Fotografa eventi e manifestazioni pubbliche."
+    }
+]

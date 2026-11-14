@@ -1,0 +1,6 @@
+[
+    {"id": "e1", "giornalista": "g1", "titolo": "Incontro con la redazione", "data": "2026-11-18", "ora": "10:00", "luogo": "Online"},
+    {"id": "e2", "giornalista": "g1", "titolo": "Forum sul territorio", "data": "2026-11-27", "ora": "15:30", "luogo": "Parma"},
+    {"id": "e3", "giornalista": "g2", "titolo": "Sopralluogo nei quartieri", "data": "2026-11-20", "ora": "09:30", "luogo": "Valleverde"},
+    {"id": "e4", "giornalista": "g3", "titolo": "Anteprima della mostra", "data": "2026-11-21", "ora": "17:00", "luogo": "Sala civica"}
+]

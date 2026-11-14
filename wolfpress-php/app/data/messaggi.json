@@ -1,0 +1,16 @@
+[
+    {
+        "id": "m1",
+        "canale": "Redazione generale",
+        "autore": "Editore",
+        "testo": "Benvenuti nella chat di redazione. Qui condividiamo gli aggiornamenti comuni.",
+        "quando": "2026-11-05 09:00"
+    },
+    {
+        "id": "m2",
+        "canale": "Redazione generale",
+        "autore": "Giulia Serra",
+        "testo": "Ho aggiornato il riepilogo degli appuntamenti di novembre.",
+        "quando": "2026-11-05 09:20"
+    }
+]

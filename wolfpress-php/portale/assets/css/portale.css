@@ -1,0 +1,419 @@
+/* ==========================================================================
+   WolfPress · portale (single page application)
+   Struttura: menu laterale scuro + barra in alto + contenuto.
+   ========================================================================== */
+
+/* --- Struttura generale --------------------------------------------------- */
+.wp-griglia {
+  display: flex;
+  min-height: 100vh;
+}
+
+.wp-laterale {
+  flex: none;
+  --bs-offcanvas-width: 16rem;
+  --bs-offcanvas-bg: var(--wp-forest);
+}
+.wp-laterale-interno {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  height: 100%;
+  padding: 1.4rem 1rem 1.1rem;
+  background: linear-gradient(180deg, #14271e 0%, #173426 100%);
+  color: #fff;
+  overflow-y: auto;
+}
+
+@media (min-width: 992px) {
+  /* La colonna del menu resta scura per tutta l'altezza della pagina. */
+  .wp-griglia { background: linear-gradient(90deg, #173426 15.5rem, transparent 15.5rem); }
+  .wp-laterale { width: 15.5rem; }
+  .wp-laterale-interno {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
+}
+
+.wp-corpo {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Marchio --------------------------------------------------------------- */
+.wp-marchio {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0 0.35rem;
+  color: #fff;
+  text-decoration: none;
+}
+.wp-marchio strong {
+  display: block;
+  font-family: var(--wp-serif);
+  font-size: 1.2rem;
+  line-height: 1.15;
+}
+.wp-marchio small { display: block; font-size: 0.68rem; color: rgba(255, 255, 255, 0.78); }
+.wp-marchio-sigla,
+.wp-marchio-logo {
+  flex: none;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.55rem;
+}
+.wp-marchio-sigla {
+  display: inline-grid;
+  place-items: center;
+  background: var(--wp-lime);
+  color: var(--wp-forest);
+  font-family: var(--wp-serif);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.wp-marchio-logo { object-fit: contain; background: #fff; }
+
+/* --- Menu laterale --------------------------------------------------------- */
+.wp-menu-titolo {
+  margin: 0 0 0.6rem 0.4rem;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+}
+.wp-menu ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.25rem; }
+.wp-menu a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.65rem;
+  border-left: 2px solid transparent;
+  border-radius: 0.4rem;
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+.wp-menu a:hover { background: rgba(255, 255, 255, 0.08); }
+.wp-menu a.attiva {
+  background: rgba(255, 255, 255, 0.13);
+  border-left-color: var(--wp-lime);
+}
+.wp-menu .bi { font-size: 0.9rem; opacity: 0.9; }
+
+.wp-laterale-piede {
+  margin-top: auto;
+  padding: 0.9rem 0.35rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: 0.78rem;
+}
+.wp-laterale-piede strong { display: block; }
+.wp-laterale-piede small { color: rgba(255, 255, 255, 0.75); font-size: 0.68rem; }
+
+/* --- Barra in alto --------------------------------------------------------- */
+.wp-barra {
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 3.7rem;
+  padding: 0.6rem 2.5rem;
+  background: #fff;
+  border-bottom: 1px solid var(--wp-line);
+}
+.wp-barra-titolo { font-size: 0.86rem; font-weight: 700; white-space: nowrap; }
+.wp-barra-azioni {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+  min-width: 0;
+}
+.wp-schede {
+  display: flex;
+  gap: 0.45rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.wp-schede::-webkit-scrollbar { display: none; }
+.wp-schede .btn { white-space: nowrap; }
+.wp-schede .btn.attiva {
+  background: #e4eedb;
+  border-color: var(--wp-forest);
+  box-shadow: inset 0 0 0 1px var(--wp-forest);
+}
+.wp-avatar-mini { width: 1.5rem; height: 1.5rem; font-size: 0.58rem; }
+.wp-barra .dropdown-toggle { display: inline-flex; align-items: center; gap: 0.45rem; }
+.wp-barra .dropdown-menu { --bs-dropdown-font-size: 0.84rem; --bs-dropdown-min-width: 15rem; }
+.wp-barra .dropdown-item { display: flex; gap: 0.6rem; align-items: center; }
+.wp-barra .dropdown-item:active { background: var(--wp-primary); }
+
+/* --- Contenuto -------------------------------------------------------------- */
+.wp-main {
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: 78rem;
+  padding: 1.75rem 2.5rem 1.5rem;
+  outline: none;
+}
+
+.wp-intestazione { margin-bottom: 1rem; }
+.wp-intestazione h1 { margin-bottom: 0.6rem; }
+.wp-intro { max-width: 34rem; color: var(--wp-muted); }
+
+.wp-piede {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--wp-line);
+  font-size: 0.72rem;
+  color: var(--wp-muted);
+}
+
+/* --- Avvisi dopo un salvataggio --------------------------------------------- */
+.wp-avviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 0.5rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  animation: wp-entra 0.25s ease-out;
+}
+.wp-avviso-ok { background: #e2ecdc; color: #1d4631; border: 1px solid #c4d9b9; }
+.wp-avviso-errore { background: #f9dcd7; color: #7c231b; border: 1px solid #ecb9b1; }
+@keyframes wp-entra {
+  from { opacity: 0; transform: translateY(-0.4rem); }
+  to { opacity: 1; transform: none; }
+}
+
+/* --- Copertina verde in cima alle aree --------------------------------------- */
+.wp-copertina {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  padding: 2.2rem 2.2rem 2rem;
+  border-radius: 0.8rem;
+  background: var(--wp-primary);
+  color: #fff;
+}
+.wp-copertina::after {
+  content: "";
+  position: absolute;
+  right: -7rem;
+  top: -10rem;
+  width: 27rem;
+  height: 27rem;
+  border: 3.2rem solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.wp-copertina > * { position: relative; z-index: 1; }
+.wp-copertina .wp-occhiello { color: rgba(255, 255, 255, 0.92); }
+.wp-copertina h1 { color: #fff; font-size: clamp(2.1rem, 4.4vw, 3.1rem); margin-bottom: 0.55rem; }
+.wp-copertina p { max-width: 36rem; font-size: 0.9rem; }
+.wp-copertina-profilo h1 { margin-bottom: 0.2rem; }
+.wp-copertina-terra { background: var(--wp-terra); }
+.wp-copertina .wp-avatar { background: #e9f1dc; }
+
+/* --- Schede: varianti -------------------------------------------------------- */
+.wp-scheda-stretta { max-width: 34rem; margin: 1.5rem auto 0; }
+.wp-scheda-media { max-width: 48rem; }
+.wp-scheda-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+.wp-scheda-link .bi { display: block; margin-bottom: 0.7rem; font-size: 1.3rem; color: var(--wp-primary); }
+.wp-scheda-link:hover {
+  border-color: var(--wp-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 0.6rem 1.4rem -1rem rgba(21, 42, 32, 0.5);
+}
+.wp-altri-ruoli {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.75rem 0 0;
+  font-size: 0.86rem;
+}
+.wp-altri-ruoli a { color: var(--wp-ink); }
+
+.wp-passo {
+  flex: none;
+  padding: 0.15rem 0.45rem;
+  border-radius: 0.3rem;
+  background: var(--wp-soft);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+.wp-conteggio { margin: 0.75rem 0 0.2rem; font-size: 0.74rem; color: var(--wp-muted); }
+.wp-titolo-campi {
+  margin: 1.1rem 0 0.7rem;
+  font-family: var(--wp-sans);
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+.wp-spunta { width: 1.15rem; height: 1.15rem; margin: 0; flex: none; }
+.wp-codice-colore { font-size: 0.78rem; }
+.form-control-color { width: 2.6rem; height: 2.1rem; padding: 0.2rem; }
+
+.wp-dettagli summary { cursor: pointer; font-size: 0.82rem; }
+.wp-dettagli summary:hover { color: var(--wp-primary); }
+
+.wp-dati { margin: 0.9rem 0 1rem; }
+.wp-dati dt { font-size: 0.72rem; font-weight: 400; color: var(--wp-muted); }
+.wp-dati dd { margin: 0 0 0.65rem; font-size: 0.9rem; }
+
+.wp-flusso { padding-left: 1.1rem; font-size: 0.84rem; color: var(--wp-muted); }
+.wp-flusso li { margin-bottom: 0.3rem; }
+.wp-flusso strong { color: var(--wp-ink); }
+
+/* --- Anteprima del configuratore ---------------------------------------------- */
+.wp-anteprima { position: sticky; top: 4.8rem; }
+.wp-anteprima-sfondo { margin: 1rem -1.25rem 0; padding: 0.9rem; background: var(--wp-soft); }
+.wp-finestra { border: 1px solid var(--wp-line); border-radius: 0.6rem; background: #fff; overflow: hidden; }
+.wp-finestra-barra {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.66rem;
+  color: #8a948c;
+}
+.wp-finestra-testa { padding: 1.25rem 1.1rem 1.1rem; background: var(--wp-primary); color: #fff; }
+.wp-finestra-testa strong { display: block; margin-top: 0.8rem; font-size: 0.84rem; }
+.wp-finestra-testa .wp-titolo { margin: 0 0 0.35rem; color: #fff; font-size: 1.4rem; line-height: 1.15; overflow-wrap: anywhere; }
+.wp-finestra-testa p:last-child { margin: 0; font-size: 0.78rem; }
+.wp-finestra-moduli { list-style: none; margin: 0; padding: 0.7rem; display: grid; gap: 0.45rem; }
+.wp-finestra-moduli li {
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--wp-line);
+  border-radius: 0.35rem;
+  font-size: 0.76rem;
+}
+.wp-finestra-moduli .bi { margin-right: 0.5rem; }
+
+/* --- Grafico a barre delle letture -------------------------------------------- */
+.wp-grafico {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.6rem;
+  align-items: end;
+  height: 7rem;
+  margin: 1rem 0 0.6rem;
+}
+.wp-grafico-colonna { display: grid; grid-template-rows: minmax(0, 1fr) auto; height: 100%; text-align: center; }
+.wp-grafico-barra { display: block; align-self: end; border-radius: 0.2rem 0.2rem 0 0; background: #6a987b; background: color-mix(in srgb, var(--wp-primary) 70%, #fff); }
+.wp-grafico small { margin-top: 0.3rem; font-size: 0.64rem; color: var(--wp-muted); }
+
+/* --- Classifica del portfolio --------------------------------------------------- */
+.wp-classifica a { display: flex; align-items: center; gap: 0.9rem; color: inherit; text-decoration: none; }
+.wp-classifica a:hover strong { text-decoration: underline; }
+.wp-classifica strong { display: block; font-size: 0.9rem; }
+.wp-classifica small { color: var(--wp-muted); font-size: 0.74rem; }
+.wp-posizione {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 0.3rem;
+  background: var(--wp-soft);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+/* --- Elenco dei ticket ------------------------------------------------------------ */
+.wp-elenco-ticket { display: grid; gap: 0.45rem; }
+.wp-ticket {
+  display: block;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--wp-line);
+  border-radius: 0.45rem;
+  color: inherit;
+  text-decoration: none;
+}
+.wp-ticket strong { display: block; font-size: 0.9rem; }
+.wp-ticket small { display: block; margin-bottom: 0.3rem; font-size: 0.72rem; color: var(--wp-muted); }
+.wp-ticket:hover { border-color: #b7c4b0; }
+.wp-ticket.attivo { background: #e9f1e3; border-color: var(--wp-primary); }
+.wp-riga-attiva > td { background: #f0f5ea; }
+
+/* --- Chat ---------------------------------------------------------------------------- */
+.wp-chat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 19rem;
+  overflow-y: auto;
+  padding: 0.7rem;
+  border: 1px solid var(--wp-line);
+  border-radius: 0.5rem;
+  background: #f1f5ec;
+}
+.wp-bolla {
+  align-self: flex-start;
+  max-width: 88%;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--wp-line);
+  border-radius: 0.4rem;
+  background: #fff;
+}
+.wp-bolla strong { display: block; font-size: 0.76rem; }
+.wp-bolla p { margin: 0.15rem 0 0; font-size: 0.84rem; overflow-wrap: anywhere; }
+.wp-bolla-mia { align-self: flex-end; background: #dfecd3; border-color: #cbdfbc; }
+
+/* --- Ritratto del referente (segnaposto con le iniziali) -------------------------------- */
+.wp-ritratto {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  margin: 0.9rem 0;
+  border-radius: 0.5rem;
+  background: linear-gradient(160deg, #a9b8a4, #7f9482);
+  color: #fff;
+  font-family: var(--wp-serif);
+  font-size: 3rem;
+}
+
+/* --- Barra di avanzamento della single page application ---------------------------------- */
+.wp-avanzamento {
+  position: fixed;
+  inset: 0 auto auto 0;
+  z-index: 3000;
+  width: 0;
+  height: 3px;
+  background: #e0902b;
+  opacity: 0;
+}
+.wp-caricamento .wp-avanzamento {
+  width: 85%;
+  opacity: 1;
+  transition: width 4s cubic-bezier(0.1, 0.7, 0.2, 1);
+}
+.wp-caricamento #wp-main { opacity: 0.6; transition: opacity 0.2s 0.15s; }
+
+/* --- Schermi piccoli ---------------------------------------------------------------------- */
+@media (max-width: 991.98px) {
+  .wp-barra { padding: 0.6rem 1rem; }
+  .wp-main { padding: 1.25rem 1rem; }
+  .wp-copertina { padding: 1.6rem 1.25rem; }
+  .wp-anteprima { position: static; }
+}
+@media (max-width: 575.98px) {
+  .wp-barra-titolo { display: none; }
+}

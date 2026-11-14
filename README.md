@@ -7,7 +7,12 @@
 - `backend/`: server locale Node.js, API articoli e ticket in memoria, test automatici.
 - `docs/INVENTARIO-E-GAP.md`: elenco delle funzioni richieste, stato reale e asset non recuperati.
 
-## Avvio su Windows o Mac
+- `wolfpress-php/`: **versione PHP (MVC) + Bootstrap** costruita sul PDF delle schermate del 6 novembre 2026. Contiene due front end: `portale/` (single page application per editori, giornalisti, politici e tecnici) e `sito/` (sito pubblico per i lettori). Istruzioni in `wolfpress-php/README.md`.
+
+## Avvio della versione PHP
+Installare **PHP >= 8.0**, aprire un terminale nella cartella `wolfpress-php` ed eseguire `php -S localhost:8080 router.php`. Poi aprire **http://localhost:8080/sito/** e **http://localhost:8080/portale/**.
+
+## Avvio del prototipo Node.js (Windows o Mac)
 Installare **Node.js >= 20** e aprire un terminale nella cartella `backend`.
 
 ```sh
@@ -24,6 +29,6 @@ Homepage, sei articoli demo, sezioni, ricerca, schede politiche di esempio, stru
 I pannelli non sono protetti da login: il selettore cambia soltanto la vista. Non inserire dati reali, credenziali o informazioni riservate. Prima della produzione occorrono sicurezza per tenant, autenticazione, database, autorizzazioni, backup, privacy, verifiche accessibilità e integrazione di un CMS.
 
 ## Materiale storico mancante
-Il codice WordPress di **Prova3055**, la cartella originale `dist/` della demo «Il Punto», le immagini e il PDF delle schermate delle conversazioni 5–6 novembre non erano disponibili come file sorgente in questa sessione. Queste risorse non sono dichiarate importate.
+Il codice WordPress di **Prova3055**, la cartella originale `dist/` della demo «Il Punto» e le immagini originali non erano disponibili come file sorgente. Il PDF delle schermate del 6 novembre 2026 è stato fornito il 14 novembre 2026 ed è la base di `wolfpress-php/`: le schermate sono state ricostruite a partire dal PDF, non importate dai sorgenti originali.
 
 Vedere `docs/INVENTARIO-E-GAP.md` per la matrice dettagliata.
