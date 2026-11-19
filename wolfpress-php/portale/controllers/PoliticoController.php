@@ -14,7 +14,7 @@ final class PoliticoController extends PortaleController
     {
         $politico = $this->scheda();
         if ($politico === null) {
-            $this->pagina404('Scheda politica non trovata: scegli di nuovo il profilo demo.');
+            $this->pagina404('Scheda politica non trovata.');
             return;
         }
         $scenario = $this->tra($this->parametro('scenario'), array_keys(Politico::SCENARI), 'candidatura');
@@ -25,7 +25,7 @@ final class PoliticoController extends PortaleController
             'politico' => $politico,
             'scenario' => $scenario,
             'dati' => $politico[$scenario],
-            'livello' => Politico::LIVELLI[$politico['id']],
+            'livello' => Politico::livello($politico),
         ]);
     }
 

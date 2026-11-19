@@ -15,7 +15,7 @@ final class ErroreController extends PortaleController
     {
         $this->vista('errore', [
             'titolo' => 'Area non disponibile',
-            'messaggio' => 'Il profilo «' . Auth::etichettaRuolo() . '» non può aprire questa area. Cambia profilo demo per entrare.',
+            'messaggio' => 'Il profilo «' . Auth::etichettaRuolo() . '» non può aprire questa area.',
         ], 403);
     }
 

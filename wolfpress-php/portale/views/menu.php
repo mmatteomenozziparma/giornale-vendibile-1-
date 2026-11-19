@@ -12,11 +12,13 @@ $menu = [
     'home' => ['Portale', 'Portale WolfPress', [
         ['home', 'Le tue aree', 'bi-grid', url('home')],
     ]],
-    'accesso' => ['Accessi demo', 'Portale editoriale', [
-        ['editore', 'Editore', 'bi-building', url('accesso', ['ruolo' => 'editore'])],
-        ['giornalista', 'Giornalista', 'bi-pencil-square', url('accesso', ['ruolo' => 'giornalista'])],
-        ['politico', 'Politico', 'bi-bank', url('accesso', ['ruolo' => 'politico'])],
-        ['tecnico', 'Operatore tecnico', 'bi-hdd-network', url('accesso', ['ruolo' => 'tecnico'])],
+    'accesso' => ['Accesso', 'Portale editoriale', [
+        ['entra', 'Accedi', 'bi-box-arrow-in-right', url('accesso')],
+        ['registrazione', 'Registrati', 'bi-person-plus', url('accesso/registrazione')],
+        ['password', 'Password dimenticata', 'bi-key', url('accesso/password')],
+    ]],
+    'testata' => ['Primo avvio', 'Portale editoriale', [
+        ['nuova', 'Crea la tua testata', 'bi-newspaper', url('testata')],
     ]],
     'configuratore' => ['Impostazioni', 'Studio editoriale', [
         ['identita', 'Identità', 'bi-sliders', url('configuratore')],
@@ -50,6 +52,7 @@ $menu = [
     'tecnico' => ['Gestione tecnica', 'Console del fornitore', [
         ['infrastruttura', 'Infrastruttura', 'bi-hdd-network', url('tecnico')],
         ['personale', 'Personale tecnico', 'bi-person-gear', url('tecnico/personale')],
+        ['account', 'Account da approvare', 'bi-person-check', url('tecnico/account')],
         ['clienti', 'Clienti e testate', 'bi-building', url('tecnico/clienti')],
         ['referente', 'Referente cliente', 'bi-person-lines-fill', url('tecnico/referente')],
         ['ticket', 'Ticket di assistenza', 'bi-ticket-perforated', url('tecnico/ticket')],
@@ -93,9 +96,9 @@ $logo = $impostazioni['logo'] ?? '';
     <div class="wp-laterale-piede">
         <?php if ($utente): ?>
             <strong><?= e($utente['nome']) ?></strong>
-            <small><?= e(Auth::etichettaRuolo()) ?> · ambiente dimostrativo</small>
+            <small><?= e(Auth::etichettaRuolo()) ?></small>
         <?php else: ?>
-            <small>Ambiente dimostrativo</small>
+            <small>Accesso riservato</small>
         <?php endif; ?>
     </div>
 </div>

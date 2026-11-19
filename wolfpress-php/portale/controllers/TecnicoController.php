@@ -48,7 +48,7 @@ final class TecnicoController extends PortaleController
         $this->vista('tecnico/personale', [
             'titolo' => 'Personale tecnico · WolfPress',
             'operatori' => Operatore::tutti(),
-            'operatore' => $operatore ?? ['id' => '', 'nome' => '', 'ruolo' => Operatore::RUOLI[0], 'turno' => '', 'stato' => 'Attivo'],
+            'operatore' => $operatore ?? ['id' => '', 'nome' => '', 'ruolo' => Operatore::RUOLI[0], 'turno' => '', 'stato' => 'Attivo', 'email' => ''],
         ]);
     }
 
@@ -69,13 +69,43 @@ final class TecnicoController extends PortaleController
         }
         if ($esistente !== null) {
             Operatore::salva($dati + $esistente);
+            $this->avviso('Operatore ' . $dati['nome'] . ' salvato.');
         } else {
-            Operatore::crea($dati);
+            // Nuovo operatore: account vero, la password la sceglie lui dal link ricevuto per email.
+            try {
+                Operatore::crea($dati + ['email' => $this->campo('email', 120)]);
+                $this->avviso('Operatore ' . $dati['nome'] . ' creato: riceverà un\'email per scegliere la password.');
+            } catch (ErroreApi $errore) {
+                $this->avviso($errore->getMessage(), 'errore');
+            }
         }
-        $this->avviso('Operatore ' . $dati['nome'] . ' salvato.');
         $this->vai('tecnico/personale');
     }
 
+    /* ---------- Account da approvare ---------- */
+    /** Editori, politici e giornalisti che hanno confermato l'email e attendono l'approvazione. */
+    public function account(): void
+    {
+        $this->voce = 'account';
+        $this->vista('tecnico/account', [
+            'titolo' => 'Account da approvare · WolfPress',
+            'inAttesa' => Database::righe(
+                "SELECT id, tipo, nome, cognome, creato_il FROM generalita WHERE stato = 'in_approvazione' ORDER BY creato_il"
+            ),
+        ]);
+    }
+    public function approva(): void
+    {
+        $this->soloPost();
+        Http::imposta(['azione' => $this->tra($this->campo('azione', 10), ['approva', 'sospendi'], 'approva')]);
+        try {
+            $esito = Api::statoAccount((int) $this->campo('id', 20));
+            $this->avviso($esito['stato'] === 'attivo' ? 'Account approvato: l\'interessato è stato avvisato per email.' : 'Account sospeso.');
+        } catch (ErroreApi $errore) {
+            $this->avviso($errore->getMessage(), 'errore');
+        }
+        $this->vai('tecnico/account');
+    }
     /* ---------- Clienti e testate ---------- */
 
     public function clienti(): void
@@ -173,7 +203,7 @@ final class TecnicoController extends PortaleController
 
         $risposta = $this->campo('risposta', 600);
         if ($risposta !== '') {
-            Ticket::aggiungiMessaggio($ticket['id'], Auth::nome(), 'tecnico', $risposta);
+            Ticket::aggiungiMessaggio($ticket['id'], $risposta);
         }
         $this->avviso('Ticket ' . $ticket['id'] . ' aggiornato.');
         $this->vai('tecnico/ticket', ['id' => $ticket['id']]);
@@ -220,7 +250,7 @@ final class TecnicoController extends PortaleController
         }
         $testo = $this->campo('testo', 600);
         if ($testo !== '') {
-            Ticket::aggiungiMessaggio($ticket['id'], Auth::nome(), 'tecnico', $testo);
+            Ticket::aggiungiMessaggio($ticket['id'], $testo);
         }
         $this->vai('tecnico/chat', ['id' => $ticket['id']]);
     }
@@ -255,7 +285,7 @@ final class TecnicoController extends PortaleController
                 return $testata;
             }
         }
-        return $testate[0];
+        return $testate[0] ?? ['id' => '', 'db_id' => 0, 'nome' => 'Nessuna testata', 'descrizione' => '', 'dominio' => '', 'email' => '', 'cliente' => '', 'stato' => 'Operativo', 'nodo' => '', 'backup' => '', 'incidente' => '', 'piano' => 'Essenziale', 'referente' => '', 'social' => []];
     }
 
     private function ticketScelto(array $ticket): ?array

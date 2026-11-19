@@ -37,7 +37,7 @@ final class EditoreController extends PortaleController
             'titolo' => $giornalista['nome'] . ' · WolfPress',
             'giornalista' => $giornalista,
             'modifica' => false,
-            'portfolio' => Articolo::piuLetti(3, $giornalista['nome']),
+            'portfolio' => Articolo::piuLetti(3, $giornalista['id']),
             'eventi' => Evento::perGiornalista($giornalista['id']),
         ]);
     }
@@ -81,18 +81,25 @@ final class EditoreController extends PortaleController
             'bio' => $this->campo('bio', 400),
         ];
 
+        // Per un account nuovo l'email è obbligatoria: serve per spedire il link con cui scegliere la password.
         if ($dati['nome'] === '' || $dati['ruolo'] === '' || ($id !== '' && $esistente === null)
-            || ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL))) {
+            || ($esistente === null && $email === '') || ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL))) {
             $this->avviso('Controlla i dati: nome e ruolo sono obbligatori e l\'email deve essere valida.', 'errore');
             $this->vai($esistente ? 'editore/modifica' : 'editore/nuovo', $esistente ? ['id' => $id] : []);
         }
 
         if ($esistente !== null) {
-            Giornalista::salva($dati + $esistente);
+            // L'email di un account esistente non si cambia da qui.
+            Giornalista::salva(['email' => $esistente['email']] + $dati + $esistente);
             $this->avviso('Account di ' . $dati['nome'] . ' aggiornato.');
         } else {
-            Giornalista::crea($dati);
-            $this->avviso('Account di ' . $dati['nome'] . ' creato.');
+            try {
+                Giornalista::crea($dati);
+                $this->avviso('Account di ' . $dati['nome'] . ' creato: riceverà un\'email per scegliere la password.');
+            } catch (ErroreApi $errore) {
+                $this->avviso($errore->getMessage(), 'errore');
+                $this->vai('editore/nuovo');
+            }
         }
         $this->vai('editore');
     }
@@ -104,7 +111,7 @@ final class EditoreController extends PortaleController
         $canale = $this->tra($this->campo('canale', 60), $canali, $canali[0]);
         $testo = $this->campo('testo', 600);
         if ($testo !== '') {
-            Messaggio::invia($canale, 'Editore', $testo);
+            Messaggio::invia($canale, Auth::nome(), $testo);
         }
         $this->vai('editore', ['canale' => $canale], 'chat');
     }

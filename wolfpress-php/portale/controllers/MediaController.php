@@ -9,7 +9,7 @@ final class MediaController extends PortaleController
     public function logo(): void
     {
         $logo = Impostazioni::leggi()['logo'] ?? '';
-        $file = WP_STORAGE . '/logo.bin';
+        $file = Impostazioni::fileLogo();
         $tipi = ['image/png', 'image/jpeg', 'image/webp'];
 
         if (!is_array($logo) || !in_array($logo['tipo'] ?? '', $tipi, true) || !is_file($file)) {

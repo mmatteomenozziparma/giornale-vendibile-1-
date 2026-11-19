@@ -70,7 +70,7 @@ final class ConfiguratoreController extends PortaleController
         $impostazioni = Impostazioni::leggi();
         $impostazioni['logo'] = '';
         Impostazioni::salva($impostazioni);
-        @unlink(WP_STORAGE . '/logo.bin');
+        @unlink(Impostazioni::fileLogo());
         $this->avviso('Logo rimosso.');
         $this->vai('configuratore');
     }
@@ -98,7 +98,7 @@ final class ConfiguratoreController extends PortaleController
         if (!is_dir(WP_STORAGE)) {
             @mkdir(WP_STORAGE, 0775, true);
         }
-        if (!@move_uploaded_file($file['tmp_name'], WP_STORAGE . '/logo.bin')) {
+        if (!@move_uploaded_file($file['tmp_name'], Impostazioni::fileLogo())) {
             $errori[] = 'Impossibile salvare il logo: controlla i permessi della cartella storage/.';
             return null;
         }

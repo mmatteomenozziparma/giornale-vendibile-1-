@@ -47,10 +47,22 @@ final class Stripe
         return $dati;
     }
 
+    /** Pagina su cui Stripe riporta l'utente: il sito wolfpress-php se configurato, altrimenti FRONTEND_URL. */
+    private static function ritorno(string $cosa, bool $riuscito): string
+    {
+        $sito = Config::get('SITO_URL');
+        if ($sito !== '') {
+            return "$sito/index.php?r=sostieni/" . ($riuscito ? 'grazie' : 'annullato');
+        }
+        $frontend = Config::obbligatorio('FRONTEND_URL');
+        return $riuscito
+            ? "$frontend/$cosa-ok?sessione={CHECKOUT_SESSION_ID}"
+            : "$frontend/$cosa-" . ($cosa === 'donazione' ? 'annullata' : 'annullato');
+    }
+
     /** Checkout per una donazione una tantum. */
     public static function checkoutDonazione(int $idDonazione, int $centesimi, string $destinatario, ?string $email): array
     {
-        $frontend = Config::obbligatorio('FRONTEND_URL');
         return self::chiama('/checkout/sessions', array_filter([
             'mode' => 'payment',
             'submit_type' => 'donate',
@@ -66,15 +78,14 @@ final class Stripe
             ]],
             'metadata' => ['tipo' => 'donazione', 'id' => $idDonazione],
             'payment_intent_data' => ['metadata' => ['tipo' => 'donazione', 'id' => $idDonazione]],
-            'success_url' => "$frontend/donazione-ok?sessione={CHECKOUT_SESSION_ID}",
-            'cancel_url' => "$frontend/donazione-annullata",
+            'success_url' => self::ritorno('donazione', true),
+            'cancel_url' => self::ritorno('donazione', false),
         ], static fn ($v) => $v !== null), "donazione-$idDonazione");
     }
 
     /** Checkout per un abbonamento ricorrente a un giornale. */
     public static function checkoutAbbonamento(int $idAbbonamento, int $centesimi, string $piano, string $giornale, string $email): array
     {
-        $frontend = Config::obbligatorio('FRONTEND_URL');
         return self::chiama('/checkout/sessions', [
             'mode' => 'subscription',
             'client_reference_id' => "abbonamento_$idAbbonamento",
@@ -90,8 +101,8 @@ final class Stripe
             ]],
             'metadata' => ['tipo' => 'abbonamento', 'id' => $idAbbonamento],
             'subscription_data' => ['metadata' => ['tipo' => 'abbonamento', 'id' => $idAbbonamento]],
-            'success_url' => "$frontend/abbonamento-ok?sessione={CHECKOUT_SESSION_ID}",
-            'cancel_url' => "$frontend/abbonamento-annullato",
+            'success_url' => self::ritorno('abbonamento', true),
+            'cancel_url' => self::ritorno('abbonamento', false),
         ], "abbonamento-$idAbbonamento");
     }
 

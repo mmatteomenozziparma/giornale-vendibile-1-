@@ -59,6 +59,15 @@ $nuovo = $operatore['id'] === '';
                     <input class="form-control" id="nome" name="nome" maxlength="80" required value="<?= e($operatore['nome']) ?>">
                 </div>
                 <div class="mb-3">
+                    <label class="form-label" for="email">Email</label>
+                    <?php if ($nuovo): ?>
+                        <input class="form-control" type="email" id="email" name="email" maxlength="120" required>
+                        <div class="form-text">L'operatore riceverà un'email con il link per scegliere la password.</div>
+                    <?php else: ?>
+                        <input class="form-control" type="email" id="email" value="<?= e($operatore['email']) ?>" readonly>
+                    <?php endif; ?>
+                </div>
+                <div class="mb-3">
                     <label class="form-label" for="ruolo">Ruolo tecnico</label>
                     <select class="form-select" id="ruolo" name="ruolo">
                         <?php foreach (Operatore::RUOLI as $ruolo): ?>

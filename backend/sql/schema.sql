@@ -78,6 +78,9 @@ CREATE TABLE politici (
   carica         VARCHAR(160) NULL,
   territorio     VARCHAR(160) NULL,
   biografia      TEXT NULL,
+  livello        ENUM('comune','regione','camera','senato','europa') NOT NULL DEFAULT 'comune',
+  -- JSON: schede "candidatura" e "mandato" mostrate dal sito (proposte, atti, agenda, contatti)
+  dati           LONGTEXT NULL,
   PRIMARY KEY (id),
   UNIQUE KEY uq_politici_generalita (generalita_id),
   UNIQUE KEY uq_politici_slug (slug),
@@ -106,6 +109,10 @@ CREATE TABLE giornali (
   stato                   ENUM('bozza','attivo','sospeso') NOT NULL DEFAULT 'attivo',
   prezzo_mensile_cent     INT UNSIGNED NULL,
   prezzo_annuale_cent     INT UNSIGNED NULL,
+  -- JSON: dati di servizio gestiti dai tecnici (stato, nodo, backup, piano, referente, social)
+  dati                    LONGTEXT NULL,
+  -- JSON: scelte del configuratore dell'editore (colore, logo, moduli, canali della chat)
+  impostazioni            LONGTEXT NULL,
   creato_il               DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   UNIQUE KEY uq_giornali_generalita (generalita_id),
@@ -122,6 +129,7 @@ CREATE TABLE giornalisti (
   giornale_id    BIGINT UNSIGNED NOT NULL,
   qualifica      VARCHAR(120) NOT NULL DEFAULT 'Giornalista',
   sezione        VARCHAR(120) NULL,
+  bio            VARCHAR(500) NULL,
   PRIMARY KEY (id),
   UNIQUE KEY uq_giornalisti_generalita (generalita_id),
   KEY ix_giornalisti_giornale (giornale_id),
@@ -222,6 +230,8 @@ CREATE TABLE ticket (
   tecnico_id   BIGINT UNSIGNED NULL,
   oggetto      VARCHAR(200) NOT NULL,
   descrizione  TEXT NOT NULL,
+  mittente     VARCHAR(120) NULL,
+  video        VARCHAR(300) NULL,
   priorita     ENUM('bassa','normale','alta','urgente') NOT NULL DEFAULT 'normale',
   stato        ENUM('aperto','in_lavorazione','in_attesa_cliente','risolto','chiuso') NOT NULL DEFAULT 'aperto',
   creato_il    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -255,6 +265,9 @@ CREATE TABLE articoli_giornali (
   id              BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   giornale_id     BIGINT UNSIGNED NOT NULL,
   giornalista_id  BIGINT UNSIGNED NULL,
+  -- nome mostrato come autore quando l'articolo non è di un giornalista (es. scritto dall'editore)
+  firma           VARCHAR(160) NULL,
+  letture         INT UNSIGNED NOT NULL DEFAULT 0,
   titolo          VARCHAR(220) NOT NULL,
   slug            VARCHAR(240) NOT NULL,
   sezione         VARCHAR(120) NULL,
@@ -361,6 +374,32 @@ CREATE TABLE eventi_partecipanti (
   CONSTRAINT fk_eventi_part_giornalista FOREIGN KEY (giornalista_id) REFERENCES giornalisti (id),
   CONSTRAINT fk_eventi_part_user        FOREIGN KEY (user_id)        REFERENCES `user` (id),
   CONSTRAINT ck_eventi_part_uno CHECK ((politico_id IS NOT NULL) + (giornalista_id IS NOT NULL) + (user_id IS NOT NULL) = 1)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- Tabelle usate dai front end di wolfpress-php
+-- ---------------------------------------------------------------------
+-- Partiti mostrati nella sezione Politica del sito (scheda completa in JSON).
+CREATE TABLE partiti (
+  slug   VARCHAR(160) NOT NULL,
+  nome   VARCHAR(160) NOT NULL,
+  dati   LONGTEXT NULL,
+  PRIMARY KEY (slug)
+) ENGINE=InnoDB;
+
+-- Chat di redazione di ogni giornale, divisa per canale.
+CREATE TABLE messaggi_redazione (
+  id           BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  giornale_id  BIGINT UNSIGNED NOT NULL,
+  canale       VARCHAR(80) NOT NULL,
+  autore_id    BIGINT UNSIGNED NULL,
+  autore       VARCHAR(160) NOT NULL,
+  testo        TEXT NOT NULL,
+  creato_il    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY ix_messaggi_redazione (giornale_id, canale, creato_il),
+  CONSTRAINT fk_messaggi_redazione_giornale FOREIGN KEY (giornale_id) REFERENCES giornali (id) ON DELETE CASCADE,
+  CONSTRAINT fk_messaggi_redazione_autore   FOREIGN KEY (autore_id)   REFERENCES generalita (id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------

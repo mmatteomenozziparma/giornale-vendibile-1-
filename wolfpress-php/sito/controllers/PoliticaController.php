@@ -50,7 +50,7 @@ final class PoliticaController extends SitoController
             'politico' => $politico,
             'tipo' => $tipo,
             'dati' => $politico[$tipo],
-            'livello' => Politico::LIVELLI[$politico['id']],
+            'livello' => Politico::livello($politico),
         ]);
     }
 }

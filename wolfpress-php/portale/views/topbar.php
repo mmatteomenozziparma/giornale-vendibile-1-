@@ -5,6 +5,7 @@
 $etichette = [
     'home' => 'Portale',
     'accesso' => 'Area editoriale',
+    'testata' => 'Primo avvio',
     'configuratore' => 'Configuratore',
     'cliente' => 'Area cliente',
     'editore' => 'Area editore',
@@ -41,8 +42,6 @@ $ruolo = $utente['ruolo'] ?? '';
 <span class="wp-barra-titolo"><?= e($etichette[$area] ?? 'Portale') ?></span>
 
 <div class="wp-barra-azioni">
-    <span class="wp-pillola d-none d-md-inline-flex">Modalità demo</span>
-
     <?php if ($utente): ?>
         <nav class="wp-schede" aria-label="Aree del portale">
             <?php foreach ($schede[$ruolo] ?? [] as [$chiave, $etichetta, $indirizzo]): ?>
@@ -62,20 +61,15 @@ $ruolo = $utente['ruolo'] ?? '';
                 </p>
                 <a class="dropdown-item" href="<?= e(url('home')) ?>"><i class="bi bi-grid" aria-hidden="true"></i> Le tue aree</a>
                 <a class="dropdown-item" href="<?= e(url_sito()) ?>" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i> Apri il sito pubblico</a>
-                <a class="dropdown-item" href="<?= e(url('accesso')) ?>"><i class="bi bi-people" aria-hidden="true"></i> Accessi demo</a>
                 <div class="dropdown-divider"></div>
-                <form method="post" action="<?= e(url('demo/ripristina')) ?>">
-                    <?= Csrf::campo() ?>
-                    <button class="dropdown-item" type="submit"><i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> Ripristina dati demo</button>
-                </form>
                 <form method="post" action="<?= e(url('accesso/esci')) ?>">
                     <?= Csrf::campo() ?>
-                    <button class="dropdown-item" type="submit"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Esci dalla demo</button>
+                    <button class="dropdown-item" type="submit"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Esci</button>
                 </form>
             </div>
         </div>
     <?php else: ?>
-        <a class="btn btn-wp-bordo" href="<?= e(url('accesso')) ?>">Accessi demo</a>
+        <a class="btn btn-wp-bordo" href="<?= e(url('accesso')) ?>">Accedi</a>
         <a class="btn btn-wp-bordo" href="<?= e(url_sito()) ?>" data-spa="off">Sito pubblico</a>
     <?php endif; ?>
 </div>

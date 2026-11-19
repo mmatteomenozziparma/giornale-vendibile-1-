@@ -16,7 +16,7 @@
             <select class="form-select" id="filtro-livello" data-modelli-livello>
                 <option value="">Tutti i livelli</option>
                 <?php foreach ($politici as $politico): ?>
-                    <option value="<?= e($politico['id']) ?>"><?= e(Politico::LIVELLI[$politico['id']]) ?></option>
+                    <option value="<?= e($politico['id']) ?>"><?= e(Politico::livello($politico)) ?></option>
                 <?php endforeach; ?>
             </select>
         </div>
@@ -46,7 +46,7 @@
             <tbody>
                 <?php foreach ($politici as $politico): ?>
                     <tr data-livello="<?= e($politico['id']) ?>">
-                        <th scope="row"><?= e(Politico::LIVELLI[$politico['id']]) ?></th>
+                        <th scope="row"><?= e(Politico::livello($politico)) ?></th>
                         <td><?= e($politico['nome']) ?></td>
                         <td data-colonna="candidatura">
                             <a href="<?= e(url('politica/profilo', ['livello' => $politico['id'], 'tipo' => 'candidatura'])) ?>">Apri candidatura <i class="bi bi-arrow-right" aria-hidden="true"></i></a>

@@ -1,6 +1,8 @@
 # WolfPress — backend PHP + SQL
 
-Backend unico per i due front end di `wolfpress-php/` (**portale** e **sito**): API JSON in PHP 8.1+ senza librerie esterne, database MySQL 8 / MariaDB 10.4+.
+Backend unico per i due front end di `wolfpress-php/` (**portale** e **sito**), in PHP 8.1+ senza librerie esterne, con database MySQL 8 / MariaDB 10.4+.
+
+`wolfpress-php` carica direttamente le classi di `src/` (stesso database, stesso `.env`): per usarlo **non** serve pubblicare `public/`. Le API JSON di `public/` restano disponibili per altri client, per esempio un'app.
 
 ```
 backend/sql/schema.sql   tabelle del database
@@ -16,6 +18,7 @@ backend/php/tests/       prova automatica completa
 2. Creare un utente del database con i soli permessi `SELECT, INSERT, UPDATE, DELETE` su `wolfpress.*`.
 3. In `backend/php`: copiare `.env.example` in `.env`, eseguire `php bin/genera-chiavi.php` e incollare le tre chiavi nel `.env`, poi compilare database, SMTP e Stripe.
 4. Creare il primo tecnico: `php bin/crea-tecnico.php Nome Cognome email@esempio.it responsabile`
+   Chi aveva già creato il database con la prima versione dello schema esegue invece `backend/sql/aggiornamento-wolfpress.sql`.
 5. Avvio in locale: `php -S localhost:8090 -t public public/index.php`. In produzione puntare la radice del sito a `public/` e usare **solo HTTPS** (`APP_ENV=produzione`).
 
 Servono le estensioni PHP `pdo_mysql`, `sodium`, `curl`, `mbstring`.
@@ -34,6 +37,7 @@ Servono le estensioni PHP `pdo_mysql`, `sodium`, `curl`, `mbstring`.
 | `iscrizioni` | uno user segue un giornale o un politico |
 | `abbonamenti`, `donazioni`, `stripe_eventi` | pagamenti Stripe |
 | `ticket`, `ticket_messaggi` | assistenza |
+| `partiti`, `messaggi_redazione` | schede dei partiti e chat di redazione usate da `wolfpress-php` |
 | `token_email`, `tentativi` | token monouso delle email e limite ai tentativi |
 
 ## Sicurezza
@@ -47,7 +51,7 @@ Servono le estensioni PHP `pdo_mysql`, `sodium`, `curl`, `mbstring`.
 
 ## Stripe
 
-Nella dashboard Stripe creare un webhook verso `https://TUO-DOMINIO/api/stripe/webhook` con gli eventi `checkout.session.completed`, `checkout.session.expired`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`, `customer.subscription.updated`, `customer.subscription.deleted`, `charge.refunded`, e copiare il segreto `whsec_...` nel `.env`.
+Nella dashboard Stripe creare un webhook verso `https://TUO-DOMINIO/sito/index.php?r=sostieni/webhook` (oppure `https://TUO-DOMINIO/api/stripe/webhook` se si pubblicano le API) con gli eventi `checkout.session.completed`, `checkout.session.expired`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`, `customer.subscription.updated`, `customer.subscription.deleted`, `charge.refunded`, e copiare il segreto `whsec_...` nel `.env`.
 
 Tutti gli incassi arrivano sull'unico conto Stripe della piattaforma: per versare automaticamente a ogni giornale o politico serve Stripe Connect (non incluso). Le donazioni ai politici sono soggette alle norme sul finanziamento della politica: verificarle con un consulente prima di attivarle.
 
@@ -83,7 +87,7 @@ Il browser chiama prima `GET /api/csrf` e manda il valore ricevuto nell'intestaz
 
 ## Prova automatica
 
-Con lo schema caricato in un database **vuoto di prova**:
+Con lo schema caricato in un database **vuoto di prova** (non quello usato da `wolfpress-php`: la prova usa chiavi di cifratura proprie):
 
 ```bash
 DB_UTENTE=wolfpress DB_PASSWORD=... php tests/prova.php

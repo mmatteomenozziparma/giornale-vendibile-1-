@@ -83,7 +83,7 @@
                             <span class="wp-avatar" aria-hidden="true"><?= e(iniziali($politico['nome'])) ?></span>
                             <span class="flex-grow-1">
                                 <strong><?= e($politico['nome']) ?></strong>
-                                <small><?= e(Politico::LIVELLI[$politico['id']]) ?></small>
+                                <small><?= e(Politico::livello($politico)) ?></small>
                             </span>
                             <a href="<?= e(url('politica/profilo', ['livello' => $politico['id'], 'tipo' => 'candidatura'])) ?>">Candidatura</a>
                             <a href="<?= e(url('politica/profilo', ['livello' => $politico['id'], 'tipo' => 'mandato'])) ?>">Mandato</a>

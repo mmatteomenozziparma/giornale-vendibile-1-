@@ -143,9 +143,24 @@ final class Mailer
         return "\n\n— " . Config::get('MAIL_NOME_MITTENTE', 'WolfPress') . "\nMessaggio automatico: non rispondere a questa email.";
     }
 
-    public static function verifica(string $a, string $nome, string $token): bool
+    /**
+     * Indirizzo da mettere nelle email. Se sono configurati PORTALE_URL e SITO_URL
+     * (front end wolfpress-php) i link portano lì; altrimenti alle API / FRONTEND_URL.
+     */
+    private static function link(string $azione, string $token, string $tipo): string
     {
-        $link = Config::get('APP_URL') . '/api/verifica-email?token=' . $token;
+        $base = Config::get($tipo === 'user' ? 'SITO_URL' : 'PORTALE_URL');
+        if ($base !== '') {
+            return "$base/index.php?r=" . ($tipo === 'user' ? 'account' : 'accesso') . "/$azione&token=$token";
+        }
+        return $azione === 'verifica'
+            ? Config::get('APP_URL') . '/api/verifica-email?token=' . $token
+            : Config::get('FRONTEND_URL') . '/nuova-password?token=' . $token;
+    }
+
+    public static function verifica(string $a, string $nome, string $token, string $tipo = 'user'): bool
+    {
+        $link = self::link('verifica', $token, $tipo);
         return self::invia($a, 'Conferma la tua registrazione', "Ciao $nome,\n\ngrazie per esserti registrato.\n"
             . "Per attivare l'account conferma il tuo indirizzo email entro 24 ore:\n\n$link\n\n"
             . 'Se non hai chiesto tu la registrazione, ignora questo messaggio.' . self::firma());
@@ -170,9 +185,17 @@ final class Mailer
             . "Se eri tu, accedi oppure usa «Password dimenticata».\nSe non eri tu, non devi fare nulla." . self::firma());
     }
 
-    public static function reset(string $a, string $nome, string $token): bool
+    /** Account creato da un editore o da un tecnico: l'interessato sceglie da sé la password. */
+    public static function invitoAccount(string $a, string $nome, string $token, string $tipo): bool
     {
-        $link = Config::get('FRONTEND_URL') . '/nuova-password?token=' . $token;
+        $link = self::link('nuova-password', $token, $tipo);
+        return self::invia($a, 'Il tuo account è pronto', "Ciao $nome,\n\nè stato creato un account a tuo nome.\n"
+            . "Per attivarlo scegli la tua password entro 3 giorni:\n\n$link" . self::firma());
+    }
+
+    public static function reset(string $a, string $nome, string $token, string $tipo = 'user'): bool
+    {
+        $link = self::link('nuova-password', $token, $tipo);
         return self::invia($a, 'Reimposta la password', "Ciao $nome,\n\nper scegliere una nuova password apri questo link entro 1 ora:\n\n$link\n\n"
             . 'Se non hai chiesto tu il cambio, ignora questo messaggio: la password resta quella attuale.' . self::firma());
     }

@@ -1,55 +1,114 @@
 <?php
 /**
- * Accessi demo: si entra scegliendo un ruolo e un profilo di esempio (senza password).
+ * Accesso al portale con account veri: login, registrazione, conferma
+ * dell'email, password dimenticata e uscita. Le regole di sicurezza
+ * (hash della password, blocco dopo troppi errori, token monouso)
+ * sono nel backend: classe Account.
  */
 declare(strict_types=1);
 
 final class AccessoController extends PortaleController
 {
     protected string $area = 'accesso';
-
-    /** Profili di esempio dell'editore. */
-    private const EDITORI = [
-        'ed1' => ['Laura Monti', 'Editore'],
-        'ed2' => ['Paolo Ferri', 'Direttore responsabile'],
-    ];
+    protected string $voce = 'entra';
 
     public function index(): void
     {
-        $ruolo = $this->tra($this->parametro('ruolo'), array_keys(Auth::RUOLI), 'editore');
-        $this->voce = $ruolo;
-
-        $titoli = [
-            'editore' => ['Accesso editore', 'Editore', 'Profilo dimostrativo della testata WolfPress.', 'Profilo editoriale'],
-            'giornalista' => ['Accesso giornalista', 'Giornalista', 'Profilo dimostrativo della testata WolfPress.', 'Giornalista'],
-            'politico' => ['Accesso politico', 'Politico', 'Gestisci la pagina pubblica di candidatura e di mandato.', 'Scheda politica'],
-            'tecnico' => ['Accesso operatore tecnico', 'Operatore tecnico', 'Profilo riservato al team del fornitore nella simulazione.', 'Operatore'],
-        ];
-
-        $this->vista('accesso', [
-            'titolo' => $titoli[$ruolo][0] . ' · WolfPress',
-            'ruolo' => $ruolo,
-            'testi' => $titoli[$ruolo],
-            'profili' => $this->profili($ruolo),
-        ]);
+        if (Auth::utente() !== null) {
+            $this->vai('home');
+        }
+        $this->vista('accesso', ['titolo' => 'Accedi · WolfPress']);
     }
 
     public function entra(): void
     {
         $this->soloPost();
-        $ruolo = $this->tra($this->campo('ruolo'), array_keys(Auth::RUOLI), '');
-        $profili = $ruolo !== '' ? $this->profili($ruolo) : [];
-        $profilo = $this->campo('profilo');
-
-        if ($ruolo === '' || !isset($profili[$profilo])) {
-            $this->avviso('Scegli un profilo valido per entrare.', 'errore');
-            $this->vai('accesso', $ruolo !== '' ? ['ruolo' => $ruolo] : []);
+        $errore = Accesso::entra();
+        if ($errore !== '') {
+            $this->avviso($errore, 'errore');
+            $this->vai('accesso');
         }
-
-        $nome = trim(explode('·', $profili[$profilo])[0]);
-        Auth::entra($ruolo, $nome, $profilo);
-        $this->avviso('Sei entrato come ' . $nome . ' (' . Auth::RUOLI[$ruolo] . ').');
+        $this->avviso('Bentornato, ' . Auth::nome() . '.');
         $this->vai('home');
+    }
+
+    public function registrazione(): void
+    {
+        $this->voce = 'registrazione';
+        $tipo = $this->tra($this->parametro('tipo'), ['editore', 'giornalista', 'politico'], 'editore');
+        $this->vista('accesso_registrazione', [
+            'titolo' => 'Registrati · WolfPress',
+            'tipo' => $tipo,
+            'testate' => Testata::tutti(),
+        ]);
+    }
+
+    public function registra(): void
+    {
+        $this->soloPost();
+        // Dal portale non ci si può registrare come tecnico: quegli account li crea un altro tecnico.
+        $tipo = $this->tra($this->campo('tipo', 20), ['editore', 'giornalista', 'politico'], '');
+        $errore = $tipo === '' ? 'Scegli il tipo di account.' : Accesso::registra($tipo);
+        if ($errore !== '') {
+            $this->avviso($errore, 'errore');
+            $this->vai('accesso/registrazione', $tipo !== '' ? ['tipo' => $tipo] : []);
+        }
+        $this->avviso('Controlla la tua casella di posta: ti abbiamo inviato un\'email per confermare l\'indirizzo.');
+        $this->vai('accesso');
+    }
+
+    /** Link cliccato dall'email di registrazione. */
+    public function verifica(): void
+    {
+        [$errore, $stato] = Accesso::verifica($this->parametro('token', 64));
+        if ($errore !== '') {
+            $this->avviso($errore, 'errore');
+        } elseif ($stato === 'attivo') {
+            $this->avviso('Indirizzo confermato: ora puoi accedere.');
+        } else {
+            $this->avviso('Indirizzo confermato. Il tuo profilo è in attesa di approvazione: ti avviseremo per email.');
+        }
+        $this->vai('accesso');
+    }
+
+    public function password(): void
+    {
+        $this->voce = 'password';
+        $this->vista('accesso_password', ['titolo' => 'Password dimenticata · WolfPress', 'token' => '']);
+    }
+
+    public function richiesta(): void
+    {
+        $this->soloPost();
+        $errore = Accesso::richiediReset();
+        // Stessa risposta che l'indirizzo sia registrato oppure no.
+        $this->avviso($errore !== '' ? $errore : 'Se l\'indirizzo è registrato riceverai un\'email con il link per scegliere una nuova password.', $errore !== '' ? 'errore' : 'ok');
+        $this->vai('accesso');
+    }
+
+    /** Link cliccato dall'email di reset o di invito: mostra il modulo della nuova password. */
+    public function nuovaPassword(): void
+    {
+        $this->voce = 'password';
+        $token = $this->parametro('token', 64);
+        if (!preg_match('/^[a-f0-9]{64}$/', $token)) {
+            $this->avviso('Link non valido o scaduto.', 'errore');
+            $this->vai('accesso/password');
+        }
+        $this->vista('accesso_password', ['titolo' => 'Nuova password · WolfPress', 'token' => $token]);
+    }
+
+    public function salvaPassword(): void
+    {
+        $this->soloPost();
+        $errore = Accesso::nuovaPassword();
+        if ($errore !== '') {
+            $this->avviso($errore, 'errore');
+            $token = $this->campo('token', 64);
+            $this->vai(preg_match('/^[a-f0-9]{64}$/', $token) ? 'accesso/nuova-password' : 'accesso/password', preg_match('/^[a-f0-9]{64}$/', $token) ? ['token' => $token] : []);
+        }
+        $this->avviso('Password salvata: ora puoi accedere.');
+        $this->vai('accesso');
     }
 
     public function esci(): void
@@ -57,34 +116,5 @@ final class AccessoController extends PortaleController
         $this->soloPost();
         Auth::esci();
         $this->vai('accesso');
-    }
-
-    /** Profili disponibili per ruolo: [id => etichetta]. */
-    private function profili(string $ruolo): array
-    {
-        $profili = [];
-        switch ($ruolo) {
-            case 'editore':
-                foreach (self::EDITORI as $id => [$nome, $qualifica]) {
-                    $profili[$id] = $nome . ' · ' . $qualifica;
-                }
-                break;
-            case 'giornalista':
-                foreach (Giornalista::attivi() as $g) {
-                    $profili[$g['id']] = $g['nome'] . ' · ' . $g['ruolo'] . ', ' . $g['sezione'];
-                }
-                break;
-            case 'politico':
-                foreach (Politico::tutti() as $p) {
-                    $profili[$p['id']] = $p['nome'] . ' · ' . Politico::LIVELLI[$p['id']];
-                }
-                break;
-            case 'tecnico':
-                foreach (Operatore::attivi() as $o) {
-                    $profili[$o['id']] = $o['nome'] . ' · ' . $o['ruolo'];
-                }
-                break;
-        }
-        return $profili;
     }
 }

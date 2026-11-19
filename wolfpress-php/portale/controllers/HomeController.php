@@ -29,6 +29,7 @@ final class HomeController extends PortaleController
             'tecnico' => [
                 ['Infrastruttura', 'Testate ospitate, domini, backup e incidenti.', 'bi-hdd-network', url('tecnico')],
                 ['Personale tecnico', 'Operatori, ruoli e turni.', 'bi-person-gear', url('tecnico/personale')],
+                ['Account da approvare', 'Editori, politici e giornalisti in attesa.', 'bi-person-check', url('tecnico/account')],
                 ['Clienti e testate', 'Referenti, piano e canali social.', 'bi-building', url('tecnico/clienti')],
                 ['Referente cliente', 'Storico delle segnalazioni per cliente.', 'bi-person-lines-fill', url('tecnico/referente')],
                 ['Ticket di assistenza', 'Prendi in carico e rispondi.', 'bi-ticket-perforated', url('tecnico/ticket')],

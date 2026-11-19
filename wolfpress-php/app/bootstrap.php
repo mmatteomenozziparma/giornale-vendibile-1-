@@ -11,6 +11,14 @@ define('WP_STORAGE', WP_ROOT . '/storage');
 
 $GLOBALS['wp_config'] = require WP_APP . '/config.php';
 
+// Backend condiviso (database, cifratura, email, Stripe, account): vedi backend/php.
+$backend = $GLOBALS['wp_config']['backend'];
+if (!is_file($backend . '/src/bootstrap.php')) {
+    http_response_code(500);
+    exit('Backend non trovato: controlla la voce "backend" in app/config.php.');
+}
+require $backend . '/src/bootstrap.php';
+
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Europe/Rome');
 error_reporting(E_ALL);
@@ -44,5 +52,6 @@ header('Cache-Control: no-store');
 header(
     "Content-Security-Policy: default-src 'self'; img-src 'self' data:; "
     . "style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self'; "
-    . "object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+    // checkout.stripe.com: il modulo delle donazioni rimanda alla pagina di pagamento di Stripe.
+    . "object-src 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; frame-ancestors 'none'"
 );

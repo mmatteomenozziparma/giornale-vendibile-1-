@@ -21,6 +21,7 @@ $altro = $mandato ? 'candidatura' : 'mandato';
         <?php endif; ?>
         <div class="d-flex flex-wrap gap-2">
             <a class="btn btn-wp-chiaro" href="#voci"><?= $mandato ? 'Consulta gli atti' : 'Leggi le proposte' ?></a>
+            <a class="btn btn-wp-vetro" href="<?= e(url('sostieni', ['politico' => $politico['id']])) ?>">Segui o sostieni</a>
             <a class="btn btn-wp-vetro" href="<?= e(url('politica/profilo', ['livello' => $politico['id'], 'tipo' => $altro])) ?>">
                 <?= $mandato ? 'Vedi la candidatura' : 'Vedi il mandato' ?> <i class="bi bi-arrow-right" aria-hidden="true"></i>
             </a>

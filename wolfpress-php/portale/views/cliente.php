@@ -98,7 +98,7 @@ $massimo = max($letture ?: [1]);
                 <div class="wp-grafico" role="img" aria-label="Letture giornaliere della settimana di esempio">
                     <?php foreach ($letture as $giorno => $valore): ?>
                         <div class="wp-grafico-colonna">
-                            <span class="wp-grafico-barra" style="height: <?= (int) round($valore / $massimo * 100) ?>%" title="<?= e($giorno . ': ' . numero((int) $valore)) ?>"></span>
+                            <span class="wp-grafico-barra" style="height: <?= $massimo > 0 ? (int) round($valore / $massimo * 100) : 0 ?>%" title="<?= e($giorno . ': ' . numero((int) $valore)) ?>"></span>
                             <small><?= e($giorno) ?></small>
                         </div>
                     <?php endforeach; ?>

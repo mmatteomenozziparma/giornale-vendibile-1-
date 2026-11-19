@@ -30,6 +30,7 @@
                     <a class="btn btn-wp" href="<?= e(url('notizie', ['testata' => $testata['id']])) ?>">
                         <?= (int) $testata['quanti'] ?> <?= $testata['quanti'] === 1 ? 'articolo' : 'articoli' ?> <i class="bi bi-arrow-right" aria-hidden="true"></i>
                     </a>
+                    <a class="btn btn-wp-bordo" href="<?= e(url('sostieni', ['testata' => $testata['id']])) ?>">Segui o sostieni</a>
                     <?php foreach ($testata['social_attivi'] as $nome => $link): ?>
                         <a href="<?= e($link) ?>" target="_blank" rel="noopener noreferrer"><?= e($nome) ?></a>
                     <?php endforeach; ?>

@@ -52,7 +52,7 @@
                     <div class="d-flex align-items-center gap-3">
                         <span class="wp-avatar wp-avatar-grande" aria-hidden="true"><?= e(iniziali($politico['nome'])) ?></span>
                         <div>
-                            <span class="wp-occhiello mb-0"><?= e(Politico::LIVELLI[$politico['id']]) ?></span>
+                            <span class="wp-occhiello mb-0"><?= e(Politico::livello($politico)) ?></span>
                             <h3 class="mb-0"><?= e($politico['nome']) ?></h3>
                             <small class="wp-sottotitolo"><?= e($politico['partito_nome']) ?></small>
                         </div>

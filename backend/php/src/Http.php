@@ -82,6 +82,12 @@ final class Http
         return $grezzo;
     }
 
+    /** Dati già letti altrove (es. un form HTML di wolfpress-php): valgono come corpo della richiesta. */
+    public static function imposta(array $dati): void
+    {
+        self::$corpo = $dati;
+    }
+
     /** Corpo JSON della richiesta come array. */
     public static function corpo(): array
     {

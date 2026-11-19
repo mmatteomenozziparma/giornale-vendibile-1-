@@ -12,7 +12,7 @@ final class AssistenzaController extends PortaleController
 
     public function index(): void
     {
-        $ticket = Ticket::perTestata(Testata::PRINCIPALE);
+        $ticket = Ticket::perTestata(Auth::testata());
         $nuovo = $this->parametro('nuovo') === '1';
 
         $this->vista('assistenza/ticket', [
@@ -37,7 +37,7 @@ final class AssistenzaController extends PortaleController
             $this->vai('assistenza', ['nuovo' => '1']);
         }
 
-        $ticket = Ticket::apri(Testata::PRINCIPALE, $mittente !== '' ? $mittente : Auth::nome(), $oggetto, $priorita, $descrizione);
+        $ticket = Ticket::apri(Auth::testata(), $mittente !== '' ? $mittente : Auth::nome(), $oggetto, $priorita, $descrizione);
         $this->avviso('Ticket ' . $ticket['id'] . ' aperto: il team tecnico lo prenderà in carico.');
         $this->vai('assistenza', ['id' => $ticket['id']]);
     }
@@ -45,7 +45,7 @@ final class AssistenzaController extends PortaleController
     public function chat(): void
     {
         $this->voce = 'chat';
-        $ticket = Ticket::perTestata(Testata::PRINCIPALE);
+        $ticket = Ticket::perTestata(Auth::testata());
 
         $this->vista('assistenza/chat', [
             'titolo' => 'Chat di assistenza · WolfPress',
@@ -60,12 +60,12 @@ final class AssistenzaController extends PortaleController
         $ticket = Ticket::trova($this->campo('id', 40));
         $testo = $this->campo('testo', 600);
 
-        if ($ticket === null || $ticket['testata'] !== Testata::PRINCIPALE) {
+        if ($ticket === null || $ticket['testata'] !== Auth::testata()) {
             $this->avviso('Ticket non trovato.', 'errore');
             $this->vai('assistenza/chat');
         }
         if ($testo !== '') {
-            Ticket::aggiungiMessaggio($ticket['id'], Auth::nome(), 'editore', $testo);
+            Ticket::aggiungiMessaggio($ticket['id'], $testo);
         }
         $this->vai('assistenza/chat', ['id' => $ticket['id']]);
     }

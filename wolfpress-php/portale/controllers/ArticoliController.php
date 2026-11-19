@@ -22,8 +22,8 @@ final class ArticoliController extends PortaleController
             $this->vai('cliente', [], 'articoli');
         }
         $miei = array_values(array_filter(
-            Articolo::perTestata(Testata::PRINCIPALE),
-            static fn (array $a): bool => $a['autore'] === Auth::nome()
+            Articolo::perTestata(Auth::testata()),
+            static fn (array $a): bool => $a['giornalista_id'] === Auth::profilo()
         ));
         $this->vista('articoli_elenco', ['titolo' => 'I miei articoli · WolfPress', 'articoli' => $miei]);
     }
@@ -85,7 +85,7 @@ final class ArticoliController extends PortaleController
         if ($esistente !== null) {
             Articolo::salva($dati + $esistente);
         } else {
-            Articolo::crea($dati + ['testata' => Testata::PRINCIPALE, 'autore' => Auth::nome()]);
+            Articolo::crea($dati + ['testata' => Auth::testata()]);
         }
 
         $messaggi = [
@@ -126,10 +126,10 @@ final class ArticoliController extends PortaleController
 
     private function visibile(array $articolo): bool
     {
-        if ($articolo['testata'] !== Testata::PRINCIPALE) {
+        if ($articolo['testata'] !== Auth::testata()) {
             return false;
         }
-        return Auth::ruolo() === 'editore' || $articolo['autore'] === Auth::nome();
+        return Auth::ruolo() === 'editore' || $articolo['giornalista_id'] === Auth::profilo();
     }
 
     private function modificabile(array $articolo): bool

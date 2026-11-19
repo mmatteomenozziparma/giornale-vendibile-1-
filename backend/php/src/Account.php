@@ -101,6 +101,7 @@ final class Account
                 'partito' => Http::testo('partito', 160, false),
                 'carica' => Http::testo('carica', 160, false),
                 'territorio' => Http::testo('territorio', 160, false),
+                'livello' => Http::scelta('livello', ['comune', 'regione', 'camera', 'senato', 'europa'], 'comune'),
             ],
             'giornalista' => ['giornale_id' => Http::intero('giornale_id'), 'sezione' => Http::testo('sezione', 120, false)],
         };
@@ -135,8 +136,42 @@ final class Account
             throw $e;
         }
 
-        Mailer::verifica($email, $nome, $token);
+        Mailer::verifica($email, $nome, $token, $tipo);
         return $risposta;
+    }
+
+    /**
+     * Crea un account già attivo ma senza password (non può ancora accedere) e
+     * spedisce all'interessato il link per sceglierla. Lo usano editori e tecnici
+     * per aggiungere giornalisti e operatori. Restituisce l'id in generalita.
+     */
+    public static function creaInvitato(string $tipo, string $nome, string $cognome, string $email, array $profilo): int
+    {
+        $email = Cifratura::normalizzaEmail($email);
+        if (!isset(self::TABELLE[$tipo]) || filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+            throw new ErroreApi('Indirizzo email non valido.', 422);
+        }
+        try {
+            [$id, $token] = Database::transazione(static function () use ($tipo, $nome, $cognome, $email, $profilo) {
+                $id = Database::inserisci('generalita', [
+                    'tipo' => $tipo,
+                    'nome' => $nome,
+                    'cognome' => $cognome,
+                    'email_cifrata' => Cifratura::cifra($email),
+                    'email_hash' => Cifratura::indiceEmail($email),
+                    'stato' => 'attivo',
+                ]);
+                Database::inserisci(self::TABELLE[$tipo], ['generalita_id' => $id] + $profilo);
+                return [$id, self::creaToken($id, 'reset', 3 * 24 * 60)];
+            });
+        } catch (PDOException $e) {
+            if (Database::doppione($e)) {
+                throw new ErroreApi('Esiste già un account con questa email.', 409);
+            }
+            throw $e;
+        }
+        Mailer::invitoAccount($email, $nome, $token, $tipo);
+        return $id;
     }
 
     private static function creaToken(int $generalitaId, string $tipo, int $minuti): string
@@ -336,7 +371,7 @@ final class Account
         );
         if ($account !== null) {
             $token = Database::transazione(static fn () => self::creaToken((int) $account['id'], 'reset', 60));
-            Mailer::reset($email, $account['nome'], $token);
+            Mailer::reset($email, $account['nome'], $token, $account['tipo']);
         }
         // La risposta al client è identica in entrambi i casi.
     }
@@ -354,7 +389,8 @@ final class Account
             $account = self::consumaToken($token, 'reset');
             self::controllaPassword($password, Cifratura::decifra($account['email_cifrata']));
             Database::esegui(
-                'UPDATE generalita SET password_hash = ?, accessi_falliti = 0, bloccato_fino = NULL WHERE id = ?',
+                'UPDATE generalita SET password_hash = ?, accessi_falliti = 0, bloccato_fino = NULL,
+                        email_verificata_il = COALESCE(email_verificata_il, NOW()) WHERE id = ?',
                 [Cifratura::hashPassword($password), $account['id']]
             );
             return $account;

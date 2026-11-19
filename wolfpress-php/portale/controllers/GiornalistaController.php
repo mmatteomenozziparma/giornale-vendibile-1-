@@ -13,7 +13,7 @@ final class GiornalistaController extends PortaleController
     {
         $giornalista = Giornalista::trova(Auth::profilo());
         if ($giornalista === null) {
-            $this->pagina404('Profilo giornalista non trovato: scegli di nuovo il profilo demo.');
+            $this->pagina404('Profilo giornalista non trovato.');
             return;
         }
         $impostazioni = Impostazioni::leggi();
@@ -22,7 +22,7 @@ final class GiornalistaController extends PortaleController
         $this->vista('giornalista', [
             'titolo' => 'Profilo giornalista · WolfPress',
             'giornalista' => $giornalista,
-            'portfolio' => Articolo::piuLetti(3, $giornalista['nome']),
+            'portfolio' => Articolo::piuLetti(3, $giornalista['id']),
             'eventi' => Evento::perGiornalista($giornalista['id']),
             'canali' => $impostazioni['canali'],
             'canale' => $canale,
@@ -70,7 +70,7 @@ final class GiornalistaController extends PortaleController
     {
         $this->soloPost();
         $evento = Evento::trova($this->campo('id', 40));
-        if ($evento !== null && $evento['giornalista'] === Auth::profilo()) {
+        if ($evento !== null) {
             Evento::elimina((string) $evento['id']);
             $this->avviso('Evento rimosso dall\'agenda.');
         }

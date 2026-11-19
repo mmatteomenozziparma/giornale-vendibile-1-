@@ -11,13 +11,13 @@ final class ClienteController extends PortaleController
 
     public function index(): void
     {
-        $testata = Testata::trova(Testata::PRINCIPALE) ?? [];
+        $testata = Testata::trova(Auth::testata()) ?? [];
         $letture = Impostazioni::leggi()['letture'] ?? [];
 
         $this->vista('cliente', [
             'titolo' => 'Area cliente · WolfPress',
-            'conteggio' => Articolo::contaPerStato(Testata::PRINCIPALE),
-            'articoli' => Articolo::perTestata(Testata::PRINCIPALE),
+            'conteggio' => Articolo::contaPerStato(Auth::testata()),
+            'articoli' => Articolo::perTestata(Auth::testata()),
             'letture' => $letture,
             'lettureTotali' => array_sum($letture),
             'social' => Testata::socialAttivi($testata),

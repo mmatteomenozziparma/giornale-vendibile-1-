@@ -46,7 +46,7 @@
                         <div class="wp-scheda h-100 d-flex gap-3">
                             <span class="wp-avatar wp-avatar-grande" aria-hidden="true"><?= e(iniziali($politico['nome'])) ?></span>
                             <div>
-                                <span class="wp-occhiello"><?= e(Politico::LIVELLI[$politico['id']]) ?> · <?= e($politico['partito_nome']) ?></span>
+                                <span class="wp-occhiello"><?= e(Politico::livello($politico)) ?> · <?= e($politico['partito_nome']) ?></span>
                                 <h3><?= e($politico['nome']) ?></h3>
                                 <p><?= e($politico['bio']) ?></p>
                                 <div class="d-flex flex-wrap gap-3">

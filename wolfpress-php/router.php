@@ -9,7 +9,7 @@
  */
 $percorso = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 
-if (preg_match('#^/(app|storage)(/|$)#i', $percorso) || preg_match('#/\.#', $percorso) || $percorso === '/router.php') {
+if (preg_match('#^/(app|storage|bin|tests)(/|$)#i', $percorso) || preg_match('#/\.#', $percorso) || $percorso === '/router.php') {
     http_response_code(403);
     header('Content-Type: text/plain; charset=utf-8');
     echo 'Accesso negato';

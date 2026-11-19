@@ -160,3 +160,38 @@ function selezionato($a, $b): string
 {
     return (string) $a === (string) $b ? ' selected' : '';
 }
+
+/** Decodifica una colonna JSON del database (array vuoto se manca o non è valida). */
+function da_json(?string $testo): array
+{
+    $dati = $testo === null || $testo === '' ? [] : json_decode($testo, true);
+    return is_array($dati) ? $dati : [];
+}
+
+function in_json(array $dati): string
+{
+    return (string) json_encode($dati, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+}
+
+/** Data e ora del database (UTC) nel fuso italiano: ora_locale('2026-11-05 08:00:00') → '2026-11-05 09:00'. */
+function ora_locale(?string $utc, string $formato = 'Y-m-d H:i'): string
+{
+    if ($utc === null || $utc === '') {
+        return '';
+    }
+    return (new DateTimeImmutable($utc, new DateTimeZone('UTC')))->setTimezone(new DateTimeZone('Europe/Rome'))->format($formato);
+}
+
+/** Data e ora italiane nel formato UTC del database. */
+function ora_utc(string $locale): string
+{
+    return (new DateTimeImmutable($locale, new DateTimeZone('Europe/Rome')))->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s');
+}
+
+/** "Giulia Maria Serra" → ['Giulia Maria', 'Serra']. */
+function nome_cognome(string $completo): array
+{
+    $parti = preg_split('/\s+/', trim($completo)) ?: [];
+    $cognome = count($parti) > 1 ? (string) array_pop($parti) : '';
+    return [implode(' ', $parti), $cognome];
+}
