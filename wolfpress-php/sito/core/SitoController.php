@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 abstract class SitoController extends Controller
 {
-    /** Voce del menu principale da evidenziare (vedi views/menu.php). */
+    /** Voce del menu principale da evidenziare (vedi menu.php). */
     protected string $voce = '';
 
     protected function datiComuni(): array

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 abstract class PortaleController extends Controller
 {
-    /** Area corrente: decide quale menu laterale mostrare (vedi views/menu.php). */
+    /** Area corrente: decide quale menu laterale mostrare (vedi menu.php). */
     protected string $area = 'home';
 
     /** Voce del menu laterale da evidenziare. */
