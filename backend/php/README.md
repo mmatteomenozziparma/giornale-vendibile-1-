@@ -89,4 +89,4 @@ Con lo schema caricato in un database **vuoto di prova**:
 DB_UTENTE=wolfpress DB_PASSWORD=... php tests/prova.php
 ```
 
-Avvia il server e una finta API Stripe ed esegue 76 controlli. Non contatta la vera Stripe né un vero server SMTP: quei due collegamenti vanno provati con le proprie chiavi di test.
+Avvia il server e una finta API Stripe ed esegue 77 controlli. Non contatta la vera Stripe né un vero server SMTP: quei due collegamenti vanno provati con le proprie chiavi di test.

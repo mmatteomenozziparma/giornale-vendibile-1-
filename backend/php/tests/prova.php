@@ -189,7 +189,7 @@ verifica('giornalista accetta l\'invito', $giornalista->post("eventi/$evento/ris
 [, $r] = $editore->post('eventi', ['titolo' => 'Festa del giornale', 'inizio' => '2030-02-01 10:00', 'giornali_organizzatori' => [$giornale]]);
 verifica('user partecipa a evento pubblico', $lettore->post("eventi/{$r['id']}/partecipa")[0] === 200);
 verifica('politico partecipa a evento pubblico', $politico->post("eventi/{$r['id']}/partecipa")[0] === 200);
-verifica('elenco eventi pubblici con organizzatori', ($lettore->get('eventi')[1]['eventi'][0]['organizzatori'][0]['nome'] ?? '') === "Gazzetta $s");
+verifica('elenco eventi pubblici con organizzatori', str_contains(json_encode($lettore->get('eventi')[1]), '"nome":"Gazzetta ' . $s . '"'));
 verifica('editore senza un suo giornale non crea eventi', $editore->post('eventi', ['titolo' => 'X', 'inizio' => '2030-02-01 10:00', 'giornali_organizzatori' => [999999]])[0] === 422);
 
 echo "== Iscrizioni, ticket ==\n";
@@ -249,6 +249,12 @@ for ($i = 0; $i < 6; $i++) {
     $forza->post('accesso', ['email' => "politico$s@prova.example", 'password' => "Tentativo-errato-$i"]);
 }
 verifica('account bloccato dopo troppi errori (anche con la password giusta)', $forza->post('accesso', ['email' => "politico$s@prova.example", 'password' => 'Password-di-prova-1'])[0] === 401);
+
+$ultimo = 0;
+for ($i = 0; $i < 6; $i++) {
+    $ultimo = registra($anonimo, 'user', 'Raffica', "raffica$i$s@prova.example")[0];
+}
+verifica('troppe registrazioni dallo stesso IP: fermate (429)', $ultimo === 429, $ultimo);
 
 echo PHP_EOL . ($falliti === 0 ? 'TUTTE LE PROVE SUPERATE' : "PROVE FALLITE: $falliti") . PHP_EOL;
 exit($falliti === 0 ? 0 : 1);
