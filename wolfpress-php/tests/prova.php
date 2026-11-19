@@ -3,7 +3,7 @@
  * Prova completa di portale e sito collegati al database.
  *
  * Preparazione (database vuoto di prova, MAI quello vero):
- *   1. caricare backend/sql/schema.sql
+ *   1. caricare backend/sql/schema.sql (dentro wolfpress-php)
  *   2. in backend/php/.env: MAIL_DRIVER=log, STRIPE_API_BASE=http://127.0.0.1:8092,
  *      STRIPE_SEGRETO_WEBHOOK=whsec_prova, PORTALE_URL=http://127.0.0.1:8080/portale,
  *      SITO_URL=http://127.0.0.1:8080/sito

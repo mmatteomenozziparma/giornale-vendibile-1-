@@ -1,24 +1,24 @@
 # WolfPress — backend PHP + SQL
 
-Backend unico per i due front end di `wolfpress-php/` (**portale** e **sito**), in PHP 8.1+ senza librerie esterne, con database MySQL 8 / MariaDB 10.4+.
+Backend unico, dentro `wolfpress-php/backend/`, per i due front end di `wolfpress-php/` (**portale** e **sito**), in PHP 8.1+ senza librerie esterne, con database MySQL 8 / MariaDB 10.4+.
 
-`wolfpress-php` carica direttamente le classi di `src/` (stesso database, stesso `.env`): per usarlo **non** serve pubblicare `public/`. Le API JSON di `public/` restano disponibili per altri client, per esempio un'app.
+`wolfpress-php` carica direttamente le classi di `src/` (stesso database, stesso `.env`): per usarlo **non** serve pubblicare `public/`. L'intera cartella `backend/` è bloccata dal sito (`.htaccess` e `router.php` di `wolfpress-php`): le API JSON di `public/` servono solo ad altri client, per esempio un'app, e in quel caso vanno pubblicate su un indirizzo a parte che punti a `backend/php/public`.
 
 ```
-backend/sql/schema.sql   tabelle del database
-backend/php/public/      UNICA cartella da esporre sul web (index.php)
-backend/php/src/         codice (non raggiungibile dal browser)
-backend/php/bin/         comandi da terminale
-backend/php/tests/       prova automatica completa
+wolfpress-php/backend/sql/schema.sql   tabelle del database
+wolfpress-php/backend/php/src/         codice (non raggiungibile dal browser)
+wolfpress-php/backend/php/bin/         comandi da terminale
+wolfpress-php/backend/php/tests/       prova automatica completa
+wolfpress-php/backend/php/public/      API JSON (facoltative, vedi sotto)
 ```
 
 ## Installazione
 
-1. Creare il database: `mysql -u root -p < backend/sql/schema.sql`
+1. Creare il database: `mysql -u root -p < wolfpress-php/backend/sql/schema.sql`
 2. Creare un utente del database con i soli permessi `SELECT, INSERT, UPDATE, DELETE` su `wolfpress.*`.
-3. In `backend/php`: copiare `.env.example` in `.env`, eseguire `php bin/genera-chiavi.php` e incollare le tre chiavi nel `.env`, poi compilare database, SMTP e Stripe.
+3. In `wolfpress-php/backend/php`: copiare `.env.example` in `.env`, eseguire `php bin/genera-chiavi.php` e incollare le tre chiavi nel `.env`, poi compilare database, SMTP e Stripe.
 4. Creare il primo tecnico: `php bin/crea-tecnico.php Nome Cognome email@esempio.it responsabile`
-   Chi aveva già creato il database con la prima versione dello schema esegue invece `backend/sql/aggiornamento-wolfpress.sql`.
+   Chi aveva già creato il database con la prima versione dello schema esegue invece `wolfpress-php/backend/sql/aggiornamento-wolfpress.sql`.
 5. Avvio in locale: `php -S localhost:8090 -t public public/index.php`. In produzione puntare la radice del sito a `public/` e usare **solo HTTPS** (`APP_ENV=produzione`).
 
 Servono le estensioni PHP `pdo_mysql`, `sodium`, `curl`, `mbstring`.

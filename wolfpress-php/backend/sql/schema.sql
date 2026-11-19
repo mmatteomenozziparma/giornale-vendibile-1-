@@ -3,7 +3,7 @@
 -- Serve i due front end: portale (editori, giornalisti, politici,
 -- tecnici) e sito pubblico (lettori = user).
 --
--- Uso:  mysql -u root -p < backend/sql/schema.sql
+-- Uso:  mysql -u root -p < wolfpress-php/backend/sql/schema.sql
 --
 -- Regole di sicurezza applicate nello schema:
 --  * l'email NON è mai salvata in chiaro: `email_cifrata` (cifratura

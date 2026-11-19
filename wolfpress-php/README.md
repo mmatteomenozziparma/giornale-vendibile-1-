@@ -12,7 +12,7 @@ I due front end condividono modelli e dati (`app/`): un articolo pubblicato dal 
 e la scheda che un politico aggiorna nel portale è la stessa che i lettori vedono nella sezione Politica.
 
 **I dati sono nel database MySQL/MariaDB** e gli account sono veri: tutto passa dal backend in
-`../backend/php` (cifratura delle email, hash delle password, email automatiche, Stripe).
+`backend/php` (cifratura delle email, hash delle password, email automatiche, Stripe).
 Le classi del backend vengono caricate direttamente da `app/bootstrap.php`; la sua posizione è
 la voce `backend` di `app/config.php`.
 
@@ -20,11 +20,11 @@ la voce `backend` di `app/config.php`.
 
 Servono **PHP 8.1 o superiore** (estensioni `pdo_mysql`, `sodium`, `curl`, `mbstring`) e **MySQL 8 / MariaDB 10.4+**.
 
-1. Preparare il backend seguendo `../backend/php/README.md` (database da `backend/sql/schema.sql`, file `.env`, chiavi).
+1. Preparare il backend seguendo `backend/php/README.md` (database da `backend/sql/schema.sql`, file `.env`, chiavi).
    Nel `.env` compilare anche `PORTALE_URL` e `SITO_URL`: finiscono nei link delle email e nel ritorno da Stripe.
 2. Facoltativo, per avere subito contenuti di prova: `php bin/importa-demo.php` carica nel database
    testate, articoli, politici, ticket e 13 account dimostrativi, tutti con la password che viene chiesta.
-   Senza importazione si parte vuoti: creare il primo tecnico con `php ../backend/php/bin/crea-tecnico.php`.
+   Senza importazione si parte vuoti: creare il primo tecnico con `php backend/php/bin/crea-tecnico.php`.
 3. Avviare il sito.
 
 **Con il server integrato di PHP** (Windows, Mac, Linux), dal terminale dentro `wolfpress-php/`:
@@ -75,7 +75,7 @@ pagamento avviene sulla pagina di Stripe. Il webhook da indicare a Stripe è
 ```
 wolfpress-php/
 ├── index.php              porta al sito pubblico
-├── router.php             solo per "php -S": blocca app/, storage/, bin/ e tests/
+├── router.php             solo per "php -S": blocca app/, storage/, bin/, tests/ e backend/
 ├── .htaccess              stessa protezione su Apache
 ├── app/                   PARTE CONDIVISA
 │   ├── config.php         nome del sito, debug, posizione del backend
@@ -85,6 +85,9 @@ wolfpress-php/
 │   │                      Ticket, Giornalista, Evento, Letture, Messaggio, Operatore, Politico,
 │   │                      Partito, Impostazioni
 │   └── data/              dati demo usati solo da bin/importa-demo.php
+├── backend/               BACKEND (non raggiungibile dal browser)
+│   ├── sql/               schema.sql: tabelle del database
+│   └── php/               database, cifratura, email, Stripe, account; .env; API JSON
 ├── bin/importa-demo.php   carica i dati demo nel database
 ├── tests/prova.php        prova automatica di portale e sito
 ├── storage/               loghi caricati (non va su GitHub)
@@ -173,13 +176,13 @@ i dati della propria testata, pagamenti solo su Stripe con conferma via webhook 
 Testo sempre protetto in uscita (`e()`), codice anti-CSRF su ogni form, permessi per ruolo lato
 server, controllo dei dati inviati, logo verificato sul contenuto reale del file (PNG, JPEG, WebP,
 massimo 1 MB), link esterni solo `https://`, Content-Security-Policy senza script esterni,
-cartelle `app/`, `storage/`, `bin/` e `tests/` non raggiungibili dal browser, nessun cookie sulle
+cartelle `app/`, `storage/`, `bin/`, `tests/` e `backend/` non raggiungibili dal browser, nessun cookie sulle
 pagine di lettura del sito.
 
 ## Prova automatica
 
 `php tests/prova.php` (istruzioni in cima al file, su un database **di prova**) avvia il server e una
-finta API Stripe ed esegue 133 controlli su portale e sito: accessi, permessi per ruolo, articoli, ticket,
+finta API Stripe ed esegue 149 controlli su portale e sito: accessi, permessi per ruolo, articoli, ticket,
 approvazioni, eventi e inviti, partiti, più testate, registrazione dei lettori, donazione, abbonamento e webhook.
 
 ## Licenze di terze parti
