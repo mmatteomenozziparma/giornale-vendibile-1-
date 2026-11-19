@@ -4,7 +4,7 @@
 
 ## Cartelle
 - `frontend/`: HTML, CSS e JavaScript responsive, homepage, articoli, sezioni, ricerca, politica e anteprima pannelli.
-- `backend/`: server locale Node.js, API articoli e ticket in memoria, test automatici.
+- `backend-node/`: server locale Node.js, API articoli e ticket in memoria, test automatici.
 - `wolfpress-php/backend/sql/` e `wolfpress-php/backend/php/`: **backend PHP + SQL** per portale e sito (account con email cifrate e password Argon2id, email automatiche, eventi, ticket, donazioni e abbonamenti Stripe). Istruzioni in `wolfpress-php/backend/php/README.md`. I due front end di `wolfpress-php/` usano questo backend e questo database.
 - `docs/INVENTARIO-E-GAP.md`: elenco delle funzioni richieste, stato reale e asset non recuperati.
 
@@ -14,7 +14,7 @@
 Preparare prima database e backend (`wolfpress-php/backend/php/README.md`), poi con **PHP >= 8.1** aprire un terminale nella cartella `wolfpress-php` ed eseguire `php -S localhost:8080 router.php`. Poi aprire **http://localhost:8080/sito/** e **http://localhost:8080/portale/**.
 
 ## Avvio del prototipo Node.js (Windows o Mac)
-Installare **Node.js >= 20** e aprire un terminale nella cartella `backend`.
+Installare **Node.js >= 20** e aprire un terminale nella cartella `backend-node`.
 
 ```sh
 npm test

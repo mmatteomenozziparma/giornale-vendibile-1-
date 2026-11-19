@@ -26,7 +26,7 @@
 
 ## Scelte di ingegneria
 
-- Separazione esatta `frontend/` e `backend/`.
+- Separazione esatta `frontend/` e `backend-node/`.
 - Frontend senza framework per contenere la complessità del prototipo.
 - Escape del contenuto dinamico in HTML.
 - API demo locale: mai usare il selettore ruoli come controllo di accesso.
