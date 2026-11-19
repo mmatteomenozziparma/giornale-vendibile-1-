@@ -11,7 +11,7 @@
         <h2>Chat di redazione</h2>
         <i class="bi bi-chat-left-text" aria-hidden="true"></i>
     </div>
-    <p class="wp-sottotitolo">I messaggi sono condivisi tra editore e giornalisti della demo.</p>
+    <p class="wp-sottotitolo">I messaggi sono condivisi tra editore e giornalisti della testata.</p>
 
     <form method="get" action="<?= e(url()) ?>" data-ancora="chat">
         <input type="hidden" name="r" value="<?= e($rotta) ?>">

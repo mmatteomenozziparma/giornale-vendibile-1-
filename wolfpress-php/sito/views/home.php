@@ -68,7 +68,7 @@
         <?php foreach ($partiti as $partito): ?>
             <div class="col-lg-4">
                 <a class="wp-partito h-100" href="<?= e(url('politica/partito', ['id' => $partito['id']])) ?>">
-                    <span class="wp-occhiello">Partito dimostrativo · <?= e($partito['sezione']) ?></span>
+                    <span class="wp-occhiello"><?= e(demo('Partito dimostrativo', 'Partito')) ?> · <?= e($partito['sezione']) ?></span>
                     <strong><?= e($partito['nome']) ?></strong>
                     <span>Notizie, circoli e appuntamenti <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
                 </a>
@@ -83,7 +83,7 @@
                             <span class="wp-avatar" aria-hidden="true"><?= e(iniziali($politico['nome'])) ?></span>
                             <span class="flex-grow-1">
                                 <strong><?= e($politico['nome']) ?></strong>
-                                <small><?= e(Politico::LIVELLI[$politico['id']]) ?></small>
+                                <small><?= e(Politico::livello($politico)) ?></small>
                             </span>
                             <a href="<?= e(url('politica/profilo', ['livello' => $politico['id'], 'tipo' => 'candidatura'])) ?>">Candidatura</a>
                             <a href="<?= e(url('politica/profilo', ['livello' => $politico['id'], 'tipo' => 'mandato'])) ?>">Mandato</a>

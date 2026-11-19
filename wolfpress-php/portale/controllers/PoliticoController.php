@@ -14,7 +14,7 @@ final class PoliticoController extends PortaleController
     {
         $politico = $this->scheda();
         if ($politico === null) {
-            $this->pagina404('Scheda politica non trovata: scegli di nuovo il profilo demo.');
+            $this->pagina404('Scheda politica non trovata.');
             return;
         }
         $scenario = $this->tra($this->parametro('scenario'), array_keys(Politico::SCENARI), 'candidatura');
@@ -25,8 +25,55 @@ final class PoliticoController extends PortaleController
             'politico' => $politico,
             'scenario' => $scenario,
             'dati' => $politico[$scenario],
-            'livello' => Politico::LIVELLI[$politico['id']],
+            'livello' => Politico::livello($politico),
+            'partiti' => Partito::nomi(),
         ]);
+    }
+
+    /* ---------- Articoli del politico ---------- */
+    public function articoli(): void
+    {
+        $politico = $this->scheda();
+        if ($politico === null) {
+            $this->pagina404('Scheda politica non trovata.');
+            return;
+        }
+        $this->voce = 'articoli';
+        $vuoto = ['id' => '', 'titolo' => '', 'categoria' => '', 'sommario' => '', 'corpo' => '', 'stato' => 'Bozza'];
+        $this->vista('politico_articoli', [
+            'titolo' => 'I tuoi articoli · WolfPress',
+            'articoli' => ArticoloPolitico::perPolitico($politico['db_id']),
+            'articolo' => ArticoloPolitico::trova($this->parametro('id', 20), $politico['db_id']) ?? $vuoto,
+        ]);
+    }
+
+    public function salvaArticolo(): void
+    {
+        [$politico] = $this->richiesta();
+        $id = $this->campo('id', 20);
+        $dati = [
+            'id' => $id,
+            'titolo' => $this->campo('titolo', 220),
+            'categoria' => $this->campo('categoria', 120),
+            'sommario' => $this->campo('sommario', 500),
+            'corpo' => $this->campo('corpo', 20000),
+            'stato' => $this->tra($this->campo('stato', 20), ArticoloPolitico::STATI, 'Bozza'),
+        ];
+        if ($dati['titolo'] === '' || $dati['corpo'] === '' || ($id !== '' && ArticoloPolitico::trova($id, $politico['db_id']) === null)) {
+            $this->avviso('Titolo e testo sono obbligatori.', 'errore');
+            $this->vai('politico/articoli', $id !== '' ? ['id' => $id] : []);
+        }
+        ArticoloPolitico::salva($dati, $politico['db_id']);
+        $this->avviso($dati['stato'] === 'Pubblicato' ? 'Articolo pubblicato: è visibile nella tua scheda sul sito.' : 'Bozza salvata.');
+        $this->vai('politico/articoli');
+    }
+
+    public function eliminaArticolo(): void
+    {
+        [$politico] = $this->richiesta();
+        ArticoloPolitico::elimina($this->campo('id', 20), $politico['db_id']);
+        $this->avviso('Articolo eliminato.');
+        $this->vai('politico/articoli');
     }
 
     public function salva(): void
@@ -41,6 +88,13 @@ final class PoliticoController extends PortaleController
         }
 
         $politico['bio'] = $this->campo('bio', 400);
+        // Il partito si sceglie tra quelli inseriti dai tecnici (oppure nessuno).
+        $partiti = Partito::nomi();
+        $partito = $this->campo('partito', 160);
+        if (isset($_POST['partito']) && ($partito === '' || isset($partiti[$partito]))) {
+            $politico['partito'] = $partito;
+            $politico['partito_nome'] = $partiti[$partito] ?? '';
+        }
         $politico[$scenario]['ruolo'] = $ruolo;
         $politico[$scenario]['luogo'] = $this->campo('luogo', 80);
         $politico[$scenario]['contatto'] = $this->campo('contatto', 80);
@@ -94,21 +148,31 @@ final class PoliticoController extends PortaleController
             $this->avviso('Per l\'agenda servono titolo e data.', 'errore');
             $this->vai('politico', ['scenario' => $scenario], 'agenda');
         }
-        $politico[$scenario]['agenda'][] = ['data' => $data, 'titolo' => $titolo, 'dettaglio' => $this->campo('dettaglio', 80)];
-        usort($politico[$scenario]['agenda'], static fn (array $a, array $b): int => strcmp($a['data'], $b['data']));
-        Politico::salva($politico);
-        $this->avviso('Appuntamento aggiunto all\'agenda.');
+        // L'appuntamento è un evento pubblico organizzato dal politico (tabelle degli eventi).
+        $ora = $this->campo('ora', 5);
+        Http::imposta(array_filter([
+            'titolo' => $titolo,
+            'luogo' => $this->campo('dettaglio', 80),
+            'inizio' => $data . ' ' . (preg_match('/^\d{2}:\d{2}$/', $ora) ? $ora : '00:00'),
+            'pubblico' => true,
+        ], static fn ($v): bool => $v !== ''));
+        try {
+            Api::creaEvento();
+            $this->avviso('Appuntamento aggiunto all\'agenda. Da «Eventi» puoi invitare politici e giornalisti.');
+        } catch (ErroreApi $errore) {
+            $this->avviso($errore->getMessage(), 'errore');
+        }
         $this->vai('politico', ['scenario' => $scenario], 'agenda');
     }
 
     public function rimuoviEvento(): void
     {
         [$politico, $scenario] = $this->richiesta();
-        $indice = (int) $this->campo('indice', 4);
-        if (isset($politico[$scenario]['agenda'][$indice])) {
-            array_splice($politico[$scenario]['agenda'], $indice, 1);
-            Politico::salva($politico);
+        try {
+            Api::annullaEvento((int) $this->campo('id', 20));
             $this->avviso('Appuntamento rimosso.');
+        } catch (ErroreApi $errore) {
+            $this->avviso($errore->getMessage(), 'errore');
         }
         $this->vai('politico', ['scenario' => $scenario], 'agenda');
     }

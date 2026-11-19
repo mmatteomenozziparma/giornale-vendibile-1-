@@ -46,7 +46,7 @@
                         <div class="wp-scheda h-100 d-flex gap-3">
                             <span class="wp-avatar wp-avatar-grande" aria-hidden="true"><?= e(iniziali($politico['nome'])) ?></span>
                             <div>
-                                <span class="wp-occhiello"><?= e(Politico::LIVELLI[$politico['id']]) ?> · <?= e($politico['partito_nome']) ?></span>
+                                <span class="wp-occhiello"><?= e(Politico::livello($politico)) ?> · <?= e($politico['partito_nome']) ?></span>
                                 <h3><?= e($politico['nome']) ?></h3>
                                 <p><?= e($politico['bio']) ?></p>
                                 <div class="d-flex flex-wrap gap-3">
@@ -68,7 +68,7 @@
                 <?php foreach ($partiti as $partito): ?>
                     <div class="col-md-6">
                         <a class="wp-partito h-100" href="<?= e(url('politica/partito', ['id' => $partito['id']])) ?>">
-                            <span class="wp-occhiello">Partito dimostrativo · <?= e($partito['sezione']) ?></span>
+                            <span class="wp-occhiello"><?= e(demo('Partito dimostrativo', 'Partito')) ?> · <?= e($partito['sezione']) ?></span>
                             <strong><?= e($partito['nome']) ?></strong>
                             <span>Notizie, circoli e appuntamenti <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
                         </a>

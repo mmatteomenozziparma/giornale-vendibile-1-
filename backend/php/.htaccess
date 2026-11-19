@@ -1,0 +1,6 @@
+# Sicurezza: se per errore la radice web punta a questa cartella invece che
+# a public/, si lascia passare soltanto public/ e si blocca tutto il resto
+# (.env, src/, storage/, bin/).
+RewriteEngine On
+RewriteRule ^public/ - [L]
+RewriteRule ^ - [F]

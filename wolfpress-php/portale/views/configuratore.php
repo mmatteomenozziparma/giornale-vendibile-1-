@@ -50,6 +50,16 @@ $haLogo = is_array($logo);
                         <label class="form-label" for="email_assistenza">Email di assistenza</label>
                         <input class="form-control" type="email" id="email_assistenza" name="email_assistenza" maxlength="120" placeholder="assistenza@esempio.it" value="<?= e($impostazioni['email_assistenza']) ?>">
                     </div>
+                    <?php $euro = static fn ($c): string => $c === null ? '' : rtrim(rtrim(number_format((int) $c / 100, 2, ',', ''), '0'), ','); ?>
+                    <div class="col-md-6">
+                        <label class="form-label" for="prezzo_mensile">Abbonamento mensile (euro)</label>
+                        <input class="form-control" id="prezzo_mensile" name="prezzo_mensile" inputmode="decimal" maxlength="12" placeholder="Non offerto" value="<?= e($euro($testataCorrente['prezzo_mensile_cent'] ?? null)) ?>">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="prezzo_annuale">Abbonamento annuale (euro)</label>
+                        <input class="form-control" id="prezzo_annuale" name="prezzo_annuale" inputmode="decimal" maxlength="12" placeholder="Non offerto" value="<?= e($euro($testataCorrente['prezzo_annuale_cent'] ?? null)) ?>">
+                        <div class="form-text">I lettori si abbonano dal sito e pagano con Stripe. Lascia vuoto per non offrire il piano.</div>
+                    </div>
                     <div class="col-12">
                         <label class="form-label mb-0" for="logo">Logo della testata</label>
                         <p class="form-text mt-0 mb-1"><strong>PNG, JPEG o WebP · massimo 1 MB</strong></p>

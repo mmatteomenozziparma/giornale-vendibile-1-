@@ -1,37 +1,27 @@
-<?php
-/** Accesso dimostrativo: scelta del ruolo e del profilo di esempio. */
-[$titoloPagina, $titoloScheda, $descrizione, $etichettaProfilo] = $testi;
-?>
+<?php /** Accesso al portale con email e password. */ ?>
 <section class="wp-intestazione">
-    <span class="wp-occhiello">WolfPress · demo</span>
-    <h1><?= e($titoloPagina) ?></h1>
-    <p class="wp-intro">Scegli il profilo dimostrativo per entrare nel percorso dedicato.</p>
-    <div class="wp-nota">Dati fittizi. Gli accessi per ruolo sono simulati: in questa demo non serve una password.</div>
+    <span class="wp-occhiello">WolfPress · portale</span>
+    <h1>Accedi</h1>
+    <p class="wp-intro">Area riservata a editori, giornalisti, politici e tecnici.</p>
 </section>
 
 <div class="wp-scheda wp-scheda-stretta">
-    <h2><?= e($titoloScheda) ?></h2>
-    <p class="wp-sottotitolo"><?= e($descrizione) ?></p>
-
     <form method="post" action="<?= e(url('accesso/entra')) ?>">
         <?= Csrf::campo() ?>
-        <input type="hidden" name="ruolo" value="<?= e($ruolo) ?>">
-
-        <label class="form-label" for="profilo"><?= e($etichettaProfilo) ?></label>
-        <select class="form-select mb-3" id="profilo" name="profilo" required>
-            <?php foreach ($profili as $id => $etichetta): ?>
-                <option value="<?= e($id) ?>"<?= selezionato($id, $utente['profilo'] ?? '') ?>><?= e($etichetta) ?></option>
-            <?php endforeach; ?>
-        </select>
-
-        <button class="btn btn-wp" type="submit">Entra nella demo</button>
+        <div class="mb-3">
+            <label class="form-label" for="email">Email</label>
+            <input class="form-control" type="email" id="email" name="email" maxlength="254" autocomplete="username" required autofocus>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="password">Password</label>
+            <input class="form-control" type="password" id="password" name="password" maxlength="128" autocomplete="current-password" required>
+        </div>
+        <button class="btn btn-wp" type="submit">Entra</button>
     </form>
 
     <p class="wp-altri-ruoli">
-        <?php foreach (Auth::RUOLI as $chiave => $etichetta): ?>
-            <?php if ($chiave !== $ruolo): ?>
-                <a href="<?= e(url('accesso', ['ruolo' => $chiave])) ?>"><?= e($etichetta) ?></a>
-            <?php endif; ?>
-        <?php endforeach; ?>
+        <a href="<?= e(url('accesso/password')) ?>">Password dimenticata</a>
+        <a href="<?= e(url('accesso/registrazione')) ?>">Crea un account</a>
+        <a href="<?= e(url_sito('account')) ?>" data-spa="off">Sei un lettore? Vai al sito</a>
     </p>
 </div>

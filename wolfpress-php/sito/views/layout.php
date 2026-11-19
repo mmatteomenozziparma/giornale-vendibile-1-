@@ -26,6 +26,9 @@
     <?php require __DIR__ . '/menu.php'; ?>
 
     <main id="contenuto" class="container wp-contenuto" tabindex="-1">
+        <?php if (!empty($avviso)): ?>
+            <div class="alert <?= $avviso['tipo'] === 'errore' ? 'alert-danger' : 'alert-success' ?> mt-3" role="status"><?= e($avviso['testo']) ?></div>
+        <?php endif; ?>
         <?= $contenuto ?>
     </main>
 

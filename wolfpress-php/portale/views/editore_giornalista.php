@@ -7,7 +7,7 @@ $nuovo = $giornalista['id'] === '';
     <h1><?= $nuovo ? 'Nuovo account' : e($giornalista['nome']) ?></h1>
     <p class="wp-intro">
         <?php if ($nuovo): ?>
-            Crea un account di redazione dimostrativo.
+            Crea l'account di un giornalista della tua redazione: riceverà un'email con il link per scegliere la password.
         <?php else: ?>
             <?= e($giornalista['ruolo']) ?> · <?= e($giornalista['sezione']) ?> · <?= bollino($giornalista['stato']) ?>
         <?php endif; ?>
@@ -25,7 +25,7 @@ $nuovo = $giornalista['id'] === '';
             </div>
             <div class="col-md-6">
                 <label class="form-label" for="email">Email</label>
-                <input class="form-control" type="email" id="email" name="email" maxlength="120" value="<?= e($giornalista['email']) ?>">
+                <input class="form-control" type="email" id="email" name="email" maxlength="120" value="<?= e($giornalista['email']) ?>"<?= $nuovo ? ' required' : ' readonly' ?>>
             </div>
             <div class="col-md-4">
                 <label class="form-label" for="ruolo">Ruolo</label>
@@ -74,7 +74,7 @@ $nuovo = $giornalista['id'] === '';
         <div class="col-xl-7">
             <section class="wp-scheda mb-3">
                 <h2>Portfolio</h2>
-                <p class="wp-sottotitolo">I tre articoli più letti, ordinati per visualizzazioni demo.</p>
+                <p class="wp-sottotitolo">I tre articoli più letti, ordinati per letture.</p>
                 <?php View::parziale('portfolio', ['portfolio' => $portfolio]); ?>
             </section>
             <section class="wp-scheda">

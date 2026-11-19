@@ -6,7 +6,7 @@ DirectoryIndex index.php
 # Le cartelle interne non devono essere raggiungibili dal browser.
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteRule ^(app|storage)(/|$) - [F,L,NC]
+    RewriteRule ^(app|storage|bin|tests)(/|$) - [F,L,NC]
     RewriteRule (^|/)\. - [F,L]
     RewriteRule ^router\.php$ - [F,L]
 </IfModule>

@@ -24,7 +24,7 @@
                 <h2>Account giornalisti</h2>
                 <i class="bi bi-people" aria-hidden="true"></i>
             </div>
-            <p class="wp-sottotitolo">Anagrafica, ruoli e profili dimostrativi.</p>
+            <p class="wp-sottotitolo">Anagrafica, ruoli e profili della redazione.</p>
 
             <div class="d-flex gap-2" role="search">
                 <input class="form-control" type="search" placeholder="Cerca nome, ruolo o sezione" aria-label="Cerca nome, ruolo o sezione" data-filtro="#elenco-giornalisti">

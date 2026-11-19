@@ -1,7 +1,7 @@
 <?php
 /** Gestione tecnica · Personale: operatori dell'azienda fornitrice, ruoli e turni. */
 View::parziale('intestazione', [
-    'occhiello' => 'Operazioni · demo',
+    'occhiello' => 'Operazioni' . demo(' · demo'),
     'titoloPagina' => 'Personale tecnico',
     'descrizione' => 'Gestisci gli operatori interni dell\'azienda fornitrice, i loro ruoli e i turni.',
 ]);
@@ -57,6 +57,15 @@ $nuovo = $operatore['id'] === '';
                 <div class="mb-3">
                     <label class="form-label" for="nome">Nome e cognome</label>
                     <input class="form-control" id="nome" name="nome" maxlength="80" required value="<?= e($operatore['nome']) ?>">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="email">Email</label>
+                    <?php if ($nuovo): ?>
+                        <input class="form-control" type="email" id="email" name="email" maxlength="120" required>
+                        <div class="form-text">L'operatore riceverà un'email con il link per scegliere la password.</div>
+                    <?php else: ?>
+                        <input class="form-control" type="email" id="email" value="<?= e($operatore['email']) ?>" readonly>
+                    <?php endif; ?>
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="ruolo">Ruolo tecnico</label>

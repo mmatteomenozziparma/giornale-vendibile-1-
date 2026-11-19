@@ -20,7 +20,6 @@
 </div>
 
 <div class="wp-nota mt-4">
-    Stai usando un profilo dimostrativo. Per provare un altro ruolo apri
-    <a href="<?= e(url('accesso')) ?>">Accessi demo</a>; per vedere il risultato dal lato dei lettori apri il
+    Per vedere il risultato dal lato dei lettori apri il
     <a href="<?= e(url_sito()) ?>" target="_blank" rel="noopener">sito pubblico</a>.
 </div>

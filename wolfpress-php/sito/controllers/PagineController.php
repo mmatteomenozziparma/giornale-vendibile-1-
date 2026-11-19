@@ -19,8 +19,9 @@ final class PagineController extends SitoController
     public function privacy(): void
     {
         $this->pagina('Privacy', [
-            'Questo sito dimostrativo non usa cookie di profilazione, non incorpora tracciatori e non carica risorse da servizi esterni.',
-            'Il sito pubblico non richiede alcuna registrazione. Il portale riservato usa un solo cookie tecnico di sessione, necessario per l\'accesso.',
+            'Questo sito non usa cookie di profilazione, non incorpora tracciatori e non carica risorse da servizi esterni.',
+            'Le pagine di lettura non richiedono registrazione e non creano cookie. L\'area account e il portale riservato usano un solo cookie tecnico di sessione, necessario per l\'accesso.',
+            'L\'indirizzo email degli iscritti è conservato cifrato e la password solo come impronta non reversibile. I pagamenti avvengono sulle pagine di Stripe: i dati della carta non passano da questo sito.',
             'Prima dell\'uso reale servono un titolare del trattamento, un\'informativa completa e la valutazione dei servizi di hosting.',
         ]);
     }

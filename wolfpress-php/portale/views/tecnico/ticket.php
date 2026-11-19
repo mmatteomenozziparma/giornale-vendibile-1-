@@ -1,7 +1,7 @@
 <?php
 /** Gestione tecnica · Ticket: coda di assistenza, presa in carico, risposta e assegnazione. */
 View::parziale('intestazione', [
-    'occhiello' => 'Operazioni · demo',
+    'occhiello' => 'Operazioni' . demo(' · demo'),
     'titoloPagina' => 'Ticket di assistenza',
     'descrizione' => 'Prendi in carico, rispondi e aggiorna lo stato delle segnalazioni.',
 ]);

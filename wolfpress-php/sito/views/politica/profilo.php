@@ -12,15 +12,16 @@ $altro = $mandato ? 'candidatura' : 'mandato';
 
 <section class="wp-copertina-persona<?= $mandato ? ' wp-copertina-mandato' : '' ?>">
     <div>
-        <span class="wp-occhiello"><?= $mandato ? 'Mandato' : 'Candidatura' ?> · scenario demo</span>
+        <span class="wp-occhiello"><?= $mandato ? 'Mandato' : 'Candidatura' ?><?= e(demo(' · scenario demo')) ?></span>
         <h1><?= e($politico['nome']) ?></h1>
         <p class="wp-ruolo"><?= e($dati['ruolo']) ?></p>
         <p><?= e($dati['luogo']) ?></p>
         <?php if ($mandato && !empty($dati['incarico'])): ?>
-            <p class="wp-incarico"><?= e($dati['incarico']) ?> · incarico demo</p>
+            <p class="wp-incarico"><?= e($dati['incarico']) ?><?= e(demo(' · incarico demo')) ?></p>
         <?php endif; ?>
         <div class="d-flex flex-wrap gap-2">
             <a class="btn btn-wp-chiaro" href="#voci"><?= $mandato ? 'Consulta gli atti' : 'Leggi le proposte' ?></a>
+            <a class="btn btn-wp-vetro" href="<?= e(url('sostieni', ['politico' => $politico['id']])) ?>">Segui o sostieni</a>
             <a class="btn btn-wp-vetro" href="<?= e(url('politica/profilo', ['livello' => $politico['id'], 'tipo' => $altro])) ?>">
                 <?= $mandato ? 'Vedi la candidatura' : 'Vedi il mandato' ?> <i class="bi bi-arrow-right" aria-hidden="true"></i>
             </a>
@@ -33,6 +34,7 @@ $altro = $mandato ? 'candidatura' : 'mandato';
     <a href="#profilo">Profilo</a>
     <a href="#voci"><?= $mandato ? 'Atti e iniziative' : 'Proposte' ?></a>
     <a href="#agenda">Agenda</a>
+    <?php if ($articoli): ?><a href="#articoli">Articoli</a><?php endif; ?>
     <a href="#contatti">Contatti</a>
 </nav>
 
@@ -46,14 +48,18 @@ $altro = $mandato ? 'candidatura' : 'mandato';
                 <p class="fw-bold mb-0"><?= e($dati['incarico']) ?>.</p>
             <?php endif; ?>
             <p class="wp-sottotitolo mt-3 mb-0">
-                <a href="<?= e(url('politica/partito', ['id' => $politico['partito']])) ?>"><?= e($politico['partito_nome']) ?></a> · partito dimostrativo
+                <?php if ($politico['partito'] !== ''): ?>
+                    <a href="<?= e(url('politica/partito', ['id' => $politico['partito']])) ?>"><?= e($politico['partito_nome']) ?></a><?= e(demo(' · partito dimostrativo')) ?>
+                <?php else: ?>
+                    <?= e($politico['partito_nome']) ?>
+                <?php endif; ?>
             </p>
         </section>
     </div>
 
     <div class="col-lg-6">
         <section class="wp-scheda h-100" id="voci">
-            <span class="wp-occhiello"><?= $mandato ? 'Rendiconto dimostrativo' : 'Programma dimostrativo' ?></span>
+            <span class="wp-occhiello"><?= e(($mandato ? 'Rendiconto' : 'Programma') . demo(' dimostrativo')) ?></span>
             <h2><?= $mandato ? 'Atti e iniziative' : 'Proposte' ?></h2>
             <?php if (!$dati['voci']): ?>
                 <p class="wp-sottotitolo mb-0"><?= $mandato ? 'Nessun atto pubblicato.' : 'Nessuna proposta pubblicata.' ?></p>
@@ -91,8 +97,8 @@ $altro = $mandato ? 'candidatura' : 'mandato';
                         <li class="d-flex align-items-center gap-3">
                             <span class="wp-data"><b><?= e($giorno) ?></b><small><?= e($mese) ?></small></span>
                             <span>
-                                <strong class="d-block"><?= e($appuntamento['titolo']) ?></strong>
-                                <span class="wp-sottotitolo"><?= e($appuntamento['dettaglio']) ?> · evento fittizio</span>
+                                <a class="fw-bold d-block" href="<?= e(url('eventi', [], 'evento-' . $appuntamento['id'])) ?>"><?= e($appuntamento['titolo']) ?></a>
+                                <span class="wp-sottotitolo"><?= e($appuntamento['dettaglio']) ?><?= e(demo(' · evento fittizio')) ?></span>
                             </span>
                         </li>
                     <?php endforeach; ?>
@@ -103,13 +109,28 @@ $altro = $mandato ? 'candidatura' : 'mandato';
 
     <div class="col-lg-6">
         <section class="wp-scheda h-100" id="contatti">
-            <span class="wp-occhiello">Recapito fittizio</span>
+            <span class="wp-occhiello"><?= e(demo('Recapito fittizio', 'Recapiti')) ?></span>
             <h2>Contatti</h2>
             <p class="wp-testo-breve"><?= e($dati['contatto']) ?></p>
             <p class="wp-recapito mb-0"><?= e($dati['email']) ?></p>
         </section>
     </div>
 </div>
+
+<?php if ($articoli): ?>
+    <section class="wp-scheda mt-3" id="articoli">
+        <span class="wp-occhiello">Firmati da <?= e($politico['nome']) ?></span>
+        <h2>Articoli</h2>
+        <ul class="wp-righe">
+            <?php foreach ($articoli as $a): ?>
+                <li>
+                    <a class="fw-bold d-block" href="<?= e(url('politica/articolo', ['slug' => $a['slug']])) ?>"><?= e($a['titolo']) ?></a>
+                    <span class="wp-sottotitolo"><?= e(data_it($a['data'])) ?><?= $a['categoria'] !== '' ? ' · ' . e($a['categoria']) : '' ?><?= $a['sommario'] !== '' ? ' · ' . e($a['sommario']) : '' ?></span>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </section>
+<?php endif; ?>
 
 <?php if ($mandato && !empty($dati['link_url']) && url_https_valido($dati['link_url'])): ?>
     <p class="wp-sottotitolo mt-3">

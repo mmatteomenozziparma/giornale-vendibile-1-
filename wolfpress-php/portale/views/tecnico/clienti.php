@@ -1,7 +1,7 @@
 <?php
 /** Gestione tecnica · Clienti e testate: referenti, piano e canali social di ogni testata. */
 View::parziale('intestazione', [
-    'occhiello' => 'Operazioni · demo',
+    'occhiello' => 'Operazioni' . demo(' · demo'),
     'titoloPagina' => 'Clienti e testate',
     'descrizione' => 'Gestisci referenti, piano e canali social di ciascuna testata.',
 ]);

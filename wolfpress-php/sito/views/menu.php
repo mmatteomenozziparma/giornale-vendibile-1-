@@ -10,6 +10,7 @@ $voci = [
     ['notizie', 'Notizie', url('notizie')],
     ['testate', 'Testate', url('testate')],
     ['politica', 'Politica', url('politica')],
+    ['eventi', 'Eventi', url('eventi')],
     ['chi-siamo', 'Chi siamo', url('pagine/chi-siamo')],
 ];
 ?>
@@ -44,7 +45,9 @@ $voci = [
                 <button class="btn btn-wp" type="submit" aria-label="Cerca"><i class="bi bi-search" aria-hidden="true"></i></button>
             </form>
 
-            <span class="wp-demo">Demo</span>
+            <a class="btn btn-wp-bordo ms-lg-2<?= $voce === 'account' ? ' attiva' : '' ?>" href="<?= e(url('account')) ?>">
+                <i class="bi bi-person" aria-hidden="true"></i> <?= $utente ? e($utente['nome']) : 'Accedi' ?>
+            </a>
         </div>
     </nav>
 

@@ -14,7 +14,7 @@ final class ConfiguratoreController extends PortaleController
 
     public function index(): void
     {
-        $this->vista('configuratore', ['titolo' => 'Configuratore · WolfPress']);
+        $this->vista('configuratore', ['titolo' => 'Configuratore · WolfPress', 'testataCorrente' => Testata::trova(Auth::testata())]);
     }
 
     public function salva(): void
@@ -38,6 +38,19 @@ final class ConfiguratoreController extends PortaleController
             $errori[] = 'L\'email di assistenza non è valida.';
         }
 
+        // Prezzi degli abbonamenti in euro (vuoto = piano non offerto), salvati in centesimi.
+        $prezzi = [];
+        foreach (['mensile', 'annuale'] as $piano) {
+            $valore = $this->campo('prezzo_' . $piano, 12);
+            $prezzi[$piano] = null;
+            if ($valore !== '') {
+                if (!preg_match('/^(\d{1,4})(?:[.,](\d{1,2}))?$/', $valore, $parti) || ($centesimi = (int) $parti[1] * 100 + (int) str_pad($parti[2] ?? '', 2, '0')) < 100 || $centesimi > 100000) {
+                    $errori[] = 'Il prezzo ' . $piano . ' deve essere tra 1 e 1000 euro.';
+                } else {
+                    $prezzi[$piano] = $centesimi;
+                }
+            }
+        }
         $logo = $this->leggiLogo($errori);
 
         if ($errori) {
@@ -60,6 +73,10 @@ final class ConfiguratoreController extends PortaleController
         }
 
         Impostazioni::salva($impostazioni);
+        Database::esegui(
+            'UPDATE giornali SET nome = ?, prezzo_mensile_cent = ?, prezzo_annuale_cent = ? WHERE id = ?',
+            [$testata, $prezzi['mensile'], $prezzi['annuale'], Testata::dbId(Auth::testata())]
+        );
         $this->avviso('Configurazione salvata: l\'area cliente è aggiornata.');
         $this->vai('configuratore');
     }
@@ -70,7 +87,7 @@ final class ConfiguratoreController extends PortaleController
         $impostazioni = Impostazioni::leggi();
         $impostazioni['logo'] = '';
         Impostazioni::salva($impostazioni);
-        @unlink(WP_STORAGE . '/logo.bin');
+        @unlink(Impostazioni::fileLogo());
         $this->avviso('Logo rimosso.');
         $this->vai('configuratore');
     }
@@ -98,7 +115,7 @@ final class ConfiguratoreController extends PortaleController
         if (!is_dir(WP_STORAGE)) {
             @mkdir(WP_STORAGE, 0775, true);
         }
-        if (!@move_uploaded_file($file['tmp_name'], WP_STORAGE . '/logo.bin')) {
+        if (!@move_uploaded_file($file['tmp_name'], Impostazioni::fileLogo())) {
             $errori[] = 'Impossibile salvare il logo: controlla i permessi della cartella storage/.';
             return null;
         }

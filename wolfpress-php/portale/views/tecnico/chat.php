@@ -1,7 +1,7 @@
 <?php
 /** Gestione tecnica · Chat: conversazione legata al ticket e link della videochiamata. */
 View::parziale('intestazione', [
-    'occhiello' => 'Operazioni · demo',
+    'occhiello' => 'Operazioni' . demo(' · demo'),
     'titoloPagina' => 'Chat di assistenza',
     'descrizione' => 'Segui la conversazione legata a un ticket e condividi un link video.',
 ]);

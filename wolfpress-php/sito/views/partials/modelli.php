@@ -6,7 +6,7 @@
  */
 ?>
 <section class="wp-scheda" id="modelli">
-    <span class="wp-occhiello"><?= count($politici) * 2 ?> pagine dimostrative</span>
+    <span class="wp-occhiello"><?= count($politici) * 2 ?> pagine<?= e(demo(' dimostrative')) ?></span>
     <h2>Scegli un modello</h2>
     <p class="wp-testo-breve">Apri la pagina di candidatura o consulta come la stessa figura renderebbe conto del proprio mandato. I due scenari sono indipendenti.</p>
 
@@ -16,7 +16,7 @@
             <select class="form-select" id="filtro-livello" data-modelli-livello>
                 <option value="">Tutti i livelli</option>
                 <?php foreach ($politici as $politico): ?>
-                    <option value="<?= e($politico['id']) ?>"><?= e(Politico::LIVELLI[$politico['id']]) ?></option>
+                    <option value="<?= e($politico['id']) ?>"><?= e(Politico::livello($politico)) ?></option>
                 <?php endforeach; ?>
             </select>
         </div>
@@ -46,7 +46,7 @@
             <tbody>
                 <?php foreach ($politici as $politico): ?>
                     <tr data-livello="<?= e($politico['id']) ?>">
-                        <th scope="row"><?= e(Politico::LIVELLI[$politico['id']]) ?></th>
+                        <th scope="row"><?= e(Politico::livello($politico)) ?></th>
                         <td><?= e($politico['nome']) ?></td>
                         <td data-colonna="candidatura">
                             <a href="<?= e(url('politica/profilo', ['livello' => $politico['id'], 'tipo' => 'candidatura'])) ?>">Apri candidatura <i class="bi bi-arrow-right" aria-hidden="true"></i></a>

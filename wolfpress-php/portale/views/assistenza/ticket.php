@@ -1,7 +1,7 @@
 <?php
 /** Assistenza editore: elenco dei ticket della testata, dettaglio e apertura di un nuovo ticket. */
 View::parziale('intestazione', [
-    'occhiello' => $impostazioni['testata'] . ' · demo',
+    'occhiello' => $impostazioni['testata'] . demo(' · demo'),
     'titoloPagina' => 'Assistenza editore',
     'descrizione' => 'Apri una segnalazione e segui le risposte del fornitore.',
 ]);

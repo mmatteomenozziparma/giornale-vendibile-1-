@@ -1,7 +1,7 @@
 <?php
 /** Gestione tecnica · Infrastruttura: testate ospitate, nodi, backup e incidenti. */
 View::parziale('intestazione', [
-    'occhiello' => 'Operazioni · demo',
+    'occhiello' => 'Operazioni' . demo(' · demo'),
     'titoloPagina' => 'Infrastruttura',
     'descrizione' => 'Controlla testate ospitate, domini, backup e incidenti.',
 ]);
@@ -63,7 +63,7 @@ View::parziale('intestazione', [
             <dl class="wp-dati">
                 <dt>Dominio</dt>
                 <dd><?= e($scelta['dominio']) ?></dd>
-                <dt>Ultimo backup demo</dt>
+                <dt>Ultimo backup</dt>
                 <dd><?= e($scelta['backup']) ?></dd>
             </dl>
 
@@ -82,7 +82,7 @@ View::parziale('intestazione', [
                     <label class="form-label" for="incidente">Incidente o manutenzione</label>
                     <input class="form-control" id="incidente" name="incidente" maxlength="160" placeholder="Nessun incidente aperto" value="<?= e($scelta['incidente']) ?>">
                 </div>
-                <button class="btn btn-wp" type="submit">Salva stato demo</button>
+                <button class="btn btn-wp" type="submit">Salva stato</button>
             </form>
         </section>
     </div>
