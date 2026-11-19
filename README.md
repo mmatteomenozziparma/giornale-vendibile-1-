@@ -5,6 +5,7 @@
 ## Cartelle
 - `frontend/`: HTML, CSS e JavaScript responsive, homepage, articoli, sezioni, ricerca, politica e anteprima pannelli.
 - `backend/`: server locale Node.js, API articoli e ticket in memoria, test automatici.
+- `backend/sql/` e `backend/php/`: **backend PHP + SQL** per portale e sito (account con email cifrate e password Argon2id, email automatiche, eventi, ticket, donazioni e abbonamenti Stripe). Istruzioni in `backend/php/README.md`. I due front end non sono ancora collegati a queste API.
 - `docs/INVENTARIO-E-GAP.md`: elenco delle funzioni richieste, stato reale e asset non recuperati.
 
 - `wolfpress-php/`: **versione PHP (MVC) + Bootstrap** costruita sul PDF delle schermate del 6 novembre 2026. Contiene due front end: `portale/` (single page application per editori, giornalisti, politici e tecnici) e `sito/` (sito pubblico per i lettori). Istruzioni in `wolfpress-php/README.md`.
