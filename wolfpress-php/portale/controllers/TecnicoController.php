@@ -106,6 +106,48 @@ final class TecnicoController extends PortaleController
         }
         $this->vai('tecnico/account');
     }
+    /* ---------- Partiti ---------- */
+    public function partiti(): void
+    {
+        $this->voce = 'partiti';
+        $this->vista('tecnico/partiti', [
+            'titolo' => 'Partiti · WolfPress',
+            'partiti' => Partito::nomi(),
+            'partito' => Partito::scheda($this->parametro('id', 160)) ?? ['id' => '', 'nome' => '', 'sezione' => '', 'descrizione' => '', 'rete_intro' => '', 'rete' => [], 'orari' => '', 'email' => ''],
+        ]);
+    }
+    public function salvaPartito(): void
+    {
+        $this->soloPost();
+        $id = $this->campo('id', 160);
+        $esistente = $id !== '' ? Partito::scheda($id) : null;
+        $nome = $this->campo('nome', 160);
+        $email = $this->campo('email', 120);
+        if ($nome === '' || ($id !== '' && $esistente === null) || ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL))) {
+            $this->avviso('Il nome è obbligatorio e l\'email deve essere valida.', 'errore');
+            $this->vai('tecnico/partiti', $esistente ? ['id' => $id] : []);
+        }
+        // Circoli: una riga per circolo, "nome | descrizione".
+        $rete = [];
+        foreach (preg_split('/\R/', $this->campo('rete', 4000)) ?: [] as $riga) {
+            [$circolo, $descrizione] = array_map('trim', explode('|', $riga, 2)) + ['', ''];
+            if ($circolo !== '' && count($rete) < 40) {
+                $rete[] = ['nome' => mb_substr($circolo, 0, 80), 'descrizione' => mb_substr($descrizione, 0, 200)];
+            }
+        }
+        $slug = Partito::salva([
+            'id' => $id,
+            'nome' => $nome,
+            'sezione' => $this->campo('sezione', 120),
+            'descrizione' => $this->campo('descrizione', 600),
+            'rete_intro' => $this->campo('rete_intro', 400),
+            'rete' => $rete,
+            'orari' => $this->campo('orari', 200),
+            'email' => $email,
+        ] + ($esistente ?? []));
+        $this->avviso('Partito ' . $nome . ' salvato.');
+        $this->vai('tecnico/partiti', ['id' => $slug]);
+    }
     /* ---------- Clienti e testate ---------- */
 
     public function clienti(): void

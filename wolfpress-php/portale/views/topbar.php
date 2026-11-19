@@ -5,7 +5,8 @@
 $etichette = [
     'home' => 'Portale',
     'accesso' => 'Area editoriale',
-    'testata' => 'Primo avvio',
+    'testata' => 'Le tue testate',
+    'eventi' => 'Eventi',
     'configuratore' => 'Configuratore',
     'cliente' => 'Area cliente',
     'editore' => 'Area editore',
@@ -22,12 +23,15 @@ $schede = [
         ['cliente', 'Area cliente', url('cliente')],
         ['editore', 'Editore', url('editore')],
         ['assistenza', 'Assistenza', url('assistenza')],
+        ['eventi', 'Eventi', url('eventi')],
     ],
     'giornalista' => [
         ['giornalista', 'Giornalista', url('giornalista')],
+        ['eventi', 'Eventi', url('eventi')],
     ],
     'politico' => [
         ['politico', 'La mia pagina', url('politico')],
+        ['eventi', 'Eventi', url('eventi')],
     ],
     'tecnico' => [
         ['tecnico', 'Gestione tecnica', url('tecnico')],
@@ -60,6 +64,21 @@ $ruolo = $utente['ruolo'] ?? '';
                     <?= e(Auth::etichettaRuolo()) ?>
                 </p>
                 <a class="dropdown-item" href="<?= e(url('home')) ?>"><i class="bi bi-grid" aria-hidden="true"></i> Le tue aree</a>
+                <?php if ($ruolo === 'editore'): ?>
+                    <div class="dropdown-divider"></div>
+                    <p class="dropdown-header">Le tue testate</p>
+                    <?php foreach (Auth::testate() as $slugTestata => $nomeTestata): ?>
+                        <form method="post" action="<?= e(url('testata/scegli')) ?>">
+                            <?= Csrf::campo() ?>
+                            <input type="hidden" name="testata" value="<?= e($slugTestata) ?>">
+                            <button class="dropdown-item" type="submit"<?= $slugTestata === Auth::testata() ? ' aria-current="true"' : '' ?>>
+                                <i class="bi <?= $slugTestata === Auth::testata() ? 'bi-check-circle-fill' : 'bi-circle' ?>" aria-hidden="true"></i> <?= e($nomeTestata) ?>
+                            </button>
+                        </form>
+                    <?php endforeach; ?>
+                    <a class="dropdown-item" href="<?= e(url('testata')) ?>"><i class="bi bi-plus-circle" aria-hidden="true"></i> Nuova testata</a>
+                    <div class="dropdown-divider"></div>
+                <?php endif; ?>
                 <a class="dropdown-item" href="<?= e(url_sito()) ?>" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i> Apri il sito pubblico</a>
                 <div class="dropdown-divider"></div>
                 <form method="post" action="<?= e(url('accesso/esci')) ?>">

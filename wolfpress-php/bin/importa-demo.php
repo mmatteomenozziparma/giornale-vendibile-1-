@@ -15,6 +15,7 @@ if (PHP_SAPI !== 'cli') {
 }
 $config = require dirname(__DIR__) . '/app/config.php';
 require $config['backend'] . '/src/bootstrap.php';
+date_default_timezone_set('Europe/Rome');
 
 $leggi = static fn (string $nome): array => json_decode((string) file_get_contents(dirname(__DIR__) . "/app/data/$nome.json"), true);
 $json = static fn (array $dati): string => (string) json_encode($dati, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -160,11 +161,34 @@ try {
             Database::inserisci('partiti', ['slug' => $p['id'], 'nome' => $p['nome'], 'dati' => $json(array_diff_key($p, ['id' => 1, 'nome' => 1]))]);
         }
         foreach ($leggi('politici') as $p) {
-            $account('politico', $p['nome'], $indirizzo($p['nome']), [
+            [$politicoG, $politicoId] = $account('politico', $p['nome'], $indirizzo($p['nome']), [
                 'slug' => $p['id'], 'livello' => $p['id'], 'partito' => $p['partito_nome'], 'biografia' => $p['bio'],
                 'carica' => $p['candidatura']['ruolo'], 'territorio' => $p['candidatura']['luogo'],
-                'dati' => $json(['partito' => $p['partito'], 'candidatura' => $p['candidatura'], 'mandato' => $p['mandato']]),
+                'dati' => $json(['partito' => $p['partito'], 'candidatura' => array_diff_key($p['candidatura'], ['agenda' => 1]), 'mandato' => array_diff_key($p['mandato'], ['agenda' => 1])]),
             ]);
+            // L'agenda del politico diventa un elenco di eventi pubblici organizzati da lui.
+            $visti = [];
+            foreach (array_merge($p['candidatura']['agenda'], $p['mandato']['agenda']) as $e) {
+                if (isset($visti[$e['data'] . $e['titolo']])) {
+                    continue;
+                }
+                $visti[$e['data'] . $e['titolo']] = true;
+                // "Piazza del Tiglio · ore 18:00" → luogo e ora separati.
+                $ora = preg_match('/ore (\d{1,2}):(\d{2})/', $e['dettaglio'], $m) ? sprintf('%02d:%s', $m[1], $m[2]) : '00:00';
+                $id = Database::inserisci('eventi', [
+                    'titolo' => $e['titolo'], 'luogo' => trim((string) preg_replace('/\s*·?\s*ore \d{1,2}:\d{2}/', '', $e['dettaglio']), ' ·'),
+                    'inizio' => $utc($e['data'] . ' ' . $ora), 'pubblico' => 1, 'creato_da' => $politicoG,
+                ]);
+                Database::inserisci('eventi_organizzatori', ['evento_id' => $id, 'politico_id' => $politicoId, 'confermato' => 1]);
+            }
+        }
+
+        // --- Letture dell'ultima settimana della testata principale (per il grafico dell'area cliente) ---
+        $giorni = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
+        $letture = $leggi('impostazioni')['letture'];
+        for ($i = 0; $i < 7; $i++) {
+            $giorno = strtotime("-$i days");
+            Database::inserisci('letture_giornaliere', ['giornale_id' => $principale, 'giorno' => date('Y-m-d', $giorno), 'letture' => $letture[$giorni[(int) date('w', $giorno)]] ?? 0]);
         }
     });
 

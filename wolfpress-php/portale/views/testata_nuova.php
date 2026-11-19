@@ -1,8 +1,8 @@
-<?php /** Primo avvio dell'editore: creazione della testata. */ ?>
+<?php /** Creazione di una testata: la prima ($prima = true) oppure una in più. */ ?>
 <section class="wp-intestazione">
-    <span class="wp-occhiello">WolfPress · primo avvio</span>
-    <h1>Crea la tua testata</h1>
-    <p class="wp-intro">Il tuo account è attivo. Per iniziare serve il giornale su cui lavorerà la redazione.</p>
+    <span class="wp-occhiello">WolfPress · <?= $prima ? 'primo avvio' : 'le tue testate' ?></span>
+    <h1><?= $prima ? 'Crea la tua testata' : 'Nuova testata' ?></h1>
+    <p class="wp-intro"><?= $prima ? 'Il tuo account è attivo. Per iniziare serve il giornale su cui lavorerà la redazione.' : 'Aggiungi un altro giornale: potrai passare da una testata all\'altra dal menu in alto a destra.' ?></p>
 </section>
 
 <form class="wp-scheda wp-scheda-media" method="post" action="<?= e(url('testata/crea')) ?>">

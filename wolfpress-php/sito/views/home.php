@@ -68,7 +68,7 @@
         <?php foreach ($partiti as $partito): ?>
             <div class="col-lg-4">
                 <a class="wp-partito h-100" href="<?= e(url('politica/partito', ['id' => $partito['id']])) ?>">
-                    <span class="wp-occhiello">Partito dimostrativo · <?= e($partito['sezione']) ?></span>
+                    <span class="wp-occhiello"><?= e(demo('Partito dimostrativo', 'Partito')) ?> · <?= e($partito['sezione']) ?></span>
                     <strong><?= e($partito['nome']) ?></strong>
                     <span>Notizie, circoli e appuntamenti <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
                 </a>

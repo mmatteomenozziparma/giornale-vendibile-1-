@@ -58,6 +58,18 @@ $euro = static fn ($centesimi): string => '€ ' . number_format((int) $centesim
             </section>
         </div>
     </div>
+    <section class="wp-scheda mt-3">
+        <h2>Eventi a cui partecipi</h2>
+        <?php if (!$eventi): ?>
+            <p class="mb-0">Nessuno. Guarda i <a href="<?= e(url('eventi')) ?>">prossimi eventi</a>.</p>
+        <?php else: ?>
+            <ul class="mb-0">
+                <?php foreach ($eventi as $ev): ?>
+                    <li><a href="<?= e(url('eventi', [], 'evento-' . $ev['id'])) ?>"><?= e($ev['titolo']) ?></a> · <?= e(data_it($ev['data'])) ?><?= $ev['luogo'] !== '' ? ' · ' . e($ev['luogo']) : '' ?></li>
+                <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
+    </section>
 <?php endif; ?>
 
 <form class="mt-3" method="post" action="<?= e(url('account/esci')) ?>">

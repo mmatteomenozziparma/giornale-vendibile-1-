@@ -21,6 +21,7 @@ final class AccountController extends SitoController
         $this->vista('account/profilo', [
             'titolo' => 'Il tuo account · WolfPress',
             'lettore' => $lettore,
+            'eventi' => Evento::partecipazioni(),
             'iscrizioni' => !$lettore ? [] : Database::righe(
                 "SELECT COALESCE(j.nome, TRIM(CONCAT(g.nome, ' ', g.cognome))) AS nome, j.slug AS testata, p.slug AS politico
                  FROM iscrizioni i LEFT JOIN giornali j ON j.id = i.giornale_id

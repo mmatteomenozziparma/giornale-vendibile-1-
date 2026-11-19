@@ -3,6 +3,7 @@
  * Schede dei politici (tabelle "politici" + "generalita"). Ogni scheda ha due
  * scenari indipendenti, salvati nella colonna JSON "dati":
  * "candidatura" (campagna elettorale) e "mandato" (rendiconto dell'eletto).
+ * L'agenda, uguale nei due scenari, viene dalle tabelle degli eventi.
  * L'id usato da viste e indirizzi è lo slug della scheda.
  */
 declare(strict_types=1);
@@ -38,9 +39,12 @@ final class Politico
              FROM politici p JOIN generalita g ON g.id = p.generalita_id
              WHERE g.stato = 'attivo' ORDER BY FIELD(p.livello, 'comune', 'regione', 'camera', 'senato', 'europa'), p.id"
         );
+        // L'agenda non è più un elenco libero: sono gli eventi pubblici organizzati dal politico.
+        $agende = Evento::agendePolitici();
         self::$memoria = [];
         foreach ($righe as $r) {
             $dati = da_json($r['dati']);
+            $agenda = ['agenda' => $agende[(int) $r['db_id']] ?? []];
             $scenario = ['ruolo' => (string) $r['carica'], 'luogo' => (string) $r['territorio'], 'voci' => [], 'agenda' => [], 'contatto' => '', 'email' => ''];
             self::$memoria[] = [
                 'id' => $r['slug'],
@@ -50,8 +54,8 @@ final class Politico
                 'partito_nome' => (string) $r['partito'],
                 'bio' => (string) $r['biografia'],
                 'livello' => $r['livello'],
-                'candidatura' => ($dati['candidatura'] ?? []) + $scenario,
-                'mandato' => ($dati['mandato'] ?? []) + $scenario + ['incarico' => '', 'link_etichetta' => '', 'link_url' => ''],
+                'candidatura' => $agenda + ($dati['candidatura'] ?? []) + $scenario,
+                'mandato' => $agenda + ($dati['mandato'] ?? []) + $scenario + ['incarico' => '', 'link_etichetta' => '', 'link_url' => ''],
             ];
         }
         return self::$memoria;
@@ -69,8 +73,11 @@ final class Politico
 
     public static function salva(array $politico): void
     {
-        Database::esegui('UPDATE politici SET biografia = ?, dati = ? WHERE id = ?', [
+        // L'agenda sta nelle tabelle degli eventi, non nel JSON della scheda.
+        unset($politico['candidatura']['agenda'], $politico['mandato']['agenda']);
+        Database::esegui('UPDATE politici SET biografia = ?, partito = ?, dati = ? WHERE id = ?', [
             $politico['bio'],
+            $politico['partito_nome'],
             in_json(['partito' => $politico['partito'], 'candidatura' => $politico['candidatura'], 'mandato' => $politico['mandato']]),
             $politico['db_id'],
         ]);

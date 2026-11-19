@@ -10,6 +10,7 @@ $voci = [
     ['notizie', 'Notizie', url('notizie')],
     ['testate', 'Testate', url('testate')],
     ['politica', 'Politica', url('politica')],
+    ['eventi', 'Eventi', url('eventi')],
     ['chi-siamo', 'Chi siamo', url('pagine/chi-siamo')],
 ];
 ?>

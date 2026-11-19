@@ -20,9 +20,9 @@ final class Auth
 
     /** Controller che ogni ruolo può aprire. */
     private const PERMESSI = [
-        'editore' => ['home', 'configuratore', 'cliente', 'articoli', 'editore', 'assistenza', 'testata'],
-        'giornalista' => ['home', 'giornalista', 'articoli'],
-        'politico' => ['home', 'politico'],
+        'editore' => ['home', 'configuratore', 'cliente', 'articoli', 'editore', 'assistenza', 'testata', 'eventi'],
+        'giornalista' => ['home', 'giornalista', 'articoli', 'eventi'],
+        'politico' => ['home', 'politico', 'eventi'],
         'tecnico' => ['home', 'tecnico'],
     ];
 
@@ -87,7 +87,10 @@ final class Auth
         $profilo = $account['profilo'];
         $testata = '';
         if ($account['tipo'] === 'editore') {
-            $testata = (string) Database::valore('SELECT slug FROM giornali WHERE editore_id = ? ORDER BY id LIMIT 1', [$profilo['id']]);
+            // Un editore può avere più testate: lavora su quella scelta dal menu, altrimenti sulla prima.
+            $mie = array_column(Database::righe('SELECT slug, nome FROM giornali WHERE editore_id = ? ORDER BY id', [$profilo['id']]), 'nome', 'slug');
+            $scelta = (string) ($_SESSION['testata'] ?? '');
+            $testata = isset($mie[$scelta]) ? $scelta : (string) (array_key_first($mie) ?? '');
         } elseif ($account['tipo'] === 'giornalista') {
             $testata = (string) Database::valore('SELECT slug FROM giornali WHERE id = ?', [$profilo['giornale_id']]);
         }
@@ -99,6 +102,7 @@ final class Auth
             'profilo' => $account['tipo'] === 'politico' ? (string) $profilo['slug'] : (string) $profilo['id'],
             'profilo_id' => (int) $profilo['id'],
             'testata' => $testata,
+            'testate' => $mie ?? [],
             'email' => Account::email($account),
         ];
     }
@@ -135,6 +139,23 @@ final class Auth
     public static function testata(): string
     {
         return self::utente()['testata'] ?? '';
+    }
+
+    /** Testate dell'editore collegato: [slug => nome]. */
+    public static function testate(): array
+    {
+        return self::utente()['testate'] ?? [];
+    }
+
+    /** L'editore sceglie su quale delle sue testate lavorare. */
+    public static function scegliTestata(string $slug): bool
+    {
+        if (!isset(self::testate()[$slug])) {
+            return false;
+        }
+        $_SESSION['testata'] = $slug;
+        self::aggiorna();
+        return true;
     }
 
     public static function etichettaRuolo(): string

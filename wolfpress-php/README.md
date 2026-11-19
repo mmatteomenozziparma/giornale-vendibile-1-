@@ -49,6 +49,15 @@ La cartella `storage/` deve essere scrivibile: lì finiscono i loghi caricati da
 Giornalisti e operatori possono anche essere creati dall'editore o da un tecnico: ricevono un'email
 con il link per scegliere la password. Un editore appena approvato crea per prima cosa la propria testata.
 
+**Eventi** (`portale/?r=eventi`): politici ed editori creano eventi, anche insieme (il co-organizzatore
+indicato deve confermare), invitano politici e giornalisti e possono annullarli; gli invitati accettano o
+rifiutano. Gli eventi pubblici compaiono in `sito/?r=eventi`, dove i lettori segnano la partecipazione.
+L'agenda nella scheda di un politico è l'elenco dei suoi eventi pubblici.
+
+**Altro nel portale**: il politico scrive i propri articoli (`portale/?r=politico/articoli`) e sceglie il
+partito; i tecnici gestiscono i partiti (`portale/?r=tecnico/partiti`); un editore può avere più testate e
+passa dall'una all'altra dal menu in alto a destra; nel configuratore imposta i prezzi degli abbonamenti.
+
 **Sito** (`sito/?r=account`): i lettori si registrano e sono attivi appena confermano l'email. Da
 «Segui o sostieni» (pagina Testate e schede dei politici) possono seguire, donare e abbonarsi; il
 pagamento avviene sulla pagina di Stripe. Il webhook da indicare a Stripe è
@@ -72,8 +81,9 @@ wolfpress-php/
 │   ├── config.php         nome del sito, debug, posizione del backend
 │   ├── bootstrap.php      avvio comune, carica il backend, intestazioni di sicurezza
 │   ├── core/              Router, Controller, View, Auth, Accesso, Csrf, helpers
-│   ├── models/            MODEL (leggono e scrivono nel database): Articolo, Testata, Ticket,
-│   │                      Giornalista, Evento, Messaggio, Operatore, Politico, Partito, Impostazioni
+│   ├── models/            MODEL (leggono e scrivono nel database): Articolo, ArticoloPolitico, Testata,
+│   │                      Ticket, Giornalista, Evento, Letture, Messaggio, Operatore, Politico,
+│   │                      Partito, Impostazioni
 │   └── data/              dati demo usati solo da bin/importa-demo.php
 ├── bin/importa-demo.php   carica i dati demo nel database
 ├── tests/prova.php        prova automatica di portale e sito
@@ -82,7 +92,7 @@ wolfpress-php/
 ├── portale/               FRONT END 1 · single page application
 │   ├── index.php          unico ingresso (front controller)
 │   ├── controllers/       CONTROLLER: Accesso, Home, Configuratore, Cliente, Articoli,
-│   │                      Editore, Giornalista, Assistenza, Politico, Tecnico, Testata…
+│   │                      Editore, Giornalista, Assistenza, Politico, Tecnico, Testata, Eventi…
 │   ├── views/             VIEW: layout.php, shell.php, menu.php, topbar.php, footer.php,
 │   │                      home.php, accesso.php, configuratore.php, cliente.php,
 │   │                      editore.php, giornalista.php, politico.php,
@@ -91,7 +101,7 @@ wolfpress-php/
 └── sito/                  FRONT END 2 · sito pubblico
     ├── index.php          unico ingresso (front controller)
     ├── controllers/       CONTROLLER: Home, Notizie, Testate, Ricerca, Politica, Pagine,
-    │                      Account (lettori), Sostieni (segui, dona, abbonati, webhook Stripe)
+    │                      Account (lettori), Eventi, Sostieni (segui, dona, abbonati, webhook Stripe)
     ├── views/             VIEW: layout.php, menu.php, footer.php, home.php, ricerca.php,
     │                      testate.php, notizie/*.php, politica/*.php, partials/*.php
     └── assets/            css/sito.css, js/sito.js
@@ -137,17 +147,18 @@ bozza → revisione → pubblicazione, e nel sito home, notizie, testate e ricer
 
 ## Limiti da conoscere
 
-- **Dove sono i dati**: account, testate, articoli, ticket, agenda dei giornalisti, chat di redazione,
-  iscrizioni, donazioni e abbonamenti sono in tabelle dedicate. Restano in colonne JSON le parti
-  ancora «a scheda libera»: proposte, atti e agenda dei politici (`politici.dati`), schede dei partiti
-  (`partiti.dati`), dati di servizio e impostazioni delle testate (`giornali.dati`, `giornali.impostazioni`).
-- **Eventi**: nel portale c'è solo l'agenda personale del giornalista. Eventi co-organizzati, inviti e
-  partecipazioni esistono nel database e nelle API (`backend/php`) ma non hanno ancora una schermata.
-- **Articoli dei politici** (`articoli_politici`): tabella e API pronte, nessuna schermata.
-- **Un editore, una testata**: il portale lavora sulla prima testata dell'editore collegato.
-- **Testi «demo»**: alcune viste contengono ancora diciture come «scenario demo» o «dati dimostrativi»,
-  e le letture settimanali dell'area cliente restano numeri di esempio. I partiti si caricano solo
-  con l'importazione dei dati demo: non c'è una schermata per crearli.
+- **Dove sono i dati**: account, testate, articoli (dei giornali e dei politici), ticket, eventi con
+  organizzatori, invitati e partecipanti, chat di redazione, letture, iscrizioni, donazioni e abbonamenti
+  sono in tabelle dedicate. Restano in colonne JSON le parti «a scheda libera»: proposte e atti dei
+  politici (`politici.dati`), circoli e contatti dei partiti (`partiti.dati`), dati di servizio e
+  impostazioni delle testate (`giornali.dati`, `giornali.impostazioni`).
+- **Diciture «demo»**: con `'demo' => true` in `app/config.php` le pagine mostrano le note «demo»,
+  «fittizio», «dimostrativo» (giuste per i dati di `bin/importa-demo.php`). Con dati veri mettere `false`.
+- **Letture**: ogni apertura di un articolo sul sito conta una lettura, senza distinguere visitatori
+  ripetuti o robot.
+- **Partiti**: i tecnici modificano nome, sezione, descrizione, circoli e contatti. Le notizie e gli
+  appuntamenti scritti a mano nei dati demo restano com'erano; a questi si aggiungono da soli gli
+  articoli e gli eventi pubblici dei politici del partito.
 - La foto del referente del PDF è sostituita da un riquadro con le iniziali.
 - Chat e videochiamate non sono in tempo reale: i messaggi compaiono al caricamento della pagina e
   la videochiamata è un link https a un servizio esterno.
@@ -168,8 +179,8 @@ pagine di lettura del sito.
 ## Prova automatica
 
 `php tests/prova.php` (istruzioni in cima al file, su un database **di prova**) avvia il server e una
-finta API Stripe ed esegue oltre cento controlli su portale e sito: accessi, permessi per ruolo,
-articoli, ticket, approvazioni, registrazione dei lettori, donazione e webhook.
+finta API Stripe ed esegue 133 controlli su portale e sito: accessi, permessi per ruolo, articoli, ticket,
+approvazioni, eventi e inviti, partiti, più testate, registrazione dei lettori, donazione, abbonamento e webhook.
 
 ## Licenze di terze parti
 

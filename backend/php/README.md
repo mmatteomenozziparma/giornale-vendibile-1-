@@ -37,7 +37,7 @@ Servono le estensioni PHP `pdo_mysql`, `sodium`, `curl`, `mbstring`.
 | `iscrizioni` | uno user segue un giornale o un politico |
 | `abbonamenti`, `donazioni`, `stripe_eventi` | pagamenti Stripe |
 | `ticket`, `ticket_messaggi` | assistenza |
-| `partiti`, `messaggi_redazione` | schede dei partiti e chat di redazione usate da `wolfpress-php` |
+| `partiti`, `messaggi_redazione`, `letture_giornaliere` | schede dei partiti, chat di redazione e letture per giorno usate da `wolfpress-php` |
 | `token_email`, `tentativi` | token monouso delle email e limite ai tentativi |
 
 ## Sicurezza
@@ -77,6 +77,7 @@ Il browser chiama prima `GET /api/csrf` e manda il valore ricevuto nell'intestaz
 | `POST /api/eventi/{id}/inviti` | organizzatore | invita `politici` e `giornalisti` (email automatica) |
 | `POST /api/eventi/{id}/risposta` | politico, giornalista | `accetta: true/false` |
 | `POST /api/eventi/{id}/partecipa` | politico, giornalista, user | partecipa |
+| `POST /api/eventi/{id}/annulla` | organizzatore | annulla l'evento |
 | `GET/POST /api/iscrizioni` · `POST /api/iscrizioni/annulla` | user | `giornale_id` oppure `politico_id` |
 | `POST /api/donazioni` | tutti | `giornale_id` o `politico_id`, `importo_centesimi` → `url_pagamento` |
 | `GET/POST /api/abbonamenti` | user | `giornale_id`, `piano` → `url_pagamento` |

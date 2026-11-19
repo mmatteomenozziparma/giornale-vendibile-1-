@@ -26,7 +26,9 @@
     </div>
 
     <footer>
-        <p class="wp-nota mb-0">Contenuto dimostrativo: non è una notizia verificata.</p>
+        <?php if (config('demo')): ?>
+            <p class="wp-nota mb-0">Contenuto dimostrativo: non è una notizia verificata.</p>
+        <?php endif; ?>
         <div class="d-flex flex-wrap gap-2 mt-3">
             <a class="btn btn-wp-bordo" href="<?= e(url('notizie', ['sezione' => $articolo['sezione']])) ?>">Altri articoli di <?= e($articolo['sezione']) ?></a>
             <a class="btn btn-wp-bordo" href="<?= e(url('notizie', ['testata' => $articolo['testata']])) ?>">Tutto da <?= e($testata['nome'] ?? 'questa testata') ?></a>

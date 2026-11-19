@@ -1,7 +1,7 @@
 <?php
 /** Gestione tecnica · Referente cliente: chi segue il cliente e storico delle sue segnalazioni. */
 View::parziale('intestazione', [
-    'occhiello' => 'Operazioni · demo',
+    'occhiello' => 'Operazioni' . demo(' · demo'),
     'titoloPagina' => 'Referente cliente',
     'descrizione' => 'Consulta lo storico delle segnalazioni per il cliente che segui.',
 ]);

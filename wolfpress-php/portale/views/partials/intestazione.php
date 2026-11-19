@@ -8,5 +8,7 @@
     <span class="wp-occhiello"><?= e($occhiello) ?></span>
     <h1><?= e($titoloPagina) ?></h1>
     <p class="wp-intro"><?= e($descrizione) ?></p>
-    <div class="wp-nota">Dati fittizi. Gli accessi per ruolo sono simulati e le modifiche restano in questa demo.</div>
+    <?php if (config('demo')): ?>
+        <div class="wp-nota">Dati dimostrativi: testate, persone e contenuti caricati con l'importazione di prova sono fittizi.</div>
+    <?php endif; ?>
 </section>

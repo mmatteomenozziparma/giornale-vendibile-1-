@@ -8,7 +8,7 @@ $parole = explode(' ', $partito['nome'], 2);
 
 <section class="wp-copertina-partito">
     <div class="wp-copertina-testo">
-        <span class="wp-occhiello">Partito dimostrativo · <?= e($partito['sezione']) ?></span>
+        <span class="wp-occhiello"><?= e(demo('Partito dimostrativo', 'Partito')) ?> · <?= e($partito['sezione']) ?></span>
         <h1><?= e($parole[0]) ?><?php if (isset($parole[1])): ?><br><?= e($parole[1]) ?><?php endif; ?></h1>
         <p><?= e($partito['descrizione']) ?></p>
         <div class="d-flex flex-wrap gap-2">
@@ -18,7 +18,7 @@ $parole = explode(' ', $partito['nome'], 2);
     </div>
     <div class="wp-copertina-mappa">
         <?php View::parziale('mappa', ['rete' => $partito['rete']]); ?>
-        <span class="wp-mappa-nota">01 / Territorio dimostrativo</span>
+        <span class="wp-mappa-nota">01 / Territorio<?= e(demo(' dimostrativo')) ?></span>
     </div>
 </section>
 
@@ -92,7 +92,7 @@ $parole = explode(' ', $partito['nome'], 2);
             <h2>Contatti</h2>
             <p class="wp-testo-breve"><?= e($partito['orari']) ?></p>
             <p class="wp-recapito"><?= e($partito['email']) ?></p>
-            <p class="wp-sottotitolo mb-0">Recapito fittizio.</p>
+            <?php if (config('demo')): ?><p class="wp-sottotitolo mb-0">Recapito fittizio.</p><?php endif; ?>
         </section>
     </div>
 

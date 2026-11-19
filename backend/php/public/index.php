@@ -34,6 +34,7 @@ $rotte = [
     ['POST', 'eventi/(\d+)/conferma',             static fn ($id) => Api::confermaOrganizzazione($id)],
     ['POST', 'eventi/(\d+)/inviti',               static fn ($id) => Api::invita($id)],
     ['POST', 'eventi/(\d+)/risposta',             static fn ($id) => Api::rispondiInvito($id)],
+    ['POST', 'eventi/(\d+)/annulla',              static fn ($id) => Api::annullaEvento($id)],
     ['POST', 'eventi/(\d+)/partecipa',            static fn ($id) => Api::partecipa($id)],
     // --- iscrizioni, abbonamenti, donazioni ---
     ['GET',  'iscrizioni',                        static fn () => Api::iscrizioni()],

@@ -10,7 +10,7 @@ final class Impostazioni
 {
     public const MODULI = [
         'articoli' => ['Articoli', 'Bozze e stato del lavoro editoriale.', 'bi-file-earmark-text'],
-        'lettori' => ['Lettori', 'Andamento delle letture di esempio.', 'bi-bar-chart'],
+        'lettori' => ['Lettori', 'Andamento delle letture degli ultimi sette giorni.', 'bi-bar-chart'],
         'redazione' => ['Redazione', 'Ruoli e referenti del giornale.', 'bi-people'],
         'assistenza' => ['Assistenza', 'Contatto per richieste tecniche.', 'bi-chat-left-text'],
     ];

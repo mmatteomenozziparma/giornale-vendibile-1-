@@ -36,3 +36,13 @@ CREATE TABLE messaggi_redazione (
   CONSTRAINT fk_messaggi_redazione_giornale FOREIGN KEY (giornale_id) REFERENCES giornali (id) ON DELETE CASCADE,
   CONSTRAINT fk_messaggi_redazione_autore   FOREIGN KEY (autore_id)   REFERENCES generalita (id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
+
+-- Seconda parte (letture reali): eseguire solo se la tabella non esiste ancora.
+-- Letture degli articoli, giorno per giorno, per il grafico dell'area cliente.
+CREATE TABLE IF NOT EXISTS letture_giornaliere (
+  giornale_id  BIGINT UNSIGNED NOT NULL,
+  giorno       DATE NOT NULL,
+  letture      INT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (giornale_id, giorno),
+  CONSTRAINT fk_letture_giornale FOREIGN KEY (giornale_id) REFERENCES giornali (id) ON DELETE CASCADE
+) ENGINE=InnoDB;

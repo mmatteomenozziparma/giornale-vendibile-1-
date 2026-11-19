@@ -22,7 +22,7 @@ $massimo = max($letture ?: [1]);
         </div>
     <?php endforeach; ?>
     <div class="col-6 col-lg-3">
-        <div class="wp-numero"><span>Letture demo · 7 giorni</span><strong><?= e(numero((int) $lettureTotali)) ?></strong></div>
+        <div class="wp-numero"><span>Letture · 7 giorni</span><strong><?= e(numero((int) $lettureTotali)) ?></strong></div>
     </div>
 </div>
 
@@ -76,7 +76,7 @@ $massimo = max($letture ?: [1]);
                     <h2>Redazione</h2>
                     <i class="bi bi-people" aria-hidden="true"></i>
                 </div>
-                <p class="wp-sottotitolo">Ruoli di esempio per organizzare il flusso editoriale.</p>
+                <p class="wp-sottotitolo">Ruoli per organizzare il flusso editoriale.</p>
                 <ul class="mb-0">
                     <?php foreach ($impostazioni['ruoli_redazione'] ?? [] as [$ruolo, $compito]): ?>
                         <li><strong><?= e($ruolo) ?></strong> · <?= e($compito) ?></li>
@@ -93,9 +93,9 @@ $massimo = max($letture ?: [1]);
                     <h2>Andamento letture</h2>
                     <i class="bi bi-bar-chart" aria-hidden="true"></i>
                 </div>
-                <p class="wp-sottotitolo">Settimana di esempio · dati dimostrativi</p>
+                <p class="wp-sottotitolo">Ultimi sette giorni · articoli aperti sul sito</p>
 
-                <div class="wp-grafico" role="img" aria-label="Letture giornaliere della settimana di esempio">
+                <div class="wp-grafico" role="img" aria-label="Letture giornaliere degli ultimi sette giorni">
                     <?php foreach ($letture as $giorno => $valore): ?>
                         <div class="wp-grafico-colonna">
                             <span class="wp-grafico-barra" style="height: <?= $massimo > 0 ? (int) round($valore / $massimo * 100) : 0 ?>%" title="<?= e($giorno . ': ' . numero((int) $valore)) ?>"></span>

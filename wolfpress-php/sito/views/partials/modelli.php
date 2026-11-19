@@ -6,7 +6,7 @@
  */
 ?>
 <section class="wp-scheda" id="modelli">
-    <span class="wp-occhiello"><?= count($politici) * 2 ?> pagine dimostrative</span>
+    <span class="wp-occhiello"><?= count($politici) * 2 ?> pagine<?= e(demo(' dimostrative')) ?></span>
     <h2>Scegli un modello</h2>
     <p class="wp-testo-breve">Apri la pagina di candidatura o consulta come la stessa figura renderebbe conto del proprio mandato. I due scenari sono indipendenti.</p>
 

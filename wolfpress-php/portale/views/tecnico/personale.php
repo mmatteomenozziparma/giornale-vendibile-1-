@@ -1,7 +1,7 @@
 <?php
 /** Gestione tecnica · Personale: operatori dell'azienda fornitrice, ruoli e turni. */
 View::parziale('intestazione', [
-    'occhiello' => 'Operazioni · demo',
+    'occhiello' => 'Operazioni' . demo(' · demo'),
     'titoloPagina' => 'Personale tecnico',
     'descrizione' => 'Gestisci gli operatori interni dell\'azienda fornitrice, i loro ruoli e i turni.',
 ]);

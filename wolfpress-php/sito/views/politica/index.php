@@ -9,7 +9,9 @@
     <span class="wp-occhiello">Atlante civico · modelli per la comunicazione politica</span>
     <h1>Politica</h1>
     <p>Trova un partito, un candidato o un eletto. Ogni persona ha due pagine: la candidatura, con le proposte, e il mandato, con gli atti e le iniziative.</p>
-    <span class="wp-demo">Demo: partito, persone, luoghi, date e atti sono fittizi</span>
+    <?php if (config('demo')): ?>
+        <span class="wp-demo">Demo: partito, persone, luoghi, date e atti sono fittizi</span>
+    <?php endif; ?>
 </header>
 
 <section aria-labelledby="titolo-partiti">
@@ -18,7 +20,7 @@
         <?php foreach ($partiti as $partito): ?>
             <div class="col-lg-6">
                 <a class="wp-partito h-100" href="<?= e(url('politica/partito', ['id' => $partito['id']])) ?>">
-                    <span class="wp-occhiello">Partito dimostrativo · <?= e($partito['sezione']) ?></span>
+                    <span class="wp-occhiello"><?= e(demo('Partito dimostrativo', 'Partito')) ?> · <?= e($partito['sezione']) ?></span>
                     <strong><?= e($partito['nome']) ?></strong>
                     <span><?= count($partito['rete']) ?> circoli · <?= count($partito['appuntamenti']) ?> appuntamenti in agenda <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
                 </a>

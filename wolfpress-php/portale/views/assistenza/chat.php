@@ -1,7 +1,7 @@
 <?php
 /** Chat di assistenza dell'editore: una conversazione per ogni ticket. */
 View::parziale('intestazione', [
-    'occhiello' => $impostazioni['testata'] . ' · demo',
+    'occhiello' => $impostazioni['testata'] . demo(' · demo'),
     'titoloPagina' => 'Chat di assistenza',
     'descrizione' => 'Segui la conversazione legata a un ticket e apri il link video condiviso dal tecnico.',
 ]);

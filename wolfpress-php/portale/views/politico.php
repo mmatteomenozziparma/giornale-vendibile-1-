@@ -7,7 +7,7 @@ $mandato = $scenario === 'mandato';
 $indirizzoPubblico = url_sito('politica/profilo', ['livello' => $politico['id'], 'tipo' => $scenario]);
 ?>
 <section class="wp-copertina wp-copertina-profilo<?= $mandato ? '' : ' wp-copertina-terra' ?>">
-    <span class="wp-occhiello"><?= e(Politico::SCENARI[$scenario]) ?> · <?= e($livello) ?> · scenario demo</span>
+    <span class="wp-occhiello"><?= e(Politico::SCENARI[$scenario]) ?> · <?= e($livello) ?><?= e(demo(' · scenario demo')) ?></span>
     <div class="d-flex align-items-center gap-3">
         <span class="wp-avatar wp-avatar-grande" aria-hidden="true"><?= e(iniziali($politico['nome'])) ?></span>
         <div>
@@ -21,7 +21,7 @@ $indirizzoPubblico = url_sito('politica/profilo', ['livello' => $politico['id'],
     </div>
 </section>
 
-<div class="wp-nota mb-3">Partito, persone, luoghi, date e atti sono fittizi. Le modifiche compaiono subito nella sezione Politica del sito.</div>
+<div class="wp-nota mb-3"><?= e(demo('Partito, persone, luoghi, date e atti sono fittizi. ')) ?>Le modifiche compaiono subito nella sezione Politica del sito.</div>
 
 <div class="row g-3 align-items-start">
     <div class="col-xl-6">
@@ -46,6 +46,15 @@ $indirizzoPubblico = url_sito('politica/profilo', ['livello' => $politico['id'],
                         <input class="form-control" id="incarico" name="incarico" maxlength="160" value="<?= e($dati['incarico'] ?? '') ?>">
                     </div>
                 <?php endif; ?>
+                <div class="mb-3">
+                    <label class="form-label" for="partito">Partito</label>
+                    <select class="form-select" id="partito" name="partito">
+                        <option value="">Nessun partito</option>
+                        <?php foreach ($partiti as $slug => $nome): ?>
+                            <option value="<?= e($slug) ?>"<?= selezionato($slug, $politico['partito']) ?>><?= e($nome) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
                 <div class="mb-3">
                     <label class="form-label" for="bio">Presentazione</label>
                     <textarea class="form-control" id="bio" name="bio" rows="3" maxlength="400"><?= e($politico['bio']) ?></textarea>
@@ -80,13 +89,13 @@ $indirizzoPubblico = url_sito('politica/profilo', ['livello' => $politico['id'],
                         <li class="d-flex align-items-center gap-3">
                             <span class="wp-data"><b><?= e($giorno) ?></b><small><?= e($mese) ?></small></span>
                             <span class="flex-grow-1">
-                                <strong class="d-block"><?= e($evento['titolo']) ?></strong>
+                                <a class="fw-bold d-block" href="<?= e(url('eventi/scheda', ['id' => $evento['id']])) ?>"><?= e($evento['titolo']) ?></a>
                                 <span class="wp-sottotitolo"><?= e($evento['dettaglio']) ?></span>
                             </span>
                             <form method="post" action="<?= e(url('politico/rimuovi-evento')) ?>">
                                 <?= Csrf::campo() ?>
                                 <input type="hidden" name="scenario" value="<?= e($scenario) ?>">
-                                <input type="hidden" name="indice" value="<?= (int) $indice ?>">
+                                <input type="hidden" name="id" value="<?= e($evento['id']) ?>">
                                 <button class="btn btn-wp-bordo btn-sm" type="submit" aria-label="Rimuovi <?= e($evento['titolo']) ?>"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
                             </form>
                         </li>
@@ -101,13 +110,18 @@ $indirizzoPubblico = url_sito('politica/profilo', ['livello' => $politico['id'],
                     <label class="form-label" for="agenda-data">Data</label>
                     <input class="form-control" type="date" id="agenda-data" name="data" required>
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-3">
+                    <label class="form-label" for="agenda-ora">Ora</label>
+                    <input class="form-control" type="time" id="agenda-ora" name="ora">
+                </div>
+                <div class="col-md-5">
                     <label class="form-label" for="agenda-titolo">Appuntamento</label>
                     <input class="form-control" id="agenda-titolo" name="titolo" maxlength="80" required>
                 </div>
                 <div class="col-12">
-                    <label class="form-label" for="agenda-dettaglio">Luogo e orario</label>
-                    <input class="form-control" id="agenda-dettaglio" name="dettaglio" maxlength="80" placeholder="Sala civica · ore 18:00">
+                    <label class="form-label" for="agenda-dettaglio">Luogo</label>
+                    <input class="form-control" id="agenda-dettaglio" name="dettaglio" maxlength="80" placeholder="Sala civica">
+                    <p class="form-text mb-0">L'agenda è la stessa per candidatura e mandato: sono i tuoi eventi pubblici. Per co-organizzatori e inviti usa <a href="<?= e(url('eventi')) ?>">Eventi</a>.</p>
                 </div>
                 <div class="col-12">
                     <button class="btn btn-wp-bordo" type="submit">Aggiungi all'agenda</button>
@@ -118,7 +132,7 @@ $indirizzoPubblico = url_sito('politica/profilo', ['livello' => $politico['id'],
 
     <div class="col-xl-6">
         <section class="wp-scheda" id="voci">
-            <span class="wp-occhiello"><?= $mandato ? 'Rendiconto dimostrativo' : 'Programma dimostrativo' ?></span>
+            <span class="wp-occhiello"><?= e(($mandato ? 'Rendiconto' : 'Programma') . demo(' dimostrativo')) ?></span>
             <h2><?= $mandato ? 'Atti e iniziative' : 'Proposte' ?></h2>
 
             <?php if (!$dati['voci']): ?>

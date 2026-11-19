@@ -195,3 +195,9 @@ function nome_cognome(string $completo): array
     $cognome = count($parti) > 1 ? (string) array_pop($parti) : '';
     return [implode(' ', $parti), $cognome];
 }
+
+/** Dicitura mostrata solo quando il sito contiene dati di prova (voce "demo" di app/config.php). */
+function demo(string $testo, string $altrimenti = ''): string
+{
+    return config('demo') ? $testo : $altrimenti;
+}

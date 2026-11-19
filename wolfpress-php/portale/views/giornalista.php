@@ -19,7 +19,7 @@
                 <h2>Portfolio</h2>
                 <i class="bi bi-file-earmark-text" aria-hidden="true"></i>
             </div>
-            <p class="wp-sottotitolo">I tre articoli più letti, ordinati per visualizzazioni demo.</p>
+            <p class="wp-sottotitolo">I tre articoli più letti, ordinati per letture.</p>
             <?php View::parziale('portfolio', ['portfolio' => $portfolio]); ?>
             <a class="btn btn-wp-bordo btn-sm mt-3" href="<?= e(url('articoli')) ?>">Tutti i miei articoli</a>
         </section>
@@ -31,7 +31,7 @@
                 <h2>Eventi in agenda</h2>
                 <i class="bi bi-calendar-event" aria-hidden="true"></i>
             </div>
-            <p class="wp-sottotitolo">Appuntamenti assegnati a questo profilo. Calendario demo.</p>
+            <p class="wp-sottotitolo">I tuoi appuntamenti e gli eventi a cui sei invitato o partecipi.</p>
             <?php View::parziale('eventi', ['eventi' => $eventi, 'rimuovi' => true]); ?>
 
             <details class="wp-dettagli mt-3">

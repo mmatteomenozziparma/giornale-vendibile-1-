@@ -28,7 +28,7 @@
             </div>
         </div>
         <p class="wp-fondo-nota">
-            <?= e(config('nome')) ?> · demo editoriale. Testate, partito, persone, luoghi, date e atti sono fittizi. Non è una testata registrata.
+            <?= e(config('nome')) ?><?= e(demo(' · demo editoriale. Testate, partito, persone, luoghi, date e atti sono fittizi. Non è una testata registrata.', ' · piattaforma per giornali digitali.')) ?>
         </p>
     </div>
 </footer>

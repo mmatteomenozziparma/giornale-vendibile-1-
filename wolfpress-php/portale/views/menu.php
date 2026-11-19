@@ -17,9 +17,13 @@ $menu = [
         ['registrazione', 'Registrati', 'bi-person-plus', url('accesso/registrazione')],
         ['password', 'Password dimenticata', 'bi-key', url('accesso/password')],
     ]],
-    'testata' => ['Primo avvio', 'Portale editoriale', [
-        ['nuova', 'Crea la tua testata', 'bi-newspaper', url('testata')],
+    'testata' => ['Le tue testate', 'Portale editoriale', [
+        ['nuova', 'Nuova testata', 'bi-newspaper', url('testata')],
     ]],
+    'eventi' => ['Agenda condivisa', 'Eventi', array_values(array_filter([
+        ['elenco', 'Eventi', 'bi-calendar-event', url('eventi')],
+        in_array($utente['ruolo'] ?? '', ['editore', 'politico'], true) ? ['nuovo', 'Nuovo evento', 'bi-calendar-plus', url('eventi', [], 'nuovo')] : null,
+    ]))],
     'configuratore' => ['Impostazioni', 'Studio editoriale', [
         ['identita', 'Identità', 'bi-sliders', url('configuratore')],
         ['moduli', 'Moduli cliente', 'bi-grid', url('configuratore', [], 'moduli')],
@@ -41,18 +45,22 @@ $menu = [
     ]],
     'giornalista' => ['Redazione', 'Profilo giornalista', [
         ['portfolio', 'Portfolio', 'bi-file-earmark-text', url('giornalista')],
-        ['eventi', 'Eventi', 'bi-calendar-event', url('giornalista', [], 'eventi')],
+        ['eventi', 'Agenda', 'bi-calendar-event', url('giornalista', [], 'eventi')],
+        ['inviti', 'Eventi e inviti', 'bi-envelope-paper', url('eventi')],
         ['chat', 'Chat e video', 'bi-chat-left-text', url('giornalista', [], 'chat')],
         ['articoli', 'I miei articoli', 'bi-pencil-square', url('articoli')],
     ]],
     'politico' => ['La tua pagina', 'Area politica', [
         ['candidatura', 'Candidatura', 'bi-megaphone', url('politico', ['scenario' => 'candidatura'])],
         ['mandato', 'Mandato', 'bi-bank', url('politico', ['scenario' => 'mandato'])],
+        ['articoli', 'I miei articoli', 'bi-pencil-square', url('politico/articoli')],
+        ['eventi', 'Eventi e inviti', 'bi-calendar-event', url('eventi')],
     ]],
     'tecnico' => ['Gestione tecnica', 'Console del fornitore', [
         ['infrastruttura', 'Infrastruttura', 'bi-hdd-network', url('tecnico')],
         ['personale', 'Personale tecnico', 'bi-person-gear', url('tecnico/personale')],
         ['account', 'Account da approvare', 'bi-person-check', url('tecnico/account')],
+        ['partiti', 'Partiti', 'bi-flag', url('tecnico/partiti')],
         ['clienti', 'Clienti e testate', 'bi-building', url('tecnico/clienti')],
         ['referente', 'Referente cliente', 'bi-person-lines-fill', url('tecnico/referente')],
         ['ticket', 'Ticket di assistenza', 'bi-ticket-perforated', url('tecnico/ticket')],

@@ -12,7 +12,7 @@ final class ClienteController extends PortaleController
     public function index(): void
     {
         $testata = Testata::trova(Auth::testata()) ?? [];
-        $letture = Impostazioni::leggi()['letture'] ?? [];
+        $letture = Letture::settimana(Testata::dbId(Auth::testata()));
 
         $this->vista('cliente', [
             'titolo' => 'Area cliente · WolfPress',

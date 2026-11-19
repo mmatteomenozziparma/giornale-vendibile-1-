@@ -259,6 +259,20 @@ final class Api
         return ['ok' => true];
     }
 
+    /** Annulla un evento: lo può fare chi l'ha creato o un organizzatore confermato. */
+    public static function annullaEvento(int $eventoId): array
+    {
+        $account = Account::richiedi();
+        $evento = self::eventoAttivo($eventoId);
+        $organizza = in_array($account['tipo'], ['politico', 'editore'], true)
+            && array_filter(self::mieOrganizzazioni($account, $eventoId), static fn ($o) => (int) $o['confermato'] === 1) !== [];
+        if ((int) $evento['creato_da'] !== (int) $account['id'] && !$organizza) {
+            throw new ErroreApi('Solo gli organizzatori possono annullare l\'evento.', 403);
+        }
+        Database::esegui("UPDATE eventi SET stato = 'annullato' WHERE id = ?", [$eventoId]);
+        return ['id' => $eventoId, 'stato' => 'annullato'];
+    }
+
     private static function eventoAttivo(int $eventoId): array
     {
         $evento = Database::riga("SELECT * FROM eventi WHERE id = ? AND stato = 'programmato'", [$eventoId]);

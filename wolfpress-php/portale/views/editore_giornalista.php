@@ -74,7 +74,7 @@ $nuovo = $giornalista['id'] === '';
         <div class="col-xl-7">
             <section class="wp-scheda mb-3">
                 <h2>Portfolio</h2>
-                <p class="wp-sottotitolo">I tre articoli più letti, ordinati per visualizzazioni demo.</p>
+                <p class="wp-sottotitolo">I tre articoli più letti, ordinati per letture.</p>
                 <?php View::parziale('portfolio', ['portfolio' => $portfolio]); ?>
             </section>
             <section class="wp-scheda">

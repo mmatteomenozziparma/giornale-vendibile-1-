@@ -39,6 +39,7 @@ final class NotizieController extends SitoController
             return;
         }
 
+        Letture::segna($articolo['id']);
         $altri = array_values(array_filter(
             Articolo::filtra($articolo['sezione']),
             static fn (array $a): bool => $a['id'] !== $articolo['id']

@@ -51,6 +51,22 @@ final class PoliticaController extends SitoController
             'tipo' => $tipo,
             'dati' => $politico[$tipo],
             'livello' => Politico::livello($politico),
+            'articoli' => ArticoloPolitico::pubblicati($politico['db_id']),
+        ]);
+    }
+
+    /** Articolo firmato da un politico. */
+    public function articolo(): void
+    {
+        $articolo = ArticoloPolitico::pubblicatoPerSlug($this->parametro('slug', 240));
+        if ($articolo === null) {
+            $this->pagina404('L\'articolo non esiste oppure non è più pubblicato.');
+            return;
+        }
+        $this->vista('politica/articolo', [
+            'titolo' => $articolo['titolo'] . ' · WolfPress',
+            'descrizione' => $articolo['sommario'],
+            'articolo' => $articolo,
         ]);
     }
 }
