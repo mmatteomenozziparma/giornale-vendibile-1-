@@ -15,7 +15,7 @@ final class AssistenzaController extends PortaleController
         $ticket = Ticket::perTestata(Auth::testata());
         $nuovo = $this->parametro('nuovo') === '1';
 
-        $this->vista('assistenza/ticket', [
+        $this->vista('assistenza', [
             'titolo' => 'Assistenza editore · WolfPress',
             'ticket' => $ticket,
             'conteggio' => Ticket::conta($ticket),
@@ -47,7 +47,7 @@ final class AssistenzaController extends PortaleController
         $this->voce = 'chat';
         $ticket = Ticket::perTestata(Auth::testata());
 
-        $this->vista('assistenza/chat', [
+        $this->vista('assistenza-chat', [
             'titolo' => 'Chat di assistenza · WolfPress',
             'ticket' => $ticket,
             'scelto' => $this->scelto($ticket),

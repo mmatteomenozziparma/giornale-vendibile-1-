@@ -25,12 +25,12 @@ final class ArticoliController extends PortaleController
             Articolo::perTestata(Auth::testata()),
             static fn (array $a): bool => $a['giornalista_id'] === Auth::profilo()
         ));
-        $this->vista('articoli_elenco', ['titolo' => 'I miei articoli · WolfPress', 'articoli' => $miei]);
+        $this->vista('articoli', ['titolo' => 'I miei articoli · WolfPress', 'articoli' => $miei]);
     }
 
     public function nuovo(): void
     {
-        $this->vista('articoli_modulo', [
+        $this->vista('articolo', [
             'titolo' => 'Nuovo articolo · WolfPress',
             'articolo' => ['id' => '', 'titolo' => '', 'sezione' => '', 'sommario' => '', 'corpo' => '', 'stato' => 'Bozza', 'autore' => Auth::nome(), 'slug' => ''],
             'stati' => $this->statiAmmessi(),
@@ -45,7 +45,7 @@ final class ArticoliController extends PortaleController
             $this->pagina404('Articolo non trovato.');
             return;
         }
-        $this->vista('articoli_modulo', [
+        $this->vista('articolo', [
             'titolo' => $articolo['titolo'] . ' · WolfPress',
             'articolo' => $articolo,
             'stati' => $this->statiAmmessi(),

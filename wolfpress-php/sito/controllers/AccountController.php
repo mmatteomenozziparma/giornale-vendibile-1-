@@ -9,16 +9,25 @@ final class AccountController extends SitoController
 {
     protected string $voce = 'account';
 
+    /** login.php: modulo di accesso (chi è già collegato va al proprio account). */
+    public function accedi(): void
+    {
+        if (Auth::utente() !== null) {
+            $this->vai('account');
+        }
+        $this->vista('login', ['titolo' => 'Accedi · WolfPress']);
+    }
+
+    /** account.php: riepilogo dell'account collegato. */
     public function index(): void
     {
         $utente = Auth::utente();
         if ($utente === null) {
-            $this->vista('account/accedi', ['titolo' => 'Accedi · WolfPress']);
-            return;
+            $this->vai('account/accedi');
         }
         $lettore = $utente['ruolo'] === 'user';
         $id = $utente['profilo_id'];
-        $this->vista('account/profilo', [
+        $this->vista('account', [
             'titolo' => 'Il tuo account · WolfPress',
             'lettore' => $lettore,
             'eventi' => Evento::partecipazioni(),
@@ -56,7 +65,7 @@ final class AccountController extends SitoController
 
     public function registrati(): void
     {
-        $this->vista('account/registrati', ['titolo' => 'Registrati · WolfPress']);
+        $this->vista('registrazione', ['titolo' => 'Registrati · WolfPress']);
     }
 
     public function registra(): void
@@ -82,7 +91,7 @@ final class AccountController extends SitoController
 
     public function password(): void
     {
-        $this->vista('account/password', ['titolo' => 'Password dimenticata · WolfPress', 'token' => '']);
+        $this->vista('password', ['titolo' => 'Password dimenticata · WolfPress', 'token' => '']);
     }
 
     public function richiesta(): void
@@ -100,7 +109,7 @@ final class AccountController extends SitoController
             $this->avviso('Link non valido o scaduto.', 'errore');
             $this->vai('account/password');
         }
-        $this->vista('account/password', ['titolo' => 'Nuova password · WolfPress', 'token' => $token]);
+        $this->vista('password', ['titolo' => 'Nuova password · WolfPress', 'token' => $token]);
     }
 
     public function salvaPassword(): void

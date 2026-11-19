@@ -12,7 +12,7 @@ final class HomeController extends SitoController
     {
         $pubblicati = Articolo::pubblicati();
 
-        $this->vista('home', [
+        $this->vista('index', [
             'titolo' => 'WolfPress · Notizie, persone, territori',
             'primoPiano' => $pubblicati[0] ?? null,
             'ultime' => array_slice($pubblicati, 1, 6),

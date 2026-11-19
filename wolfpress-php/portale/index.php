@@ -1,50 +1,32 @@
 <?php
 /**
- * PORTALE WOLFPRESS · single page application
- * per editori, giornalisti, politici e tecnici dell'azienda.
- *
- * Questo file è l'unico ingresso (front controller): tutte le pagine passano da qui.
- *   index.php?r=controller/azione
+ * Pagina iniziale del portale: le aree disponibili per il proprio ruolo.
  */
-declare(strict_types=1);
+require_once __DIR__ . '/avvio.php';
+extract(pagina(__FILE__));               // dati preparati dal controller (cartella controllers/)
+require __DIR__ . '/header.php';
+require __DIR__ . '/menu.php';
+?>
+<section class="wp-copertina">
+    <span class="wp-occhiello">WolfPress · <?= e(Auth::etichettaRuolo()) ?></span>
+    <h1>Ciao, <?= e($utente['nome']) ?></h1>
+    <p>Scegli l'area in cui lavorare. Le pagine si aprono senza ricaricare il portale.</p>
+</section>
 
-require dirname(__DIR__) . '/app/bootstrap.php';
-require __DIR__ . '/core/PortaleController.php';
+<div class="row g-3">
+    <?php foreach ($aree as [$nome, $descrizione, $icona, $indirizzo]): ?>
+        <div class="col-md-6 col-xl-4">
+            <a class="wp-scheda wp-scheda-link h-100" href="<?= e($indirizzo) ?>">
+                <i class="bi <?= e($icona) ?>" aria-hidden="true"></i>
+                <h2><?= e($nome) ?></h2>
+                <p class="wp-sottotitolo mb-0"><?= e($descrizione) ?></p>
+            </a>
+        </div>
+    <?php endforeach; ?>
+</div>
 
-Auth::avviaSessione();
-
-try {
-    Router::avvia(__DIR__ . '/controllers', 'home/index', static function (string $controller): bool {
-        // Pagine aperte a tutti (accesso, registrazione, errori).
-        if (Auth::pubblico($controller)) {
-            return true;
-        }
-        // Senza accesso si torna alla pagina di login.
-        if (Auth::utente() === null) {
-            header('Location: ' . url('accesso'), true, 303);
-            return false;
-        }
-        // I lettori hanno la loro area nel sito pubblico, non nel portale.
-        if (Auth::ruolo() === 'user') {
-            header('Location: ' . url_sito('account'), true, 303);
-            return false;
-        }
-        // Un editore senza testata deve prima crearla.
-        if (Auth::ruolo() === 'editore' && Auth::testata() === '' && $controller !== 'testata') {
-            header('Location: ' . url('testata'), true, 303);
-            return false;
-        }
-        // Ogni ruolo apre solo le proprie aree.
-        if (!Auth::puo($controller)) {
-            require_once __DIR__ . '/controllers/ErroreController.php';
-            (new ErroreController())->vietato();
-            return false;
-        }
-        return true;
-    });
-} catch (Throwable $errore) {
-    http_response_code(500);
-    require_once __DIR__ . '/controllers/ErroreController.php';
-    error_log('Portale: ' . $errore->getMessage() . ' in ' . $errore->getFile() . ':' . $errore->getLine());
-    (new ErroreController())->interno(config('debug') ? $errore->getMessage() : '');
-}
+<div class="wp-nota mt-4">
+    Per vedere il risultato dal lato dei lettori apri il
+    <a href="<?= e(url_sito()) ?>" target="_blank" rel="noopener">sito pubblico</a>.
+</div>
+<?php require __DIR__ . '/footer.php'; ?>

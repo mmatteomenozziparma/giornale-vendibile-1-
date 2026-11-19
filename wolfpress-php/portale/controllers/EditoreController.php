@@ -33,7 +33,7 @@ final class EditoreController extends PortaleController
             $this->pagina404('Account non trovato.');
             return;
         }
-        $this->vista('editore_giornalista', [
+        $this->vista('redattore', [
             'titolo' => $giornalista['nome'] . ' · WolfPress',
             'giornalista' => $giornalista,
             'modifica' => false,
@@ -44,7 +44,7 @@ final class EditoreController extends PortaleController
 
     public function nuovo(): void
     {
-        $this->vista('editore_giornalista', [
+        $this->vista('redattore', [
             'titolo' => 'Nuovo account · WolfPress',
             'giornalista' => ['id' => '', 'nome' => '', 'ruolo' => 'Giornalista', 'sezione' => '', 'stato' => 'Attivo', 'email' => '', 'bio' => ''],
             'modifica' => true,
@@ -58,7 +58,7 @@ final class EditoreController extends PortaleController
             $this->pagina404('Account non trovato.');
             return;
         }
-        $this->vista('editore_giornalista', [
+        $this->vista('redattore', [
             'titolo' => 'Modifica ' . $giornalista['nome'] . ' · WolfPress',
             'giornalista' => $giornalista,
             'modifica' => true,

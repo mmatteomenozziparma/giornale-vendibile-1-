@@ -3,7 +3,7 @@
  * Sostieni una testata o un politico: iscrizione gratuita, donazione e
  * abbonamento. I pagamenti avvengono sulla pagina di Stripe: qui non
  * passa nessun dato della carta. Un pagamento è registrato come riuscito
- * solo quando arriva il webhook firmato di Stripe (azione "webhook").
+ * solo quando arriva il webhook firmato di Stripe (file stripe-webhook.php).
  */
 declare(strict_types=1);
 
@@ -78,7 +78,7 @@ final class SostieniController extends SitoController
 
     public function grazie(): void
     {
-        $this->vista('pagina', [
+        $this->vista('grazie', [
             'titolo' => 'Grazie · WolfPress',
             'intestazione' => 'Grazie!',
             'paragrafi' => [
@@ -89,21 +89,11 @@ final class SostieniController extends SitoController
 
     public function annullato(): void
     {
-        $this->vista('pagina', [
+        $this->vista('annullato', [
             'titolo' => 'Pagamento annullato · WolfPress',
             'intestazione' => 'Pagamento annullato',
             'paragrafi' => ['Non è stato addebitato nulla. Puoi riprovare quando vuoi.'],
         ]);
-    }
-
-    /** Chiamata da Stripe (non dal browser): conferma i pagamenti. */
-    public function webhook(): void
-    {
-        try {
-            Http::json(Api::webhookStripe());
-        } catch (ErroreApi $errore) {
-            Http::json(['errore' => $errore->getMessage()], $errore->stato);
-        }
     }
 
     /** Controlli comuni alle azioni: form valido e destinatario esistente. */

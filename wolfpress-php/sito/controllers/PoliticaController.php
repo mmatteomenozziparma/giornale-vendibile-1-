@@ -11,7 +11,7 @@ final class PoliticaController extends SitoController
     /** Indice: partiti, persone e tabella dei modelli (candidatura e mandato per livello). */
     public function index(): void
     {
-        $this->vista('politica/index', [
+        $this->vista('politica', [
             'titolo' => 'Politica · WolfPress',
             'partiti' => Partito::tutti(),
             'politici' => Politico::tutti(),
@@ -27,7 +27,7 @@ final class PoliticaController extends SitoController
             $this->pagina404('Il partito richiesto non esiste.');
             return;
         }
-        $this->vista('politica/partito', [
+        $this->vista('partito', [
             'titolo' => $partito['nome'] . ' · ' . $partito['sezione'] . ' · WolfPress',
             'descrizione' => $partito['descrizione'],
             'partito' => $partito,
@@ -44,7 +44,7 @@ final class PoliticaController extends SitoController
             $this->pagina404('La scheda politica richiesta non esiste.');
             return;
         }
-        $this->vista('politica/profilo', [
+        $this->vista('politico', [
             'titolo' => $politico['nome'] . ' · ' . $politico[$tipo]['ruolo'] . ' · WolfPress',
             'descrizione' => $politico['bio'],
             'politico' => $politico,
@@ -63,7 +63,7 @@ final class PoliticaController extends SitoController
             $this->pagina404('L\'articolo non esiste oppure non è più pubblicato.');
             return;
         }
-        $this->vista('politica/articolo', [
+        $this->vista('articolo-politico', [
             'titolo' => $articolo['titolo'] . ' · WolfPress',
             'descrizione' => $articolo['sommario'],
             'articolo' => $articolo,

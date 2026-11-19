@@ -17,7 +17,7 @@ final class AccessoController extends PortaleController
         if (Auth::utente() !== null) {
             $this->vai('home');
         }
-        $this->vista('accesso', ['titolo' => 'Accedi · WolfPress']);
+        $this->vista('login', ['titolo' => 'Accedi · WolfPress']);
     }
 
     public function entra(): void
@@ -36,7 +36,7 @@ final class AccessoController extends PortaleController
     {
         $this->voce = 'registrazione';
         $tipo = $this->tra($this->parametro('tipo'), ['editore', 'giornalista', 'politico'], 'editore');
-        $this->vista('accesso_registrazione', [
+        $this->vista('registrazione', [
             'titolo' => 'Registrati · WolfPress',
             'tipo' => $tipo,
             'testate' => Testata::tutti(),
@@ -74,7 +74,7 @@ final class AccessoController extends PortaleController
     public function password(): void
     {
         $this->voce = 'password';
-        $this->vista('accesso_password', ['titolo' => 'Password dimenticata · WolfPress', 'token' => '']);
+        $this->vista('password', ['titolo' => 'Password dimenticata · WolfPress', 'token' => '']);
     }
 
     public function richiesta(): void
@@ -95,7 +95,7 @@ final class AccessoController extends PortaleController
             $this->avviso('Link non valido o scaduto.', 'errore');
             $this->vai('accesso/password');
         }
-        $this->vista('accesso_password', ['titolo' => 'Nuova password · WolfPress', 'token' => $token]);
+        $this->vista('password', ['titolo' => 'Nuova password · WolfPress', 'token' => $token]);
     }
 
     public function salvaPassword(): void

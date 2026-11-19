@@ -14,11 +14,19 @@ abstract class PortaleController extends Controller
 
     protected function datiComuni(): array
     {
+        // Se il database non risponde la pagina (di errore) si vede lo stesso, con menu e footer.
+        try {
+            $utente = Auth::utente();
+            $impostazioni = Impostazioni::leggi();
+        } catch (Throwable) {
+            $utente = null;
+            $impostazioni = Impostazioni::predefinite();
+        }
         return [
             'area' => $this->area,
             'voce' => $this->voce,
-            'utente' => Auth::utente(),
-            'impostazioni' => Impostazioni::leggi(),
+            'utente' => $utente,
+            'impostazioni' => $impostazioni,
             'avviso' => Auth::leggiAvviso(),
         ];
     }

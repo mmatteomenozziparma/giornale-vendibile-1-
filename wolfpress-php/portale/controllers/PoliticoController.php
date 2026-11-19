@@ -40,7 +40,7 @@ final class PoliticoController extends PortaleController
         }
         $this->voce = 'articoli';
         $vuoto = ['id' => '', 'titolo' => '', 'categoria' => '', 'sommario' => '', 'corpo' => '', 'stato' => 'Bozza'];
-        $this->vista('politico_articoli', [
+        $this->vista('politico-articoli', [
             'titolo' => 'I tuoi articoli · WolfPress',
             'articoli' => ArticoloPolitico::perPolitico($politico['db_id']),
             'articolo' => ArticoloPolitico::trova($this->parametro('id', 20), $politico['db_id']) ?? $vuoto,

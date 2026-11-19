@@ -27,6 +27,7 @@ register_shutdown_function(static function () use ($server, $stripe) { proc_term
 usleep(700000);
 
 require "$backend/src/bootstrap.php";
+Database::esegui('DELETE FROM tentativi');   // la prova si può ripetere senza incappare nel limite per IP
 
 $falliti = 0;
 function verifica(string $cosa, bool $ok, mixed $dettaglio = null): void
@@ -61,9 +62,45 @@ final class Browser
         return $this->chiama($azione, ['_csrf' => $m[1] ?? ''] + $campi, $segui);
     }
 
+    /**
+     * Nella prova le pagine sono indicate come "portale/index.php?r=controller/azione&...":
+     * qui diventano l'indirizzo vero del file .php, con la stessa regola usata dall'applicazione
+     * (tabelle sito/pagine.php e portale/pagine.php).
+     */
+    public static function indirizzo(string $percorso): string
+    {
+        global $radice;
+        static $tabelle = [];
+        if (!preg_match('#^(sito|portale)/index\.php\?r=([a-z-]+)(?:/([a-z-]+))?(?:&(.*))?$#', $percorso, $m)) {
+            return $percorso;
+        }
+        [, $fronte, $controller] = $m;
+        $azione = ($m[3] ?? '') !== '' ? $m[3] : 'index';
+        $metodo = lcfirst(str_replace(' ', '', ucwords(str_replace('-', ' ', $azione))));
+        $tabelle[$fronte] ??= require "$radice/$fronte/pagine.php";
+        $file = null;
+        $query = $m[4] ?? '';
+        foreach ($tabelle[$fronte] as $nome => [$c, $a]) {
+            if ($c === $controller && $a === $metodo) {
+                $file = $nome;
+                break;
+            }
+        }
+        if ($file === null) {
+            foreach ($tabelle[$fronte] as $nome => [$c]) {
+                if ($c === $controller) {
+                    $file = $nome;
+                    $query = "azione=$azione" . ($query !== '' ? "&$query" : '');
+                    break;
+                }
+            }
+        }
+        return "$fronte/" . ($file ?? 'index') . '.php' . ($query !== '' ? "?$query" : '');
+    }
+
     public function chiama(string $percorso, ?array $campi, bool $segui, array $intestazioni = [], ?string $grezzo = null): string
     {
-        $c = curl_init('http://127.0.0.1:8080/' . $percorso);
+        $c = curl_init('http://127.0.0.1:8080/' . self::indirizzo($percorso));
         curl_setopt_array($c, [
             CURLOPT_RETURNTRANSFER => true, CURLOPT_COOKIEJAR => $this->cookie, CURLOPT_COOKIEFILE => $this->cookie,
             CURLOPT_FOLLOWLOCATION => $segui, CURLOPT_PROXY => '', CURLOPT_HEADER => true, CURLOPT_HTTPHEADER => $intestazioni,
@@ -91,7 +128,7 @@ final class Browser
 function ultimoLink(string $azione): string
 {
     global $registroEmail;
-    preg_match_all('#http://127\.0\.0\.1:8080/(\S+' . preg_quote($azione, '#') . '&token=[a-f0-9]{64})#', (string) @file_get_contents($registroEmail), $m);
+    preg_match_all('#http://127\.0\.0\.1:8080/(\S+azione=' . preg_quote($azione, '#') . '&token=[a-f0-9]{64})#', (string) @file_get_contents($registroEmail), $m);
     return (string) end($m[1]);
 }
 
@@ -111,12 +148,24 @@ foreach (['notizie', 'notizie&sezione=Politica', 'notizie&testata=wolfpress', 'n
 }
 verifica('scheda politico dal database', str_contains($visitatore->get('sito/index.php?r=politica/profilo&livello=comune'), 'Ada Valleri'));
 verifica('ricerca trova il politico', str_contains($visitatore->get('sito/index.php?r=ricerca&q=Valleri'), 'Ada Valleri'));
-verifica('cartelle interne non raggiungibili', $visitatore->get('bin/importa-demo.php') === 'Accesso negato' && $visitatore->get('app/config.php') === 'Accesso negato');
+verifica('cartelle interne non raggiungibili', $visitatore->get('bin/importa-demo.php') === 'Accesso negato' && $visitatore->get('app/config.php') === 'Accesso negato'
+    && $visitatore->get('backend/php/.env') === 'Accesso negato' && $visitatore->get('sito/controllers/HomeController.php') === 'Accesso negato' && $visitatore->get('portale/parti/topbar.php') === 'Accesso negato');
+$visitatore->get('sito/header.php');
+verifica('header, menu e footer non si aprono da soli', $visitatore->stato === 404 && $visitatore->get('portale/menu.php') === '' && $visitatore->get('sito/footer.php') === '');
+foreach (['sito/index.php', 'sito/notizie.php', 'sito/login.php', 'sito/registrazione.php', 'portale/login.php', 'portale/registrazione.php'] as $file) {
+    $html = $visitatore->get($file);
+    verifica("$file: pagina completa con header, menu e footer", $visitatore->stato === 200 && str_starts_with($html, '<!doctype html>') && str_contains($html, '<title>')
+        && preg_match('/<(nav|aside)\b/', $html) === 1 && str_contains($html, '<footer') && str_contains($html, '</html>'), $html);
+}
+$visitatore->get('sito/non-esiste.php');
+verifica('pagina inesistente: 404', $visitatore->stato === 404);
+$html = $visitatore->get('sito/notizie.php?azione=non-esiste');
+verifica('azione inesistente: pagina di errore 404 con menu e footer', $visitatore->stato === 404 && str_contains($html, '<footer'), $html);
 
 echo "== Portale: accesso ==\n";
 $editore = new Browser();
 $editore->get('portale/index.php', false);
-verifica('senza accesso si viene mandati al login', $editore->stato === 303 && str_contains($editore->intestazioni, 'r=accesso'));
+verifica('senza accesso si viene mandati al login', $editore->stato === 303 && str_contains($editore->intestazioni, 'login.php'));
 verifica('password sbagliata rifiutata', str_contains($editore->entra('portale', 'laura.monti@wolfpress.example', 'Password-sbagliata'), 'Email o password non corretti'));
 verifica('accesso senza codice CSRF rifiutato', $editore->chiama('portale/index.php?r=accesso/entra', ['email' => 'laura.monti@wolfpress.example', 'password' => PW], true) !== '' && $editore->stato === 400);
 $html = $editore->entra('portale', 'laura.monti@wolfpress.example', PW);
@@ -184,7 +233,7 @@ $html = $politico->post('portale/index.php?r=accesso/registrazione&tipo=politico
 verifica('registrazione politico', str_contains($html, 'Controlla la tua casella di posta'), $html);
 $html = $politico->post('portale/index.php?r=accesso/registrazione', 'portale/index.php?r=accesso/registra', ['tipo' => 'tecnico', 'nome' => 'X', 'cognome' => 'Y', 'email' => "x$s@prova.example", 'password' => PW, 'password2' => PW, 'privacy' => '1']);
 verifica('dal portale non ci si registra come tecnico', str_contains($html, 'Scegli il tipo di account'), $html);
-verifica('conferma dell\'email dal link', str_contains($politico->get(ultimoLink('accesso/verifica')), 'in attesa di approvazione'));
+verifica('conferma dell\'email dal link', str_contains($politico->get(ultimoLink('verifica')), 'in attesa di approvazione'));
 verifica('accesso negato prima dell\'approvazione', str_contains($politico->entra('portale', "pia$s@prova.example", PW), 'in attesa di approvazione'));
 verifica('la scheda non è ancora pubblica', !str_contains($visitatore->get('sito/index.php?r=politica'), "Verdi$s"));
 $id = (string) Database::valore('SELECT id FROM generalita WHERE cognome = ?', ["Verdi$s"]);
@@ -202,7 +251,7 @@ verifica('la proposta compare sul sito', str_contains($visitatore->get("sito/ind
 
 $nuovoEditore = new Browser();
 $nuovoEditore->post('portale/index.php?r=accesso/registrazione&tipo=editore', 'portale/index.php?r=accesso/registra', ['tipo' => 'editore', 'nome' => 'Rita', 'cognome' => "Blu$s", 'email' => "rita$s@prova.example", 'ragione_sociale' => 'Edizioni Blu', 'password' => PW, 'password2' => PW, 'privacy' => '1']);
-$nuovoEditore->get(ultimoLink('accesso/verifica'));
+$nuovoEditore->get(ultimoLink('verifica'));
 $tecnico->post('portale/index.php?r=tecnico/account', 'portale/index.php?r=tecnico/approva', ['id' => (string) Database::valore('SELECT id FROM generalita WHERE cognome = ?', ["Blu$s"]), 'azione' => 'approva']);
 $nuovoEditore->entra('portale', "rita$s@prova.example", PW);
 $html = $nuovoEditore->get('portale/index.php?r=cliente');
@@ -225,11 +274,11 @@ echo "== Lettori: account, iscrizioni, donazioni ==\n";
 $lettore = new Browser();
 $html = $lettore->post('sito/index.php?r=account/registrati', 'sito/index.php?r=account/registra', ['nome' => 'Lia', 'cognome' => "Rossi$s", 'email' => "lia$s@prova.example", 'password' => PW, 'password2' => PW, 'privacy' => '1']);
 verifica('registrazione lettore dal sito', str_contains($html, 'Controlla la tua casella di posta'), $html);
-verifica('conferma dell\'email dal link del sito', str_contains($lettore->get(ultimoLink('account/verifica')), 'ora puoi accedere'));
+verifica('conferma dell\'email dal link del sito', str_contains($lettore->get(ultimoLink('verifica')), 'ora puoi accedere'));
 $html = $lettore->entra('sito', "lia$s@prova.example", PW);
 verifica('accesso lettore', str_contains($html, "Lia Rossi$s") && str_contains($html, "lia$s@prova.example"), $html);
 $lettore->get('portale/index.php?r=home', false);
-verifica('il lettore non entra nel portale', $lettore->stato === 303 && str_contains($lettore->intestazioni, 'sito/index.php'));
+verifica('il lettore non entra nel portale', $lettore->stato === 303 && str_contains($lettore->intestazioni, 'sito/account.php'));
 $html = $lettore->post('sito/index.php?r=sostieni&testata=wolfpress', 'sito/index.php?r=sostieni/segui', ['testata' => 'wolfpress']);
 verifica('il lettore segue una testata', str_contains($html, 'Ora segui WolfPress') && str_contains($html, 'Smetti di seguire'), $html);
 $html = $lettore->post('sito/index.php?r=sostieni&politico=comune', 'sito/index.php?r=sostieni/dona', ['politico' => 'comune', 'importo' => '0,10']);
@@ -241,9 +290,9 @@ verifica('donazione registrata in attesa, 1250 centesimi', $donazione['stato'] =
 $evento = json_encode(['id' => "evt_w$s", 'type' => 'checkout.session.completed', 'data' => ['object' => ['id' => $donazione['stripe_checkout_session_id'], 'payment_status' => 'paid', 'amount_total' => 1250, 'payment_intent' => "pi_w$s", 'metadata' => ['tipo' => 'donazione', 'id' => (string) $donazione['id']]]]]);
 $ora = time();
 $stripeFinto = new Browser();
-$stripeFinto->chiama('sito/index.php?r=sostieni/webhook', null, false, ['Stripe-Signature: t=' . $ora . ',v1=' . hash_hmac('sha256', "$ora.$evento", 'whsec_falso')], $evento);
+$stripeFinto->chiama('sito/stripe-webhook.php', null, false, ['Stripe-Signature: t=' . $ora . ',v1=' . hash_hmac('sha256', "$ora.$evento", 'whsec_falso')], $evento);
 verifica('webhook con firma falsa rifiutato', $stripeFinto->stato === 400 && Database::valore('SELECT stato FROM donazioni WHERE id = ?', [$donazione['id']]) === 'in_attesa');
-$stripeFinto->chiama('sito/index.php?r=sostieni/webhook', null, false, ['Stripe-Signature: t=' . $ora . ',v1=' . hash_hmac('sha256', "$ora.$evento", 'whsec_prova')], $evento);
+$stripeFinto->chiama('sito/stripe-webhook.php', null, false, ['Stripe-Signature: t=' . $ora . ',v1=' . hash_hmac('sha256', "$ora.$evento", 'whsec_prova')], $evento);
 verifica('webhook firmato: donazione pagata', $stripeFinto->stato === 200 && Database::valore('SELECT stato FROM donazioni WHERE id = ?', [$donazione['id']]) === 'pagata');
 $html = $lettore->get('sito/index.php?r=account');
 verifica('il lettore vede donazione e iscrizione nel suo account', str_contains($html, '12,50') && str_contains($html, 'WolfPress'), $html);

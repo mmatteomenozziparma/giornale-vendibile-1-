@@ -42,7 +42,7 @@ final class HomeController extends PortaleController
             ],
         ];
 
-        $this->vista('home', [
+        $this->vista('index', [
             'titolo' => 'Le tue aree · WolfPress',
             'aree' => $aree[Auth::ruolo()] ?? [],
         ]);

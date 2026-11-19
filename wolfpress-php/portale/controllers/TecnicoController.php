@@ -15,7 +15,7 @@ final class TecnicoController extends PortaleController
     public function index(): void
     {
         $testate = Testata::tutti();
-        $this->vista('tecnico/infrastruttura', [
+        $this->vista('tecnico', [
             'titolo' => 'Infrastruttura · WolfPress',
             'testate' => $testate,
             'scelta' => $this->testataScelta($testate),
@@ -45,7 +45,7 @@ final class TecnicoController extends PortaleController
     {
         $this->voce = 'personale';
         $operatore = Operatore::trova($this->parametro('id'));
-        $this->vista('tecnico/personale', [
+        $this->vista('tecnico-personale', [
             'titolo' => 'Personale tecnico · WolfPress',
             'operatori' => Operatore::tutti(),
             'operatore' => $operatore ?? ['id' => '', 'nome' => '', 'ruolo' => Operatore::RUOLI[0], 'turno' => '', 'stato' => 'Attivo', 'email' => ''],
@@ -87,7 +87,7 @@ final class TecnicoController extends PortaleController
     public function account(): void
     {
         $this->voce = 'account';
-        $this->vista('tecnico/account', [
+        $this->vista('tecnico-account', [
             'titolo' => 'Account da approvare · WolfPress',
             'inAttesa' => Database::righe(
                 "SELECT id, tipo, nome, cognome, creato_il FROM generalita WHERE stato = 'in_approvazione' ORDER BY creato_il"
@@ -110,7 +110,7 @@ final class TecnicoController extends PortaleController
     public function partiti(): void
     {
         $this->voce = 'partiti';
-        $this->vista('tecnico/partiti', [
+        $this->vista('tecnico-partiti', [
             'titolo' => 'Partiti · WolfPress',
             'partiti' => Partito::nomi(),
             'partito' => Partito::scheda($this->parametro('id', 160)) ?? ['id' => '', 'nome' => '', 'sezione' => '', 'descrizione' => '', 'rete_intro' => '', 'rete' => [], 'orari' => '', 'email' => ''],
@@ -154,7 +154,7 @@ final class TecnicoController extends PortaleController
     {
         $this->voce = 'clienti';
         $testate = Testata::tutti();
-        $this->vista('tecnico/clienti', [
+        $this->vista('tecnico-clienti', [
             'titolo' => 'Clienti e testate · WolfPress',
             'testate' => $testate,
             'scelta' => $this->testataScelta($testate),
@@ -206,7 +206,7 @@ final class TecnicoController extends PortaleController
         $this->voce = 'referente';
         $testate = Testata::tutti();
         $scelta = $this->testataScelta($testate);
-        $this->vista('tecnico/referente', [
+        $this->vista('tecnico-referente', [
             'titolo' => 'Referente cliente · WolfPress',
             'testate' => $testate,
             'scelta' => $scelta,
@@ -221,7 +221,7 @@ final class TecnicoController extends PortaleController
     {
         $this->voce = 'ticket';
         $ticket = Ticket::tutti();
-        $this->vista('tecnico/ticket', [
+        $this->vista('tecnico-ticket', [
             'titolo' => 'Ticket di assistenza · WolfPress',
             'ticket' => $ticket,
             'conteggio' => Ticket::conta($ticket),
@@ -275,7 +275,7 @@ final class TecnicoController extends PortaleController
     {
         $this->voce = 'chat';
         $ticket = Ticket::tutti();
-        $this->vista('tecnico/chat', [
+        $this->vista('tecnico-chat', [
             'titolo' => 'Chat di assistenza · WolfPress',
             'ticket' => $ticket,
             'scelto' => $this->ticketScelto($ticket),

@@ -51,7 +51,7 @@ Servono le estensioni PHP `pdo_mysql`, `sodium`, `curl`, `mbstring`.
 
 ## Stripe
 
-Nella dashboard Stripe creare un webhook verso `https://TUO-DOMINIO/sito/index.php?r=sostieni/webhook` (oppure `https://TUO-DOMINIO/api/stripe/webhook` se si pubblicano le API) con gli eventi `checkout.session.completed`, `checkout.session.expired`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`, `customer.subscription.updated`, `customer.subscription.deleted`, `charge.refunded`, e copiare il segreto `whsec_...` nel `.env`.
+Nella dashboard Stripe creare un webhook verso `https://TUO-DOMINIO/sito/stripe-webhook.php` (oppure `https://TUO-DOMINIO/api/stripe/webhook` se si pubblicano le API) con gli eventi `checkout.session.completed`, `checkout.session.expired`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`, `customer.subscription.updated`, `customer.subscription.deleted`, `charge.refunded`, e copiare il segreto `whsec_...` nel `.env`.
 
 Tutti gli incassi arrivano sull'unico conto Stripe della piattaforma: per versare automaticamente a ogni giornale o politico serve Stripe Connect (non incluso). Le donazioni ai politici sono soggette alle norme sul finanziamento della politica: verificarle con un consulente prima di attivarle.
 

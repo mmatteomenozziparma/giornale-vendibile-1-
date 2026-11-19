@@ -1,7 +1,7 @@
 <?php
 /**
  * Avvio comune ai due front end (portale e sito).
- * Viene incluso da portale/index.php e da sito/index.php.
+ * Viene incluso da portale/avvio.php e da sito/avvio.php, cioè da ogni pagina.
  */
 declare(strict_types=1);
 

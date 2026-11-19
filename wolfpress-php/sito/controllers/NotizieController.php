@@ -20,7 +20,7 @@ final class NotizieController extends SitoController
             $titolo = Testata::nome($testata);
         }
 
-        $this->vista('notizie/elenco', [
+        $this->vista('notizie', [
             'titolo' => $titolo . ' · WolfPress',
             'intestazione' => $titolo,
             'articoli' => Articolo::filtra($sezione, $testata),
@@ -45,7 +45,7 @@ final class NotizieController extends SitoController
             static fn (array $a): bool => $a['id'] !== $articolo['id']
         ));
 
-        $this->vista('notizie/articolo', [
+        $this->vista('articolo', [
             'titolo' => $articolo['titolo'] . ' · WolfPress',
             'descrizione' => $articolo['sommario'],
             'articolo' => $articolo,

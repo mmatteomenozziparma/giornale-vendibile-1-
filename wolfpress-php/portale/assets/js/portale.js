@@ -3,7 +3,7 @@
  *
  * Il portale funziona come una normale applicazione PHP, ma questo script
  * intercetta i clic sui link e l'invio dei form: chiede al server solo il
- * contenuto interno della pagina (views/shell.php) e lo sostituisce dentro
+ * contenuto interno della pagina (senza <head> e script) e lo sostituisce dentro
  * #wp-shell, senza ricaricare il browser. Senza JavaScript tutto continua
  * a funzionare con i normali caricamenti di pagina.
  */
@@ -23,10 +23,10 @@
   function interno(url) {
     if (url.origin !== location.origin) return false;
     const file = url.pathname.slice(cartella.length);
-    return url.pathname.startsWith(cartella) && (file === '' || file === 'index.php');
+    return url.pathname.startsWith(cartella) && (file === '' || /^[a-z-]+\.php$/.test(file));
   }
 
-  /** Indirizzo senza ancora e senza "index.php", per confrontare due pagine. */
+  /** Indirizzo senza ancora (e senza "index.php", che è la pagina iniziale), per confrontare due pagine. */
   const chiave = (url) => url.pathname.replace(/index\.php$/, '') + url.search;
 
   async function carica(indirizzo, opzioni = {}) {
@@ -65,7 +65,7 @@
 
       // Dove posizionare la pagina dopo il cambio.
       const bersaglio = ancora && document.getElementById(ancora);
-      const stessaRotta = finale.searchParams.get('r') === prima.searchParams.get('r');
+      const stessaRotta = finale.pathname === prima.pathname;
       if (bersaglio) {
         bersaglio.scrollIntoView({ block: 'start' });
       } else if (opzioni.metodo === 'POST' && stessaRotta) {

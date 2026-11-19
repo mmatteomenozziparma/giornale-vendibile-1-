@@ -13,12 +13,20 @@ abstract class SitoController extends Controller
     protected function datiComuni(): array
     {
         $sessione = session_status() === PHP_SESSION_ACTIVE;
+        // Se il database non risponde la pagina (di errore) si vede lo stesso, con menu e footer.
+        try {
+            $sezioni = Articolo::sezioni();
+            $utente = Auth::utente();
+        } catch (Throwable) {
+            $sezioni = [];
+            $utente = null;
+        }
         return [
             'voce' => $this->voce,
-            'sezioniMenu' => Articolo::sezioni(),
+            'sezioniMenu' => $sezioni,
             'ricercaCorrente' => '',
             'descrizione' => 'WolfPress: notizie, politici e partiti in un unico sito.',
-            'utente' => Auth::utente(),
+            'utente' => $utente,
             'avviso' => $sessione ? Auth::leggiAvviso() : null,
         ];
     }

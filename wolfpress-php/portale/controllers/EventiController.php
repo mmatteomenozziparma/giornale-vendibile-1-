@@ -15,7 +15,7 @@ final class EventiController extends PortaleController
     public function index(): void
     {
         $organizza = in_array(Auth::ruolo(), ['politico', 'editore'], true);
-        $this->vista('eventi/elenco', [
+        $this->vista('eventi', [
             'titolo' => 'Eventi · WolfPress',
             'puoCreare' => $organizza,
             'organizzati' => Evento::organizzati(),
@@ -66,7 +66,7 @@ final class EventiController extends PortaleController
         foreach ($evento['invitati'] as $i) {
             $gia[$i['politico_id'] !== null ? 'politico_id' : 'giornalista_id'][(int) ($i['politico_id'] ?? $i['giornalista_id'])] = 1;
         }
-        $this->vista('eventi/scheda', [
+        $this->vista('evento', [
             'titolo' => $evento['titolo'] . ' · WolfPress',
             'evento' => $evento,
             'politici' => $evento['organizzo'] ? array_diff_key(Evento::politici(), $gia['politico_id']) : [],

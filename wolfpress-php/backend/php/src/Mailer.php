@@ -151,7 +151,10 @@ final class Mailer
     {
         $base = Config::get($tipo === 'user' ? 'SITO_URL' : 'PORTALE_URL');
         if ($base !== '') {
-            return "$base/index.php?r=" . ($tipo === 'user' ? 'account' : 'accesso') . "/$azione&token=$token";
+            // Stessi nomi di file nel sito e nel portale.
+            return $azione === 'verifica'
+                ? "$base/login.php?azione=verifica&token=$token"
+                : "$base/password.php?azione=nuova-password&token=$token";
         }
         return $azione === 'verifica'
             ? Config::get('APP_URL') . '/api/verifica-email?token=' . $token

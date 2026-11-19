@@ -1,23 +1,19 @@
 <?php
 /**
  * Controller di base: ogni controller dei due front end lo estende.
- * Il controller legge la richiesta, usa i modelli e sceglie la vista.
+ * Il controller legge la richiesta, usa i modelli e prepara i dati per il file di pagina.
  */
 declare(strict_types=1);
 
 abstract class Controller
 {
-    /** Cartella "views" del front end corrente. */
-    protected function cartellaViste(): string
+    /**
+     * Indica la pagina da mostrare (nome del file senza .php, es. 'notizie')
+     * e i dati che il suo HTML potrà usare come variabili.
+     */
+    protected function vista(string $pagina, array $dati = [], int $stato = 200): void
     {
-        return dirname($_SERVER['SCRIPT_FILENAME']) . '/views';
-    }
-
-    /** Mostra una vista dentro il layout. */
-    protected function vista(string $vista, array $dati = [], int $stato = 200): void
-    {
-        http_response_code($stato);
-        View::mostra($this->cartellaViste(), $vista, $dati + $this->datiComuni());
+        Pagina::mostra($pagina, $dati + $this->datiComuni(), $stato);
     }
 
     /** Dati disponibili in tutte le viste (ridefinibile). */

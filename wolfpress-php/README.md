@@ -33,8 +33,11 @@ Servono **PHP 8.1 o superiore** (estensioni `pdo_mysql`, `sodium`, `curl`, `mbst
 php -S localhost:8080 router.php
 ```
 
-- Sito pubblico: <http://localhost:8080/sito/>
-- Portale: <http://localhost:8080/portale/>
+- Sito pubblico: <http://localhost:8080/sito/> (login: `sito/login.php`, iscrizione: `sito/registrazione.php`)
+- Portale: <http://localhost:8080/portale/> (login: `portale/login.php`, iscrizione: `portale/registrazione.php`)
+
+Le pagine vanno aperte dal server (indirizzi `http://localhost...`), non con un doppio clic sul file:
+solo così il PHP viene eseguito.
 
 **Con XAMPP / MAMP**: copia la cartella `wolfpress-php` dentro `htdocs` e apri
 `http://localhost/wolfpress-php/sito/` e `http://localhost/wolfpress-php/portale/`.
@@ -43,25 +46,25 @@ La cartella `storage/` deve essere scrivibile: lì finiscono i loghi caricati da
 
 ## Come si entra
 
-**Portale** (`portale/?r=accesso`): email e password. Editori, giornalisti e politici si registrano da
+**Portale** (`portale/login.php`): email e password. Editori, giornalisti e politici si registrano da
 «Crea un account», confermano l'email dal link ricevuto e attendono l'approvazione di un tecnico
 (pagina «Account da approvare»); l'editore può approvare da sé i giornalisti della propria testata.
 Giornalisti e operatori possono anche essere creati dall'editore o da un tecnico: ricevono un'email
 con il link per scegliere la password. Un editore appena approvato crea per prima cosa la propria testata.
 
-**Eventi** (`portale/?r=eventi`): politici ed editori creano eventi, anche insieme (il co-organizzatore
+**Eventi** (`portale/eventi.php`): politici ed editori creano eventi, anche insieme (il co-organizzatore
 indicato deve confermare), invitano politici e giornalisti e possono annullarli; gli invitati accettano o
-rifiutano. Gli eventi pubblici compaiono in `sito/?r=eventi`, dove i lettori segnano la partecipazione.
+rifiutano. Gli eventi pubblici compaiono in `sito/eventi.php`, dove i lettori segnano la partecipazione.
 L'agenda nella scheda di un politico è l'elenco dei suoi eventi pubblici.
 
-**Altro nel portale**: il politico scrive i propri articoli (`portale/?r=politico/articoli`) e sceglie il
-partito; i tecnici gestiscono i partiti (`portale/?r=tecnico/partiti`); un editore può avere più testate e
+**Altro nel portale**: il politico scrive i propri articoli (`portale/politico-articoli.php`) e sceglie il
+partito; i tecnici gestiscono i partiti (`portale/tecnico-partiti.php`); un editore può avere più testate e
 passa dall'una all'altra dal menu in alto a destra; nel configuratore imposta i prezzi degli abbonamenti.
 
-**Sito** (`sito/?r=account`): i lettori si registrano e sono attivi appena confermano l'email. Da
+**Sito** (`sito/login.php`, `sito/registrazione.php`, `sito/account.php`): i lettori si registrano e sono attivi appena confermano l'email. Da
 «Segui o sostieni» (pagina Testate e schede dei politici) possono seguire, donare e abbonarsi; il
 pagamento avviene sulla pagina di Stripe. Il webhook da indicare a Stripe è
-`https://TUO-DOMINIO/sito/index.php?r=sostieni/webhook`.
+`https://TUO-DOMINIO/sito/stripe-webhook.php`.
 
 | Ruolo | Cosa può fare |
 | --- | --- |
@@ -70,17 +73,31 @@ pagamento avviene sulla pagina di Stripe. Il webhook da indicare a Stripe è
 | Politico | Pagina di candidatura e pagina di mandato: profilo, proposte o atti, agenda, contatti |
 | Operatore tecnico | Infrastruttura, personale tecnico, clienti e testate, referente cliente, coda dei ticket, chat e link video |
 
-## Struttura (MVC)
+## Struttura
+
+**Ogni pagina è un file `.php`** apribile dal browser, con dentro HTML + PHP e gli `include` di
+`header.php`, `menu.php` e `footer.php`:
+
+```php
+<?php
+require_once __DIR__ . '/avvio.php';     // avvio comune del front end
+extract(pagina(__FILE__));               // dati preparati dal controller
+require __DIR__ . '/header.php';         // <head>, stili, apertura di <body>
+require __DIR__ . '/menu.php';           // menu (e apertura di <main>)
+?>
+<h1>...HTML + PHP della pagina...</h1>
+<?php require __DIR__ . '/footer.php'; ?>
+```
 
 ```
 wolfpress-php/
 ├── index.php              porta al sito pubblico
-├── router.php             solo per "php -S": blocca app/, storage/, bin/, tests/ e backend/
+├── router.php             solo per "php -S": blocca le cartelle interne
 ├── .htaccess              stessa protezione su Apache
 ├── app/                   PARTE CONDIVISA
 │   ├── config.php         nome del sito, debug, posizione del backend
 │   ├── bootstrap.php      avvio comune, carica il backend, intestazioni di sicurezza
-│   ├── core/              Router, Controller, View, Auth, Accesso, Csrf, helpers
+│   ├── core/              Pagina, Controller, View, Auth, Accesso, Csrf, helpers
 │   ├── models/            MODEL (leggono e scrivono nel database): Articolo, ArticoloPolitico, Testata,
 │   │                      Ticket, Giornalista, Evento, Letture, Messaggio, Operatore, Politico,
 │   │                      Partito, Impostazioni
@@ -92,58 +109,71 @@ wolfpress-php/
 ├── tests/prova.php        prova automatica di portale e sito
 ├── storage/               loghi caricati (non va su GitHub)
 ├── assets/                Bootstrap, icone, css/base.css (stile comune)
-├── portale/               FRONT END 1 · single page application
-│   ├── index.php          unico ingresso (front controller)
-│   ├── controllers/       CONTROLLER: Accesso, Home, Configuratore, Cliente, Articoli,
-│   │                      Editore, Giornalista, Assistenza, Politico, Tecnico, Testata, Eventi…
-│   ├── views/             VIEW: layout.php, shell.php, menu.php, topbar.php, footer.php,
-│   │                      home.php, accesso.php, configuratore.php, cliente.php,
-│   │                      editore.php, giornalista.php, politico.php,
-│   │                      assistenza/*.php, tecnico/*.php, partials/*.php
-│   └── assets/            css/portale.css, js/portale.js
-└── sito/                  FRONT END 2 · sito pubblico
-    ├── index.php          unico ingresso (front controller)
-    ├── controllers/       CONTROLLER: Home, Notizie, Testate, Ricerca, Politica, Pagine,
-    │                      Account (lettori), Eventi, Sostieni (segui, dona, abbonati, webhook Stripe)
-    ├── views/             VIEW: layout.php, menu.php, footer.php, home.php, ricerca.php,
-    │                      testate.php, notizie/*.php, politica/*.php, partials/*.php
-    └── assets/            css/sito.css, js/sito.js
+├── sito/                  FRONT END 1 · sito pubblico
+│   ├── header.php, menu.php, footer.php     inclusi da ogni pagina
+│   ├── avvio.php, pagine.php                avvio comune ed elenco delle pagine
+│   ├── index.php (home), notizie.php, articolo.php, testate.php, politica.php, partito.php,
+│   │   politico.php, articolo-politico.php, eventi.php, ricerca.php, sostieni.php,
+│   │   login.php, registrazione.php, password.php, account.php,
+│   │   chi-siamo.php, privacy.php, accessibilita.php, grazie.php, annullato.php, errore.php
+│   ├── stripe-webhook.php                   chiamato da Stripe per confermare i pagamenti
+│   ├── controllers/       logica di ogni pagina (lettura dei dati, salvataggi, permessi)
+│   ├── parti/             pezzi di pagina riutilizzati (scheda articolo, mappa, modelli)
+│   └── assets/            css/sito.css, js/sito.js
+└── portale/               FRONT END 2 · single page application
+    ├── header.php, menu.php, footer.php     inclusi da ogni pagina
+    ├── avvio.php, pagine.php                avvio comune (sessione, permessi) ed elenco delle pagine
+    ├── index.php (le tue aree), login.php, registrazione.php, password.php, testata.php,
+    │   configuratore.php, cliente.php, articoli.php, articolo.php, editore.php, redattore.php,
+    │   giornalista.php, politico.php, politico-articoli.php, eventi.php, evento.php,
+    │   assistenza.php, assistenza-chat.php, tecnico.php, tecnico-personale.php,
+    │   tecnico-account.php, tecnico-partiti.php, tecnico-clienti.php, tecnico-referente.php,
+    │   tecnico-ticket.php, tecnico-chat.php, errore.php, logo.php
+    ├── controllers/       logica di ogni pagina
+    ├── parti/             pezzi di pagina riutilizzati (barra in alto, ticket, chat, agenda)
+    └── assets/            css/portale.css, js/portale.js
 ```
 
-**Come gira una richiesta**: `index.php?r=tecnico/salva-stato` → il `Router` apre
-`TecnicoController` e chiama `salvaStato()` → il controller usa i **model** per leggere o salvare →
-sceglie una **view** → la `View` la inserisce nel layout.
+**Come gira una richiesta**: il browser apre `portale/tecnico-personale.php` → il file chiama
+`pagina(__FILE__)`, che in `pagine.php` trova il controller (`TecnicoController::personale()`) → il
+controller controlla i permessi, usa i **model** e restituisce i dati → il file prosegue con
+`header.php`, `menu.php`, il proprio HTML e `footer.php`.
 
-**Aggiungere una pagina**: 1) un metodo pubblico nel controller, 2) un file in `views/`,
-3) una riga in `views/menu.php`.
+**I form** chiamano un'azione dello stesso controller con `?azione=`: per esempio il modulo di login
+invia a `login.php?azione=entra`, quello di un nuovo operatore a `tecnico.php?azione=salva-operatore`.
+L'azione salva e rimanda alla pagina giusta.
+
+**Aggiungere una pagina**: 1) copiare un file di pagina esistente e cambiarne l'HTML, 2) aggiungere una
+riga in `pagine.php`, 3) scrivere nel controller il metodo che prepara i dati, 4) una voce in `menu.php`.
 
 ### Perché il portale è una single page application
 
 `portale/assets/js/portale.js` intercetta link e form, chiede al server solo la parte interna
-della pagina (`views/shell.php`) e la sostituisce senza ricaricare il browser; indirizzi e tasto
+della pagina (`header.php` e `footer.php` in quel caso non scrivono `<head>` e script) e la sostituisce
+senza ricaricare il browser; indirizzi e tasto
 «indietro» continuano a funzionare. Il rendering resta tutto in PHP. Senza JavaScript il portale
 funziona comunque, con i normali caricamenti di pagina.
 
 ## Corrispondenza con le schermate del PDF
 
-| Pagine PDF | Schermata | Indirizzo | Vista |
-| --- | --- | --- | --- |
-| 02–03 | Configuratore della testata | `portale/?r=configuratore` | `configuratore.php` |
-| 04–05 | Dashboard cliente | `portale/?r=cliente` | `cliente.php` |
-| 06, 13, 16 | Accesso (ora unico, con email e password) | `portale/?r=accesso` | `accesso.php` |
-| 07–08 | Area editore | `portale/?r=editore` | `editore.php` |
-| 09–11 | Assistenza editore e apertura ticket | `portale/?r=assistenza` | `assistenza/ticket.php` |
-| 12 | Chat dell'editore | `portale/?r=assistenza/chat` | `assistenza/chat.php` |
-| 14–15 | Profilo giornalista | `portale/?r=giornalista` | `giornalista.php` |
-| 17 | Infrastruttura | `portale/?r=tecnico` | `tecnico/infrastruttura.php` |
-| 18 | Personale tecnico | `portale/?r=tecnico/personale` | `tecnico/personale.php` |
-| 19–20 | Clienti e testate | `portale/?r=tecnico/clienti` | `tecnico/clienti.php` |
-| 21 | Referente cliente e storico | `portale/?r=tecnico/referente` | `tecnico/referente.php` |
-| 22–23 | Coda tecnica dei ticket | `portale/?r=tecnico/ticket` | `tecnico/ticket.php` |
-| 24–25 | Chat tecnica e link video | `portale/?r=tecnico/chat` | `tecnico/chat.php` |
-| 26 | Sezione regionale del partito | `sito/?r=politica/partito` | `politica/partito.php` |
-| 27 | Indice dei modelli | `sito/?r=politica` | `politica/index.php` |
-| 28–47 | Candidatura e mandato (5 livelli) | `sito/?r=politica/profilo&livello=…&tipo=…` | `politica/profilo.php` |
+| Pagine PDF | Schermata | File |
+| --- | --- | --- |
+| 02–03 | Configuratore della testata | `portale/configuratore.php` |
+| 04–05 | Dashboard cliente | `portale/cliente.php` |
+| 06, 13, 16 | Accesso (ora unico, con email e password) | `portale/login.php` |
+| 07–08 | Area editore | `portale/editore.php` |
+| 09–11 | Assistenza editore e apertura ticket | `portale/assistenza.php` |
+| 12 | Chat dell'editore | `portale/assistenza-chat.php` |
+| 14–15 | Profilo giornalista | `portale/giornalista.php` |
+| 17 | Infrastruttura | `portale/tecnico.php` |
+| 18 | Personale tecnico | `portale/tecnico-personale.php` |
+| 19–20 | Clienti e testate | `portale/tecnico-clienti.php` |
+| 21 | Referente cliente e storico | `portale/tecnico-referente.php` |
+| 22–23 | Coda tecnica dei ticket | `portale/tecnico-ticket.php` |
+| 24–25 | Chat tecnica e link video | `portale/tecnico-chat.php` |
+| 26 | Sezione regionale del partito | `sito/partito.php` |
+| 27 | Indice dei modelli | `sito/politica.php` |
+| 28–47 | Candidatura e mandato (5 livelli) | `sito/politico.php?livello=…&tipo=…` |
 
 **Aggiunte rispetto al PDF**: area politico nel portale, scrittura degli articoli con flusso
 bozza → revisione → pubblicazione, e nel sito home, notizie, testate e ricerca unica.
@@ -176,13 +206,13 @@ i dati della propria testata, pagamenti solo su Stripe con conferma via webhook 
 Testo sempre protetto in uscita (`e()`), codice anti-CSRF su ogni form, permessi per ruolo lato
 server, controllo dei dati inviati, logo verificato sul contenuto reale del file (PNG, JPEG, WebP,
 massimo 1 MB), link esterni solo `https://`, Content-Security-Policy senza script esterni,
-cartelle `app/`, `storage/`, `bin/`, `tests/` e `backend/` non raggiungibili dal browser, nessun cookie sulle
+cartelle `app/`, `storage/`, `bin/`, `tests/`, `backend/` e le cartelle `controllers/`, `core/`, `parti/` dei due front end non raggiungibili dal browser, nessun cookie sulle
 pagine di lettura del sito.
 
 ## Prova automatica
 
 `php tests/prova.php` (istruzioni in cima al file, su un database **di prova**) avvia il server e una
-finta API Stripe ed esegue 149 controlli su portale e sito: accessi, permessi per ruolo, articoli, ticket,
+finta API Stripe ed esegue 158 controlli su portale e sito: accessi, permessi per ruolo, articoli, ticket,
 approvazioni, eventi e inviti, partiti, più testate, registrazione dei lettori, donazione, abbonamento e webhook.
 
 ## Licenze di terze parti

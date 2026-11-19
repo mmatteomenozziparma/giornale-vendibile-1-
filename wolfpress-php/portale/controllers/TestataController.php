@@ -12,7 +12,7 @@ final class TestataController extends PortaleController
 
     public function index(): void
     {
-        $this->vista('testata_nuova', ['titolo' => 'Nuova testata · WolfPress', 'prima' => Auth::testata() === '']);
+        $this->vista('testata', ['titolo' => 'Nuova testata · WolfPress', 'prima' => Auth::testata() === '']);
     }
 
     /** L'editore con più testate sceglie su quale lavorare. */

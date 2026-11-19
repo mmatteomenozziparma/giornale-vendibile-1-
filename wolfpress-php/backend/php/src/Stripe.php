@@ -52,7 +52,7 @@ final class Stripe
     {
         $sito = Config::get('SITO_URL');
         if ($sito !== '') {
-            return "$sito/index.php?r=sostieni/" . ($riuscito ? 'grazie' : 'annullato');
+            return "$sito/" . ($riuscito ? 'grazie.php' : 'annullato.php');
         }
         $frontend = Config::obbligatorio('FRONTEND_URL');
         return $riuscito

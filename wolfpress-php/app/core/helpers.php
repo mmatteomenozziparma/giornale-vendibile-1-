@@ -4,6 +4,15 @@
  */
 declare(strict_types=1);
 
+/**
+ * Da usare in cima a ogni file di pagina: extract(pagina(__FILE__));
+ * Esegue il controller della pagina e restituisce i dati per il suo HTML (vedi app/core/Pagina.php).
+ */
+function pagina(string $file): array
+{
+    return Pagina::avvia($file);
+}
+
 /** Protegge un testo prima di stamparlo in HTML (anti XSS). */
 function e($valore): string
 {
@@ -16,30 +25,36 @@ function config(string $chiave, $predefinito = null)
     return $GLOBALS['wp_config'][$chiave] ?? $predefinito;
 }
 
-/** Costruisce l'indirizzo di una rotta del front end corrente: url('notizie/articolo', ['slug' => 'x']). */
+/** Indirizzo di una pagina o azione del front end corrente: url('notizie/articolo', ['slug' => 'x']) → articolo.php?slug=x */
 function url(string $rotta = '', array $parametri = [], string $ancora = ''): string
 {
-    return costruisci_url(APP_BASE, $rotta, $parametri, $ancora);
+    return costruisci_url(APP_BASE, Pagina::fronte(), $rotta, $parametri, $ancora);
 }
 
 /** Indirizzo di una rotta del sito pubblico (usabile anche dal portale). */
 function url_sito(string $rotta = '', array $parametri = [], string $ancora = ''): string
 {
-    return costruisci_url(ROOT_BASE . '/sito', $rotta, $parametri, $ancora);
+    return costruisci_url(ROOT_BASE . '/sito', 'sito', $rotta, $parametri, $ancora);
 }
 
 /** Indirizzo di una rotta del portale (usabile anche dal sito). */
 function url_portale(string $rotta = '', array $parametri = [], string $ancora = ''): string
 {
-    return costruisci_url(ROOT_BASE . '/portale', $rotta, $parametri, $ancora);
+    return costruisci_url(ROOT_BASE . '/portale', 'portale', $rotta, $parametri, $ancora);
 }
 
-function costruisci_url(string $base, string $rotta, array $parametri, string $ancora): string
+/**
+ * Ogni rotta "controller/azione" porta a un file .php: quello della pagina
+ * (es. 'notizie/articolo' → articolo.php) oppure, per le azioni dei form,
+ * la pagina del controller con ?azione= (es. 'accesso/entra' → login.php?azione=entra).
+ */
+function costruisci_url(string $base, string $fronte, string $rotta, array $parametri, string $ancora): string
 {
-    $query = $rotta !== '' ? ['r' => $rotta] + $parametri : $parametri;
-    $indirizzo = $base . '/index.php';
+    [$file, $azione] = Pagina::indirizzo($fronte, $rotta);
+    $query = ($azione !== null ? ['azione' => $azione] : []) + $parametri;
+    $indirizzo = $base . '/' . $file;
     if ($query) {
-        $indirizzo .= '?' . str_replace('%2F', '/', http_build_query($query));
+        $indirizzo .= '?' . http_build_query($query);
     }
     return $indirizzo . ($ancora !== '' ? '#' . $ancora : '');
 }
