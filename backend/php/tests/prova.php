@@ -251,8 +251,9 @@ for ($i = 0; $i < 6; $i++) {
 verifica('account bloccato dopo troppi errori (anche con la password giusta)', $forza->post('accesso', ['email' => "politico$s@prova.example", 'password' => 'Password-di-prova-1'])[0] === 401);
 
 $ultimo = 0;
+$raffica = new Cliente();
 for ($i = 0; $i < 6; $i++) {
-    $ultimo = registra($anonimo, 'user', 'Raffica', "raffica$i$s@prova.example")[0];
+    $ultimo = registra($raffica, 'user', 'Raffica', "raffica$i$s@prova.example")[0];
 }
 verifica('troppe registrazioni dallo stesso IP: fermate (429)', $ultimo === 429, $ultimo);
 
