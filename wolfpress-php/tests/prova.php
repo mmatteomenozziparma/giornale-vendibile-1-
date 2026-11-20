@@ -98,7 +98,7 @@ final class Browser
         return "$fronte/" . ($file ?? 'index') . '.php' . ($query !== '' ? "?$query" : '');
     }
 
-    public function chiama(string $percorso, ?array $campi, bool $segui, array $intestazioni = [], ?string $grezzo = null): string
+    public function chiama(string $percorso, ?array $campi, bool $segui, array $intestazioni = [], ?string $grezzo = null, bool $conFile = false): string
     {
         $c = curl_init('http://127.0.0.1:8080/' . self::indirizzo($percorso));
         curl_setopt_array($c, [
@@ -106,7 +106,8 @@ final class Browser
             CURLOPT_FOLLOWLOCATION => $segui, CURLOPT_PROXY => '', CURLOPT_HEADER => true, CURLOPT_HTTPHEADER => $intestazioni,
         ]);
         if ($campi !== null || $grezzo !== null) {
-            curl_setopt($c, CURLOPT_POSTFIELDS, $grezzo ?? http_build_query($campi));
+            // Con un file allegato curl invia il form come multipart; altrimenti come normale form.
+            curl_setopt($c, CURLOPT_POSTFIELDS, $grezzo ?? ($conFile ? $campi : http_build_query($campi)));
         }
         $risposta = (string) curl_exec($c);
         $this->stato = (int) curl_getinfo($c, CURLINFO_RESPONSE_CODE);
@@ -347,7 +348,7 @@ $html = $editore->post('portale/index.php?r=eventi', 'portale/index.php?r=eventi
 verifica('la testata crea un evento riservato con un politico co-organizzatore', str_contains($html, 'Evento creato'), $html);
 $idRiservato = (string) Database::valore('SELECT id FROM eventi WHERE titolo = ?', ["Riunione riservata $s"]);
 verifica('l\'evento riservato non è sul sito', !str_contains($visitatore->get('sito/index.php?r=eventi'), "Riunione riservata $s"));
-$html = $lettore->post('sito/index.php?r=eventi', 'sito/index.php?r=eventi/partecipa', ['id' => $idRiservato]);
+$html = $lettore->post('sito/index.php?r=account', 'sito/index.php?r=eventi/partecipa', ['id' => $idRiservato]);
 verifica('il lettore non può partecipare a un evento riservato', str_contains($html, 'riservato agli invitati'), $html);
 $ada->get("portale/index.php?r=eventi/scheda&id=$idRiservato");
 verifica('chi non c\'entra non apre la scheda riservata', $ada->stato === 404);
@@ -408,6 +409,155 @@ verifica('le letture degli articoli vengono contate', (int) Database::valore('SE
     && (int) Database::valore('SELECT letture FROM letture_giornaliere WHERE giornale_id = ? AND giorno = ?', [$idTestata, (new DateTimeImmutable('now', new DateTimeZone('Europe/Rome')))->format('Y-m-d')]) >= 2);
 $html = $editore->get('portale/index.php?r=cliente');
 verifica('l\'area cliente mostra le letture reali', $editore->stato === 200 && str_contains($html, 'Ultimi sette giorni'), $html);
+
+echo "== Atlante Civico: clienti, permessi, fascicoli ==\n";
+/** Carica un file con un form (multipart), leggendo il codice CSRF dalla pagina indicata. */
+$carica = static function (Browser $b, string $pagina, string $azione, array $campi, string $campoFile, string $contenuto, string $nome) {
+    preg_match('/name="_csrf" value="([a-f0-9]{64})"/', $b->get($pagina), $m);
+    $temporaneo = tempnam(sys_get_temp_dir(), 'wp') . '-' . $nome;
+    file_put_contents($temporaneo, $contenuto);
+    return $b->chiama($azione, ['_csrf' => $m[1] ?? ''] + $campi + [$campoFile => new CURLFile($temporaneo, null, $nome)], true, [], null, true);
+};
+$pdf = "%PDF-1.4\n1 0 obj<</Type/Catalog>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n";
+$idComitato = (string) Database::valore("SELECT id FROM clienti_atlante WHERE denominazione = 'Comitato per Ada Valleri'");
+$idPartitoCliente = (string) Database::valore("SELECT id FROM clienti_atlante WHERE denominazione = 'Alleanza Valdora'");
+$html = $tecnico->get('portale/index.php?r=atlante');
+verifica('staff: vede tutti i clienti di Atlante Civico', $tecnico->stato === 200 && str_contains($html, 'Comitato per Ada Valleri') && str_contains($html, 'Lista civica Valleverde Insieme'), $html);
+$html = $ada->get('portale/index.php?r=atlante');
+verifica('referente: vede solo il cliente per cui ha un mandato verificato', $ada->stato === 200 && str_contains($html, 'Comitato per Ada Valleri') && !str_contains($html, 'Lista civica Valleverde Insieme') && !str_contains($html, 'Nuovo cliente'), $html);
+$ada->get("portale/index.php?r=atlante/cliente&id=$idPartitoCliente");
+verifica('referente: il cliente di un altro risulta inesistente', $ada->stato === 404);
+verifica('il tentativo negato finisce nel registro', (int) Database::valore("SELECT COUNT(*) FROM audit_atlante WHERE cliente_id = ? AND esito = 'negata'", [$idPartitoCliente]) >= 1);
+$html = $editore->get('portale/index.php?r=atlante');
+verifica('chi non ha mandati non vede nessun cliente', $editore->stato === 200 && !str_contains($html, 'Comitato per Ada Valleri'), $html);
+$editore->get('portale/index.php?r=atlante/modelli');
+verifica('i modelli MASTER sono solo per lo staff', $editore->stato === 404);
+$html = $ada->post("portale/index.php?r=atlante/cliente&id=$idComitato", 'portale/index.php?r=atlante/salva-cliente', ['id' => $idComitato, 'tipo' => 'comitato', 'denominazione' => 'Manomesso']);
+verifica('un referente non modifica l\'anagrafica', Database::valore('SELECT denominazione FROM clienti_atlante WHERE id = ?', [$idComitato]) === 'Comitato per Ada Valleri');
+
+$html = $tecnico->post('portale/index.php?r=atlante', 'portale/index.php?r=atlante/salva-cliente', ['id' => '0', 'tipo' => 'candidato', 'denominazione' => "Candidato $s", 'codice_fiscale' => 'RSSMRA80A01H501U', 'partita_iva' => '', 'pec' => "pec$s@prova.example", 'sede' => 'Via Roma 1, Parma']);
+$idCliente = (string) Database::valore('SELECT id FROM clienti_atlante WHERE denominazione = ?', ["Candidato $s"]);
+verifica('staff crea un cliente', $idCliente !== '' && str_contains($html, 'RSSMRA80A01H501U'), $html);
+$riga = Database::riga('SELECT * FROM clienti_atlante WHERE id = ?', [$idCliente]);
+verifica('codice fiscale, PEC e sede cifrati nel database', !str_contains(implode('|', array_map('strval', $riga)), 'RSSMRA80') && !str_contains(implode('|', array_map('strval', $riga)), 'Via Roma') && Cifratura::decifra($riga['codice_fiscale_cifrato']) === 'RSSMRA80A01H501U');
+$html = $tecnico->post('portale/index.php?r=atlante', 'portale/index.php?r=atlante/salva-cliente', ['id' => '0', 'tipo' => 'candidato', 'denominazione' => "Doppione $s", 'codice_fiscale' => 'rssmra80a01h501u']);
+verifica('stesso codice fiscale: cliente doppio rifiutato', str_contains($html, 'Esiste già un cliente'), $html);
+$base = "portale/index.php?r=atlante/cliente&id=$idCliente";
+$html = $tecnico->post($base, 'portale/index.php?r=atlante/referente', ['cliente' => $idCliente, 'email' => "pia$s@prova.example", 'ruolo' => 'firmatario', 'evidenza' => 'Delega prot. 7']);
+verifica('staff collega un referente (account esistente)', str_contains($html, 'Referente aggiunto'), $html);
+$politico->get($base);
+verifica('referente non ancora verificato: non vede il cliente', $politico->stato === 404);
+$idRef = (string) Database::valore('SELECT id FROM referenti_clienti_atlante WHERE cliente_id = ?', [$idCliente]);
+$tecnico->post($base, 'portale/index.php?r=atlante/stato-referente', ['cliente' => $idCliente, 'referente' => $idRef, 'cosa' => 'verifica']);
+$html = $politico->get($base);
+verifica('dopo la verifica del mandato il referente vede il cliente', $politico->stato === 200 && str_contains($html, "Candidato $s") && str_contains($html, 'RSSMRA80A01H501U'), $html);
+$html = $tecnico->post($base, 'portale/index.php?r=atlante/sito', ['cliente' => $idCliente, 'sito' => '0', 'nome' => "Sito $s", 'dominio' => "sito$s.example.it", 'tipo_sito' => 'comunicazione_politica']);
+$idSito = (string) Database::valore('SELECT id FROM siti_atlante WHERE cliente_id = ?', [$idCliente]);
+verifica('staff crea un sito: tutte le funzioni facoltative sono spente', $idSito !== '' && (int) Database::valore('SELECT COUNT(*) FROM funzionalita_siti_atlante WHERE sito_id = ?', [$idSito]) === 0, $html);
+$html = $tecnico->post($base, 'portale/index.php?r=atlante/stato-sito', ['cliente' => $idCliente, 'sito' => $idSito, 'stato' => 'attivo']);
+verifica('il sito non si attiva se il cliente non è verificato', str_contains($html, 'solo dopo la verifica del cliente'), $html);
+$tecnico->post($base, 'portale/index.php?r=atlante/stato-cliente', ['cliente' => $idCliente, 'stato' => 'verificato']);
+$tecnico->post($base, 'portale/index.php?r=atlante/stato-sito', ['cliente' => $idCliente, 'sito' => $idSito, 'stato' => 'attivo']);
+$riga = Database::riga('SELECT stato, ambiente, attivato_il FROM siti_atlante WHERE id = ?', [$idSito]);
+verifica('cliente verificato: il sito va in produzione con data di attivazione', $riga['stato'] === 'attivo' && $riga['ambiente'] === 'produzione' && $riga['attivato_il'] !== null, $riga);
+$html = $politico->post($base, 'portale/index.php?r=atlante/richiedi-funzione', ['cliente' => $idCliente, 'sito' => $idSito, 'codice' => 'newsletter']);
+verifica('il referente chiede la newsletter: resta «richiesta», non attiva', str_contains($html, 'Richiesta inviata') && Database::valore("SELECT stato FROM funzionalita_siti_atlante WHERE sito_id = ? AND codice = 'newsletter'", [$idSito]) === 'richiesta', $html);
+$politico->post($base, 'portale/index.php?r=atlante/stato-funzione', ['cliente' => $idCliente, 'sito' => $idSito, 'codice' => 'newsletter', 'stato' => 'attiva']);
+verifica('il referente non può attivarsela da solo', Database::valore("SELECT stato FROM funzionalita_siti_atlante WHERE sito_id = ? AND codice = 'newsletter'", [$idSito]) === 'richiesta');
+$tecnico->post($base, 'portale/index.php?r=atlante/stato-funzione', ['cliente' => $idCliente, 'sito' => $idSito, 'codice' => 'newsletter', 'stato' => 'attiva', 'evidenza' => 'Verifica consensi del 20/11']);
+$riga = Database::riga("SELECT * FROM funzionalita_siti_atlante WHERE sito_id = ? AND codice = 'newsletter'", [$idSito]);
+verifica('lo staff la attiva: restano chi ha autorizzato e quando', $riga['stato'] === 'attiva' && $riga['autorizzato_da'] !== null && $riga['attivato_il'] !== null, $riga);
+$html = $tecnico->post($base, 'portale/index.php?r=atlante/offerta', ['cliente' => $idCliente, 'codice_offerta' => "OFF-$s", 'sito_id' => $idSito, 'attivazione' => '450', 'canone' => '39,90', 'periodicita' => 'mensile']);
+$idOfferta = (string) Database::valore('SELECT id FROM offerte_atlante WHERE codice_offerta = ?', ["OFF-$s"]);
+verifica('offerta creata con importi in centesimi', (int) Database::valore('SELECT canone_centesimi FROM offerte_atlante WHERE id = ?', [$idOfferta]) === 3990 && str_contains($html, '39,90'), $html);
+$tecnico->post($base, 'portale/index.php?r=atlante/stato-offerta', ['cliente' => $idCliente, 'offerta' => $idOfferta, 'stato' => 'accettata']);
+verifica('lo staff non può accettare l\'offerta al posto del cliente', Database::valore('SELECT stato FROM offerte_atlante WHERE id = ?', [$idOfferta]) === 'bozza');
+$tecnico->post($base, 'portale/index.php?r=atlante/stato-offerta', ['cliente' => $idCliente, 'offerta' => $idOfferta, 'stato' => 'inviata']);
+$html = $politico->post($base, 'portale/index.php?r=atlante/stato-offerta', ['cliente' => $idCliente, 'offerta' => $idOfferta, 'stato' => 'accettata']);
+verifica('il firmatario accetta l\'offerta inviata', Database::valore('SELECT stato FROM offerte_atlante WHERE id = ?', [$idOfferta]) === 'accettata', $html);
+$tecnico->post($base, 'portale/index.php?r=atlante/salva-campo', ['cliente' => $idCliente, 'chiave' => 'iban', 'valore' => 'IT60X0542811101000000123456', 'riservato' => '1']);
+verifica('campo riservato cifrato nel database', (int) Database::valore("SELECT COUNT(*) FROM campi_clienti_atlante WHERE cliente_id = ? AND valore_pubblico IS NULL AND valore_cifrato NOT LIKE '%IT60X%'", [$idCliente]) === 1);
+$tecnico->post($base, 'portale/index.php?r=atlante/verifica', ['cliente' => $idCliente, 'oggetto' => 'dpia', 'sito_id' => $idSito]);
+$idVerifica = (string) Database::valore('SELECT id FROM verifiche_atlante WHERE cliente_id = ?', [$idCliente]);
+$html = $tecnico->post($base, 'portale/index.php?r=atlante/esito-verifica', ['cliente' => $idCliente, 'verifica' => $idVerifica, 'esito' => 'conclusa', 'motivazione' => '']);
+verifica('una verifica non si chiude senza motivazione', str_contains($html, 'Campo obbligatorio: motivazione') && Database::valore('SELECT esito FROM verifiche_atlante WHERE id = ?', [$idVerifica]) === 'da_fare', $html);
+$tecnico->post($base, 'portale/index.php?r=atlante/esito-verifica', ['cliente' => $idCliente, 'verifica' => $idVerifica, 'esito' => 'conclusa', 'motivazione' => 'DPIA non necessaria: nessun trattamento su larga scala.', 'evidenza' => 'Verbale 12/2026']);
+verifica('verifica conclusa con motivazione e validatore', Database::valore('SELECT validata_da FROM verifiche_atlante WHERE id = ? AND esito = ?', [$idVerifica, 'conclusa']) !== null);
+
+echo "== Atlante Civico: modelli, documenti, firme ==\n";
+$html = $tecnico->post('portale/index.php?r=atlante/modelli', 'portale/index.php?r=atlante/modello', ['codice' => "contratto-$s", 'titolo' => "Contratto $s", 'categoria' => 'contratto', 'destinatario' => 'candidato']);
+$idModello = (string) Database::valore('SELECT id FROM modelli_documentali_master WHERE titolo = ?', ["Contratto $s"]);
+verifica('staff aggiunge un modello al catalogo', $idModello !== '' && str_contains($html, "Contratto $s"), $html);
+$html = $carica($tecnico, 'portale/index.php?r=atlante/modelli', 'portale/index.php?r=atlante/versione', ['modello' => $idModello, 'versione' => '1.0'], 'file', '<?php echo 1;', 'finto.pdf');
+verifica('un file che non è un PDF viene rifiutato anche se si chiama .pdf', str_contains($html, 'Tipo di file non ammesso'), $html);
+$html = $carica($tecnico, 'portale/index.php?r=atlante/modelli', 'portale/index.php?r=atlante/versione', ['modello' => $idModello, 'versione' => '1.0'], 'file', $pdf, 'modello.pdf');
+$versione = Database::riga('SELECT * FROM versioni_modelli_master WHERE modello_id = ?', [$idModello]);
+verifica('versione caricata: impronta SHA-256 del contenuto', $versione !== null && $versione['sha256'] === hash('sha256', $pdf), $html);
+$fileArchivio = "$backend/storage/" . substr($versione['file_rif'], 0, strrpos($versione['file_rif'], '.')) . '.bin';
+verifica('il file in archivio è cifrato', is_file($fileArchivio) && !str_contains((string) file_get_contents($fileArchivio), '%PDF'));
+verifica('l\'archivio non è raggiungibile dal web', $visitatore->get('backend/php/storage/' . basename(dirname($fileArchivio)) . '/' . basename($fileArchivio)) === 'Accesso negato');
+$tecnico->post($base, 'portale/index.php?r=atlante/crea-fascicolo', ['cliente' => $idCliente, 'codice' => "F-$s", 'titolo' => "Fascicolo $s", 'sito_id' => $idSito]);
+$idFascicolo = (string) Database::valore('SELECT id FROM fascicoli_atlante WHERE codice = ?', [strtoupper("F-$s")]);
+$fasc = "portale/index.php?r=atlante/fascicolo&id=$idFascicolo";
+$html = $tecnico->post($fasc, 'portale/index.php?r=atlante/documento', ['fascicolo' => $idFascicolo, 'versione' => $versione['id']]);
+verifica('una versione non approvata non genera documenti', str_contains($html, 'solo versioni approvate'), $html);
+$tecnico->post('portale/index.php?r=atlante/modelli', 'portale/index.php?r=atlante/stato-versione', ['versione' => $versione['id'], 'stato' => 'da_verificare']);
+$tecnico->post('portale/index.php?r=atlante/modelli', 'portale/index.php?r=atlante/stato-versione', ['versione' => $versione['id'], 'stato' => 'approvata']);
+$html = $tecnico->post($fasc, 'portale/index.php?r=atlante/documento', ['fascicolo' => $idFascicolo, 'versione' => $versione['id']]);
+$idDoc = (string) Database::valore('SELECT id FROM documenti_atlante WHERE fascicolo_id = ?', [$idFascicolo]);
+verifica('documento creato dalla versione approvata', $idDoc !== '' && str_contains($html, "Contratto $s"), $html);
+$html = $tecnico->post($fasc, 'portale/index.php?r=atlante/avanza-documento', ['fascicolo' => $idFascicolo, 'documento' => $idDoc, 'cosa' => 'approva']);
+verifica('non si approva un documento senza file e senza verifica', str_contains($html, 'va verificato'), $html);
+$carica($tecnico, $fasc, 'portale/index.php?r=atlante/carica-documento', ['fascicolo' => $idFascicolo, 'documento' => $idDoc], 'file', $pdf . "compilato $s", 'contratto.pdf');
+$tecnico->post($fasc, 'portale/index.php?r=atlante/avanza-documento', ['fascicolo' => $idFascicolo, 'documento' => $idDoc, 'cosa' => 'verifica']);
+$tecnico->post($fasc, 'portale/index.php?r=atlante/avanza-documento', ['fascicolo' => $idFascicolo, 'documento' => $idDoc, 'cosa' => 'approva']);
+verifica('file caricato, verificato e approvato: pronto per la firma', Database::valore('SELECT stato FROM documenti_atlante WHERE id = ?', [$idDoc]) === 'pronto_firma');
+$html = $tecnico->post($fasc, 'portale/index.php?r=atlante/avanza-documento', ['fascicolo' => $idFascicolo, 'documento' => $idDoc, 'cosa' => 'firmato']);
+verifica('non è «firmato» senza le firme verificate', str_contains($html, 'Servono una firma del cliente e una del fornitore'), $html);
+foreach (['cliente', 'fornitore'] as $parte) {
+    $carica($tecnico, $fasc, 'portale/index.php?r=atlante/firma', ['fascicolo' => $idFascicolo, 'documento' => $idDoc, 'parte' => $parte, 'firmato_il' => date('Y-m-d')], 'prova', $pdf . "firma $parte", 'firma.pdf');
+}
+$tecnico->post($fasc, 'portale/index.php?r=atlante/avanza-documento', ['fascicolo' => $idFascicolo, 'documento' => $idDoc, 'cosa' => 'firmato']);
+verifica('firme registrate ma non verificate: ancora non firmato', Database::valore('SELECT stato FROM documenti_atlante WHERE id = ?', [$idDoc]) === 'pronto_firma');
+foreach (Database::righe('SELECT id FROM firme_documenti_atlante WHERE documento_id = ?', [$idDoc]) as $f) {
+    $tecnico->post($fasc, 'portale/index.php?r=atlante/verifica-firma', ['fascicolo' => $idFascicolo, 'firma' => $f['id']]);
+}
+$tecnico->post($fasc, 'portale/index.php?r=atlante/avanza-documento', ['fascicolo' => $idFascicolo, 'documento' => $idDoc, 'cosa' => 'firmato']);
+verifica('con le due firme verificate il documento è firmato', Database::valore('SELECT stato FROM documenti_atlante WHERE id = ?', [$idDoc]) === 'firmato');
+$scaricato = $politico->get("portale/index.php?r=atlante/scarica&cosa=documento&id=$idDoc");
+verifica('il firmatario scarica il documento (decifrato)', $politico->stato === 200 && $scaricato === $pdf . "compilato $s");
+$ada->get("portale/index.php?r=atlante/scarica&cosa=documento&id=$idDoc");
+verifica('il referente di un altro cliente non lo scarica', $ada->stato === 404);
+$politico->get("portale/index.php?r=atlante/scarica&cosa=versione&id={$versione['id']}");
+verifica('il modello MASTER non è scaricabile dai referenti', $politico->stato === 404);
+$tecnico->post($base, 'portale/index.php?r=atlante/stato-referente', ['cliente' => $idCliente, 'referente' => $idRef, 'cosa' => 'revoca']);
+$politico->get($fasc);
+verifica('mandato revocato: accesso tolto subito', $politico->stato === 404);
+$html = $tecnico->get($base);
+verifica('registro delle operazioni visibile allo staff', str_contains($html, 'Registro delle operazioni') && str_contains($html, 'scaricamento') && (int) Database::valore('SELECT COUNT(*) FROM audit_atlante WHERE cliente_id = ?', [$idCliente]) > 15, $html);
+
+echo "== Menu per contesto ==\n";
+$html = $tecnico->get('portale/index.php?r=tecnico');
+verifica('portale, tecnico: contesto WolfPress con le tre schede', str_contains($html, 'wp-contesto-wolfpress') && str_contains($html, 'Piattaforma del fornitore') && substr_count($html, 'Contesti del portale') === 1 && str_contains($html, '>Atlante Civico</a>') && str_contains($html, '>Giornali</a>'), $html);
+verifica('portale, tecnico: «Clienti e testate» è nel contesto Giornali', str_contains($tecnico->get('portale/index.php?r=tecnico/clienti'), 'wp-contesto-giornale'));
+$html = $tecnico->get('portale/index.php?r=atlante/modelli');
+verifica('portale, tecnico: Atlante Civico con le sue voci', str_contains($html, 'wp-contesto-atlante') && str_contains($html, 'Modelli documentali') && str_contains($html, 'Clienti e fascicoli') && !str_contains($html, 'Personale tecnico'), $html);
+$html = $ada->get('portale/index.php?r=politico');
+verifica('portale, politico: solo Atlante Civico', str_contains($html, 'wp-contesto-atlante') && str_contains($html, '<strong>Atlante Civico</strong>') && !str_contains($html, 'Contesti del portale'), $html);
+$html = $editore->get('portale/index.php?r=cliente');
+verifica('portale, editore: contesto del giornale con il nome della testata', str_contains($html, 'wp-contesto-giornale') && str_contains($html, '<strong>WolfPress</strong>') && str_contains($html, 'Account giornalisti') && str_contains($html, 'I miei ticket'), $html);
+$html = $visitatore->get('sito/index.php');
+verifica('sito: barra dei tre mondi e contesto WolfPress', str_contains($html, 'wp-mondi') && str_contains($html, 'wp-contesto-wolfpress') && str_contains($html, 'Aree del sito'), $html);
+$html = $visitatore->get('sito/index.php?r=politica');
+verifica('sito: Atlante Civico ha marchio e voci proprie', str_contains($html, 'wp-contesto-atlante') && str_contains($html, '<strong>Atlante Civico</strong>') && str_contains($html, 'Candidati ed eletti') && str_contains($html, 'Alleanza Valdora'), $html);
+$html = $visitatore->get('sito/index.php?r=notizie&testata=wolfpress');
+verifica('sito: dentro una testata il menu ha il suo nome e le sue sezioni', str_contains($html, 'wp-contesto-giornale') && str_contains($html, 'Segui o sostieni') && str_contains($html, 'notizie.php?testata=wolfpress&amp;sezione='), $html);
+$html = $visitatore->get('sito/index.php?r=notizie/articolo&slug=la-settimana-in-cinque-notizie');
+verifica('sito: anche l\'articolo sta nel contesto della sua testata', str_contains($html, 'wp-contesto-giornale') && str_contains($html, 'Tutte le testate'), $html);
+verifica('sito: l\'elenco delle testate è il contesto Giornali', str_contains($visitatore->get('sito/index.php?r=testate'), '<strong>Giornali</strong>'));
+$lettore->entra('sito', "lia$s@prova.example", PW);
+$lettore->post('sito/index.php?r=sostieni&politico=comune', 'sito/index.php?r=sostieni/segui', ['politico' => 'comune']);
+verifica('seguire non iscrive alla newsletter', (int) Database::valore('SELECT newsletter FROM iscrizioni ORDER BY id DESC LIMIT 1') === 0);
 
 echo "== Sospensione ==\n";
 $tecnico->post('portale/index.php?r=tecnico/personale&id=1', 'portale/index.php?r=tecnico/salva-operatore', ['id' => '1', 'nome' => 'Marco Bellori', 'ruolo' => 'Sistemista', 'turno' => '08:00–16:00', 'stato' => 'Sospeso']);

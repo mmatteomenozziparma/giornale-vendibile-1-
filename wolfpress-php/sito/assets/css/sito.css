@@ -461,3 +461,27 @@
   .wp-cerchio { display: none; }
   .wp-filtro-testata .form-select { width: auto; flex: 1; }
 }
+
+/* ---------------------------------------------------------------------
+ * Menu contestuale: barra dei tre mondi e colori di ogni contesto
+ * ------------------------------------------------------------------- */
+.wp-mondi { background: var(--wp-forest); font-size: 0.78rem; }
+.wp-mondi nav { max-width: 68rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.15rem 0.35rem; padding-top: 0.3rem; padding-bottom: 0.3rem; }
+.wp-mondi a {
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.86);
+  font-weight: 700;
+  text-decoration: none;
+}
+.wp-mondi a:hover, .wp-mondi a:focus-visible { color: #fff; background: rgba(255, 255, 255, 0.14); }
+.wp-mondi a.attivo { background: var(--wp-lime); color: var(--wp-forest); }
+.wp-mondi .wp-mondi-account { margin-left: auto; }
+
+/* Atlante Civico: terracotta. Giornali: il verde della piattaforma con un segno più chiaro. */
+.wp-contesto-atlante { border-bottom-color: #e6cfc2; }
+.wp-contesto-atlante .wp-logo-segno { background: var(--wp-terra); }
+.wp-contesto-atlante .wp-voci .nav-link.attiva,
+.wp-contesto-atlante .wp-voci .nav-link:hover { color: var(--wp-terra-text); border-color: var(--wp-terra-text); }
+.wp-contesto-atlante .wp-sezioni { background: #f6ece5; }
+.wp-contesto-giornale .wp-logo-segno { background: var(--wp-primary); font-style: normal; }

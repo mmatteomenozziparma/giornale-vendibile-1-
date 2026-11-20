@@ -7,6 +7,7 @@ declare(strict_types=1);
 final class PoliticaController extends SitoController
 {
     protected string $voce = 'politica';
+    protected string $contesto = 'atlante';
 
     /** Indice: partiti, persone e tabella dei modelli (candidatura e mandato per livello). */
     public function index(): void

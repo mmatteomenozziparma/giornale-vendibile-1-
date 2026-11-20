@@ -400,7 +400,8 @@ final class Api
         $a = self::destinatario();
         Database::esegui(
             'INSERT IGNORE INTO iscrizioni (user_id, giornale_id, politico_id, newsletter) VALUES (?, ?, ?, ?)',
-            [Account::profiloId($user), $a['giornale_id'], $a['politico_id'], (Http::corpo()['newsletter'] ?? true) === false ? 0 : 1]
+            // Seguire non equivale ad acconsentire alla newsletter: serve una scelta esplicita.
+            [Account::profiloId($user), $a['giornale_id'], $a['politico_id'], (Http::corpo()['newsletter'] ?? false) === true ? 1 : 0]
         );
         return ['ok' => true];
     }

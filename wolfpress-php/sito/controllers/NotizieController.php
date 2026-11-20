@@ -7,12 +7,14 @@ declare(strict_types=1);
 final class NotizieController extends SitoController
 {
     protected string $voce = 'notizie';
+    protected string $contesto = 'giornale';
 
     public function index(): void
     {
         $sezione = $this->tra($this->parametro('sezione'), Articolo::sezioni(), '');
         $testata = $this->tra($this->parametro('testata'), array_column(Testata::tutti(), 'id'), '');
 
+        $this->testataMenu = $testata;
         $titolo = 'Tutte le notizie';
         if ($sezione !== '') {
             $titolo = $sezione;
@@ -39,6 +41,7 @@ final class NotizieController extends SitoController
             return;
         }
 
+        $this->testataMenu = $articolo['testata'];
         Letture::segna($articolo['id']);
         $altri = array_values(array_filter(
             Articolo::filtra($articolo['sezione']),

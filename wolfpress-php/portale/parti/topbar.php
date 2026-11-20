@@ -1,12 +1,14 @@
 <?php
 /**
- * Barra in alto: nome dell'area, schede delle aree disponibili per il ruolo, menu dell'utente.
+ * Barra in alto: nome dell'area, schede dei contesti disponibili per il ruolo
+ * (WolfPress, Giornali, Atlante Civico), menu dell'utente.
  */
 $etichette = [
     'home' => 'Portale',
     'accesso' => 'Area editoriale',
     'testata' => 'Le tue testate',
     'eventi' => 'Eventi',
+    'atlante' => 'Atlante Civico',
     'configuratore' => 'Configuratore',
     'cliente' => 'Area cliente',
     'editore' => 'Area editore',
@@ -16,28 +18,8 @@ $etichette = [
     'tecnico' => 'Fornitore del servizio',
 ];
 
-// Schede visibili per ogni ruolo: [area, etichetta, indirizzo]
-$schede = [
-    'editore' => [
-        ['configuratore', 'Configuratore', url('configuratore')],
-        ['cliente', 'Area cliente', url('cliente')],
-        ['editore', 'Editore', url('editore')],
-        ['assistenza', 'Assistenza', url('assistenza')],
-        ['eventi', 'Eventi', url('eventi')],
-    ],
-    'giornalista' => [
-        ['giornalista', 'Giornalista', url('giornalista')],
-        ['eventi', 'Eventi', url('eventi')],
-    ],
-    'politico' => [
-        ['politico', 'La mia pagina', url('politico')],
-        ['eventi', 'Eventi', url('eventi')],
-    ],
-    'tecnico' => [
-        ['tecnico', 'Gestione tecnica', url('tecnico')],
-    ],
-];
 $ruolo = $utente['ruolo'] ?? '';
+// $contesto, $contesti e $contestiRuolo arrivano da menu.php, che include questo file.
 ?>
 <button class="btn btn-wp-bordo btn-sm d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#wp-laterale" aria-controls="wp-laterale" aria-label="Apri il menu">
     <i class="bi bi-list" aria-hidden="true"></i>
@@ -47,11 +29,13 @@ $ruolo = $utente['ruolo'] ?? '';
 
 <div class="wp-barra-azioni">
     <?php if ($utente): ?>
-        <nav class="wp-schede" aria-label="Aree del portale">
-            <?php foreach ($schede[$ruolo] ?? [] as [$chiave, $etichetta, $indirizzo]): ?>
-                <a class="btn btn-wp-bordo<?= $chiave === $area ? ' attiva' : '' ?>" href="<?= e($indirizzo) ?>"<?= $chiave === $area ? ' aria-current="true"' : '' ?>><?= e($etichetta) ?></a>
-            <?php endforeach; ?>
-        </nav>
+        <?php if (count($contestiRuolo) > 1): ?>
+            <nav class="wp-schede" aria-label="Contesti del portale">
+                <?php foreach ($contestiRuolo as $chiave): ?>
+                    <a class="btn btn-wp-bordo<?= $chiave === $contesto ? ' attiva' : '' ?>" href="<?= e($contesti[$chiave][4]) ?>"<?= $chiave === $contesto ? ' aria-current="true"' : '' ?>><?= e($contesti[$chiave][0]) ?></a>
+                <?php endforeach; ?>
+            </nav>
+        <?php endif; ?>
 
         <div class="dropdown">
             <button class="btn btn-wp-bordo dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">

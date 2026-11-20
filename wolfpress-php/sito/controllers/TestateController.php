@@ -7,6 +7,7 @@ declare(strict_types=1);
 final class TestateController extends SitoController
 {
     protected string $voce = 'testate';
+    protected string $contesto = 'giornale';
 
     public function index(): void
     {

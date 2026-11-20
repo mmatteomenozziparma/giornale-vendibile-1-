@@ -106,6 +106,12 @@ function classe_stato(string $stato): string
         'Normale' => 'ok', 'Bassa' => 'neutro', 'Alta' => 'attenzione', 'Urgente' => 'errore',
         'In revisione' => 'attenzione', 'In lavorazione' => 'attenzione', 'Manutenzione' => 'attenzione',
         'Bozza' => 'neutro', 'Sospeso' => 'neutro', 'Degradato' => 'errore',
+        // Atlante Civico
+        'Verificato' => 'ok', 'Verificata' => 'ok', 'Attiva' => 'ok', 'Autorizzata' => 'ok', 'Approvata' => 'ok', 'Accettata' => 'ok',
+        'Accettato' => 'ok', 'Firmato' => 'ok', 'Conclusa' => 'ok', 'Completo' => 'ok', 'Riuscita' => 'ok',
+        'Da verificare' => 'attenzione', 'In verifica' => 'attenzione', 'Richiesta' => 'attenzione', 'Inviata' => 'attenzione',
+        'Pronto per la firma' => 'attenzione', 'Integrazioni richieste' => 'attenzione', 'Collaudo' => 'attenzione', 'Da fare' => 'attenzione',
+        'Negata' => 'errore', 'Errore' => 'errore', 'Rifiutata' => 'errore', 'Rifiutato' => 'errore', 'Revocato' => 'errore',
     ];
     return 'wp-stato wp-stato-' . ($mappa[$stato] ?? 'neutro');
 }

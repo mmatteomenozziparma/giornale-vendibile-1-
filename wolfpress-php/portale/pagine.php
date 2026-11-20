@@ -35,6 +35,10 @@ return [
     'tecnico-referente' => ['tecnico', 'referente'],// Gestione tecnica: referente cliente.
     'tecnico-ticket' => ['tecnico', 'ticket'],  // Gestione tecnica: coda dei ticket.
     'tecnico-chat' => ['tecnico', 'chat'],      // Gestione tecnica: chat di assistenza.
+    'atlante' => ['atlante', 'index'],                // Atlante Civico: clienti (candidati, partiti, liste, comitati).
+    'atlante-cliente' => ['atlante', 'cliente'],      // Atlante Civico: scheda di un cliente (referenti, siti, offerte, verifiche).
+    'atlante-fascicolo' => ['atlante', 'fascicolo'],  // Atlante Civico: fascicolo con documenti e firme.
+    'atlante-modelli' => ['atlante', 'modelli'],      // Atlante Civico: modelli documentali MASTER.
     'errore' => ['errore', 'nonTrovata'],       // Pagina di errore del portale (404, 403, 500).
     'logo' => ['media', 'logo'],                    // Logo caricato dal configuratore (immagine, senza HTML).
 ];

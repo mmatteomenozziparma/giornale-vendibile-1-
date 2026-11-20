@@ -10,19 +10,39 @@ abstract class SitoController extends Controller
     /** Voce del menu principale da evidenziare (vedi menu.php). */
     protected string $voce = '';
 
+    /**
+     * Contesto del menu (vedi menu.php):
+     *   wolfpress  la piattaforma: home, ricerca, pagine informative, account
+     *   giornale   le testate: notizie, articoli, elenco dei giornali
+     *   atlante    Atlante Civico: partiti, candidati ed eletti, eventi
+     */
+    protected string $contesto = 'wolfpress';
+
+    /** Slug della testata che si sta leggendo: il menu prende il suo nome e le sue sezioni. */
+    protected string $testataMenu = '';
+
     protected function datiComuni(): array
     {
         $sessione = session_status() === PHP_SESSION_ACTIVE;
         // Se il database non risponde la pagina (di errore) si vede lo stesso, con menu e footer.
         try {
-            $sezioni = Articolo::sezioni();
+            $testata = $this->testataMenu !== '' ? Testata::trova($this->testataMenu) : null;
+            // Dentro una testata il menu mostra solo le sue sezioni.
+            $sezioni = $testata === null
+                ? Articolo::sezioni()
+                : array_values(array_unique(array_filter(array_column(Articolo::filtra('', $testata['id']), 'sezione'))));
+            $partiti = $this->contesto === 'atlante' ? Partito::nomi() : [];
             $utente = Auth::utente();
         } catch (Throwable) {
-            $sezioni = [];
+            $testata = null;
+            $sezioni = $partiti = [];
             $utente = null;
         }
         return [
             'voce' => $this->voce,
+            'contesto' => $this->contesto,
+            'testataMenu' => $testata,
+            'partitiMenu' => $partiti,
             'sezioniMenu' => $sezioni,
             'ricercaCorrente' => '',
             'descrizione' => 'WolfPress: notizie, politici e partiti in un unico sito.',

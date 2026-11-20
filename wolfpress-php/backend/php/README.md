@@ -38,6 +38,8 @@ Servono le estensioni PHP `pdo_mysql`, `sodium`, `curl`, `mbstring`.
 | `abbonamenti`, `donazioni`, `stripe_eventi` | pagamenti Stripe |
 | `ticket`, `ticket_messaggi` | assistenza |
 | `partiti`, `messaggi_redazione`, `letture_giornaliere` | schede dei partiti, chat di redazione e letture per giorno usate da `wolfpress-php` |
+| `clienti_atlante`, `referenti_clienti_atlante`, `siti_atlante`, `funzionalita_siti_atlante`, `offerte_atlante`, `campi_clienti_atlante` | **Atlante Civico**: clienti, mandati dei referenti, siti, funzioni facoltative, offerte, campi |
+| `modelli_documentali_master`, `versioni_modelli_master`, `fascicoli_atlante`, `documenti_atlante`, `firme_documenti_atlante`, `verifiche_atlante`, `audit_atlante` | **Atlante Civico**: modelli MASTER, fascicoli, documenti, prove di firma, verifiche, registro delle operazioni |
 | `token_email`, `tentativi` | token monouso delle email e limite ai tentativi |
 
 ## Sicurezza
@@ -48,6 +50,22 @@ Servono le estensioni PHP `pdo_mysql`, `sodium`, `curl`, `mbstring`.
 - **Accesso**: blocco dell'account per 15 minuti dopo 5 errori, limite di tentativi per IP, risposte identiche per email esistenti o no, sessione rigenerata al login, cookie `HttpOnly`/`SameSite`/`Secure`, scadenza dopo 2 ore di inattività, tutte le sessioni chiuse al cambio password.
 - **Richieste**: token CSRF obbligatorio su ogni POST, CORS limitato a `CORS_ORIGINI`, solo prepared statement, validazione di ogni campo, errori interni mai mostrati al client.
 - **Stripe**: si usa Stripe Checkout, quindi i dati della carta non toccano mai questo server. L'importo è validato dal server e un pagamento diventa «pagato» solo con il webhook firmato di Stripe (firma, importo e sessione verificati; eventi ripetuti ignorati).
+
+## Atlante Civico
+
+La logica è in `src/Atlante.php` (permessi per cliente, cifratura, registro) e `src/Archivio.php` (file).
+
+- **Permessi**: lo staff (account tecnico) gestisce tutto. Un referente accede solo ai clienti per cui ha un mandato verificato e non revocato; chi non ha titolo riceve «non trovato» e il tentativo viene registrato.
+- **Dati riservati**: codice fiscale, partita IVA, PEC, sede e campi riservati sono cifrati con `CHIAVE_CIFRATURA`.
+- **File**: modelli, documenti e prove di firma stanno in `storage/atlante/`, cifrati; nel database ci sono solo un riferimento casuale e l'impronta SHA-256. Si scaricano solo dopo i controlli.
+- **Registro**: `audit_atlante` contiene solo metadati. Per renderlo non modificabile dal sito, togliere all'utente MySQL del sito i permessi di modifica su quella tabella:
+
+```sql
+REVOKE UPDATE, DELETE ON wolfpress.audit_atlante FROM 'wolfpress'@'localhost';
+```
+
+  (funziona se i permessi sono stati dati tabella per tabella; se sono stati dati su `wolfpress.*`, vanno prima ridati tabella per tabella).
+- Su un database già esistente le tabelle si aggiungono con `wolfpress-php/backend/sql/aggiornamento-atlante-civico-2026-11.sql`.
 
 ## Stripe
 

@@ -20,10 +20,11 @@ final class Auth
 
     /** Controller che ogni ruolo può aprire. */
     private const PERMESSI = [
-        'editore' => ['home', 'configuratore', 'cliente', 'articoli', 'editore', 'assistenza', 'testata', 'eventi'],
-        'giornalista' => ['home', 'giornalista', 'articoli', 'eventi'],
-        'politico' => ['home', 'politico', 'eventi'],
-        'tecnico' => ['home', 'tecnico'],
+        // 'atlante' è aperto a tutti i ruoli: dentro, ognuno vede solo i clienti per cui ha un mandato verificato.
+        'editore' => ['home', 'configuratore', 'cliente', 'articoli', 'editore', 'assistenza', 'testata', 'eventi', 'atlante'],
+        'giornalista' => ['home', 'giornalista', 'articoli', 'eventi', 'atlante'],
+        'politico' => ['home', 'politico', 'eventi', 'atlante'],
+        'tecnico' => ['home', 'tecnico', 'atlante'],
     ];
 
     /** Controller aperti anche senza accesso. */

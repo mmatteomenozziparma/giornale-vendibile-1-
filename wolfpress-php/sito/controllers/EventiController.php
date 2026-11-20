@@ -8,6 +8,7 @@ declare(strict_types=1);
 final class EventiController extends SitoController
 {
     protected string $voce = 'eventi';
+    protected string $contesto = 'atlante';
 
     public function index(): void
     {

@@ -161,7 +161,7 @@ try {
             Database::inserisci('partiti', ['slug' => $p['id'], 'nome' => $p['nome'], 'dati' => $json(array_diff_key($p, ['id' => 1, 'nome' => 1]))]);
         }
         foreach ($leggi('politici') as $p) {
-            [$politicoG, $politicoId] = $account('politico', $p['nome'], $indirizzo($p['nome']), [
+            [$politicoG, $politicoId] = $politiciDemo[$p['id']] = $account('politico', $p['nome'], $indirizzo($p['nome']), [
                 'slug' => $p['id'], 'livello' => $p['id'], 'partito' => $p['partito_nome'], 'biografia' => $p['bio'],
                 'carica' => $p['candidatura']['ruolo'], 'territorio' => $p['candidatura']['luogo'],
                 'dati' => $json(['partito' => $p['partito'], 'candidatura' => array_diff_key($p['candidatura'], ['agenda' => 1]), 'mandato' => array_diff_key($p['mandato'], ['agenda' => 1])]),
@@ -189,6 +189,36 @@ try {
         for ($i = 0; $i < 7; $i++) {
             $giorno = strtotime("-$i days");
             Database::inserisci('letture_giornaliere', ['giornale_id' => $principale, 'giorno' => date('Y-m-d', $giorno), 'letture' => $letture[$giorni[(int) date('w', $giorno)]] ?? 0]);
+        }
+
+        // --- Atlante Civico: clienti, referenti, sito, funzioni, offerta, fascicolo, verifiche, modelli ---
+        $staff = reset($tecnici)['generalita'];
+        $adesso = gmdate('Y-m-d H:i:s');
+        [$adaG, $adaId] = $politiciDemo['comune'];
+        $partito = Database::inserisci('clienti_atlante', ['tipo' => 'partito', 'denominazione' => 'Alleanza Valdora', 'stato' => 'verificato', 'verificato_da' => $staff, 'verificato_il' => $adesso]);
+        $comitato = Database::inserisci('clienti_atlante', ['tipo' => 'comitato', 'denominazione' => 'Comitato per Ada Valleri', 'rappresentante_id' => $adaG, 'stato' => 'verificato', 'verificato_da' => $staff, 'verificato_il' => $adesso]);
+        Database::inserisci('clienti_atlante', ['tipo' => 'lista_civica', 'denominazione' => 'Lista civica Valleverde Insieme', 'stato' => 'da_verificare']);
+        // Ada è la firmataria del proprio comitato (mandato verificato): è l'unico cliente che vede.
+        Database::inserisci('referenti_clienti_atlante', ['cliente_id' => $comitato, 'generalita_id' => $adaG, 'ruolo' => 'firmatario', 'mandato_evidenza_rif' => 'Atto costitutivo del comitato (demo)', 'verificato_il' => $adesso]);
+        Database::inserisci('referenti_clienti_atlante', ['cliente_id' => $comitato, 'generalita_id' => $adaG, 'ruolo' => 'comunicazione', 'verificato_il' => $adesso]);
+        $sito = Database::inserisci('siti_atlante', [
+            'cliente_id' => $comitato, 'beneficiario_cliente_id' => $partito, 'politico_id' => $adaId,
+            'nome' => 'Ada Valleri · candidatura comunale', 'slug' => 'ada-valleri', 'dominio' => 'adavalleri.example', 'stato' => 'collaudo',
+        ]);
+        Database::inserisci('funzionalita_siti_atlante', ['sito_id' => $sito, 'codice' => 'cms', 'stato' => 'attiva', 'autorizzato_da' => $staff, 'attivato_il' => $adesso]);
+        Database::inserisci('funzionalita_siti_atlante', ['sito_id' => $sito, 'codice' => 'newsletter', 'stato' => 'richiesta']);
+        Database::inserisci('offerte_atlante', ['cliente_id' => $comitato, 'sito_id' => $sito, 'codice_offerta' => 'DEMO-2026-01', 'attivazione_centesimi' => 45000, 'canone_centesimi' => 3900, 'periodicita' => 'mensile', 'stato' => 'inviata']);
+        Database::inserisci('campi_clienti_atlante', ['cliente_id' => $comitato, 'chiave' => 'slogan', 'valore_pubblico' => 'Una città che si attraversa a piedi']);
+        Database::inserisci('fascicoli_atlante', ['cliente_id' => $comitato, 'sito_id' => $sito, 'codice' => 'F-DEMO-01', 'titolo' => 'Avvio del sito di candidatura', 'creato_da' => $staff]);
+        Database::inserisci('verifiche_atlante', ['cliente_id' => $comitato, 'sito_id' => $sito, 'oggetto' => 'gdpr_ruoli']);
+        Database::inserisci('verifiche_atlante', ['cliente_id' => $comitato, 'sito_id' => $sito, 'oggetto' => 'cookie']);
+        foreach ([
+            ['CONTRATTO-SITO', 'Contratto di fornitura del sito', 'contratto', 'tutti', null],
+            ['DPA', 'Accordo sul trattamento dei dati (DPA)', 'privacy', 'tutti', null],
+            ['INFORMATIVA-NEWSLETTER', 'Informativa per la newsletter', 'privacy', 'tutti', 'Solo se è attiva la newsletter'],
+            ['TRASPARENZA-PUBBLICITA', 'Avviso di trasparenza per la pubblicità politica', 'pubblicita_politica', 'candidato', 'Solo se è attiva la pubblicità politica'],
+        ] as [$codice, $titolo, $categoria, $destinatario, $condizione]) {
+            Database::inserisci('modelli_documentali_master', ['codice' => $codice, 'titolo' => $titolo, 'categoria' => $categoria, 'destinatario' => $destinatario, 'condizione_utilizzo' => $condizione]);
         }
     });
 

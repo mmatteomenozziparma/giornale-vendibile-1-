@@ -1,28 +1,82 @@
 <?php
 if (!function_exists('pagina')) { http_response_code(404); exit; }   // non si apre da solo: lo includono le pagine
 /**
- * MENU del sito pubblico: testata con il menu principale e la ricerca.
- * Incluso in ogni pagina dopo header.php; apre anche <main>, che footer.php chiude.
- * Per aggiungere una voce al menu basta inserire una riga in $voci.
+ * MENU del sito pubblico. Incluso in ogni pagina dopo header.php; apre anche <main>, che footer.php chiude.
  *
- * Ogni voce: [chiave, etichetta, indirizzo]
+ * Il menu è CONTESTUALE ($contesto, impostato dal controller della pagina):
+ *
+ *   wolfpress  la piattaforma: home, notizie di tutte le testate, ricerca, pagine informative
+ *   giornale   una testata ($testataMenu) con il suo nome e le sue sezioni, oppure l'elenco dei giornali
+ *   atlante    Atlante Civico: partiti, candidati ed eletti, eventi
+ *
+ * In alto c'è sempre la barra dei tre mondi, per passare dall'uno all'altro.
+ * Per aggiungere una voce basta una riga nell'elenco del contesto giusto: [chiave, etichetta, indirizzo]
  */
-$voci = [
-    ['home', 'Home', url()],
-    ['notizie', 'Notizie', url('notizie')],
-    ['testate', 'Testate', url('testate')],
-    ['politica', 'Politica', url('politica')],
-    ['eventi', 'Eventi', url('eventi')],
-    ['chi-siamo', 'Chi siamo', url('pagine/chi-siamo')],
+$mondi = [
+    'wolfpress' => ['WolfPress', url()],
+    'giornale' => ['Giornali', url('testate')],
+    'atlante' => ['Atlante Civico', url('politica')],
 ];
+
+if ($contesto === 'atlante') {
+    $marchio = ['A', 'Atlante Civico', 'Partiti, candidati ed eletti', url('politica')];
+    $voci = [
+        ['politica', 'Panoramica', url('politica')],
+        ['partiti', 'Partiti', url('politica', [], 'titolo-partiti')],
+        ['persone', 'Candidati ed eletti', url('politica', [], 'titolo-persone')],
+        ['eventi', 'Eventi', url('eventi')],
+    ];
+    $cerca = ['politici', 'Cerca politici'];
+    $striscia = ['Partiti', array_map(static fn ($slug, $nome) => [$nome, url('politica/partito', ['id' => $slug])], array_keys($partitiMenu), $partitiMenu)];
+} elseif ($contesto === 'giornale' && $testataMenu !== null) {
+    $marchio = [mb_strtoupper(mb_substr($testataMenu['nome'], 0, 1)), $testataMenu['nome'], $testataMenu['dominio'] !== '' ? $testataMenu['dominio'] : 'Testata su ' . config('nome'), url('notizie', ['testata' => $testataMenu['id']])];
+    $voci = [
+        ['notizie', 'Ultime notizie', url('notizie', ['testata' => $testataMenu['id']])],
+        ['sostieni', 'Segui o sostieni', url('sostieni', ['testata' => $testataMenu['id']])],
+        ['testate', 'Tutte le testate', url('testate')],
+    ];
+    $cerca = ['notizie', 'Cerca nelle notizie'];
+    $striscia = ['Sezioni', array_map(static fn ($nome) => [$nome, url('notizie', ['testata' => $testataMenu['id'], 'sezione' => $nome])], $sezioniMenu)];
+} elseif ($contesto === 'giornale') {
+    $marchio = ['G', 'Giornali', 'Le testate della piattaforma', url('testate')];
+    $voci = [
+        ['testate', 'Le testate', url('testate')],
+        ['notizie', 'Tutte le notizie', url('notizie')],
+    ];
+    $cerca = ['notizie', 'Cerca nelle notizie'];
+    $striscia = ['Sezioni', array_map(static fn ($nome) => [$nome, url('notizie', ['sezione' => $nome])], $sezioniMenu)];
+} else {
+    $marchio = ['W', config('nome'), config('motto'), url()];
+    $voci = [
+        ['home', 'Home', url()],
+        ['notizie', 'Notizie', url('notizie')],
+        ['testate', 'Giornali', url('testate')],
+        ['politica', 'Atlante Civico', url('politica')],
+        ['eventi', 'Eventi', url('eventi')],
+        ['chi-siamo', 'Chi siamo', url('pagine/chi-siamo')],
+    ];
+    $cerca = ['tutto', 'Cerca notizie, politici, partiti'];
+    $striscia = ['Sezioni', array_map(static fn ($nome) => [$nome, url('notizie', ['sezione' => $nome])], $sezioniMenu)];
+}
 ?>
-<header class="wp-testata">
-    <nav class="navbar navbar-expand-lg container" aria-label="Navigazione principale">
-        <a class="wp-logo" href="<?= e(url()) ?>" aria-label="<?= e(config('nome')) ?>, pagina iniziale">
-            <span class="wp-logo-segno" aria-hidden="true">W</span>
+<div class="wp-mondi">
+    <nav class="container" aria-label="Aree del sito">
+        <?php foreach ($mondi as $chiave => [$etichetta, $indirizzo]): ?>
+            <a class="<?= $chiave === $contesto ? 'attivo' : '' ?>" href="<?= e($indirizzo) ?>"<?= $chiave === $contesto ? ' aria-current="true"' : '' ?>><?= e($etichetta) ?></a>
+        <?php endforeach; ?>
+        <a class="wp-mondi-account<?= $voce === 'account' ? ' attivo' : '' ?>" href="<?= e(url($utente ? 'account' : 'account/accedi')) ?>">
+            <i class="bi bi-person" aria-hidden="true"></i> <?= $utente ? e($utente['nome']) : 'Accedi' ?>
+        </a>
+    </nav>
+</div>
+
+<header class="wp-testata wp-contesto-<?= e($contesto) ?>">
+    <nav class="navbar navbar-expand-lg container" aria-label="Menu di <?= e($marchio[1]) ?>">
+        <a class="wp-logo" href="<?= e($marchio[3]) ?>" aria-label="<?= e($marchio[1]) ?>, pagina iniziale">
+            <span class="wp-logo-segno" aria-hidden="true"><?= e($marchio[0]) ?></span>
             <span>
-                <strong><?= e(config('nome')) ?></strong>
-                <small><?= e(config('motto')) ?></small>
+                <strong><?= e($marchio[1]) ?></strong>
+                <small><?= e($marchio[2]) ?></small>
             </span>
         </a>
 
@@ -41,23 +95,20 @@ $voci = [
             </ul>
 
             <form class="wp-cerca" role="search" method="get" action="<?= e(url('ricerca')) ?>">
-                <label class="visually-hidden" for="cerca-menu">Cerca notizie, politici o partiti</label>
-                <input class="form-control" type="search" id="cerca-menu" name="q" maxlength="80" placeholder="Cerca notizie, politici, partiti" value="<?= e($ricercaCorrente) ?>">
+                <?php if ($cerca[0] !== 'tutto'): ?><input type="hidden" name="dove" value="<?= e($cerca[0]) ?>"><?php endif; ?>
+                <label class="visually-hidden" for="cerca-menu"><?= e($cerca[1]) ?></label>
+                <input class="form-control" type="search" id="cerca-menu" name="q" maxlength="80" placeholder="<?= e($cerca[1]) ?>" value="<?= e($ricercaCorrente) ?>">
                 <button class="btn btn-wp" type="submit" aria-label="Cerca"><i class="bi bi-search" aria-hidden="true"></i></button>
             </form>
-
-            <a class="btn btn-wp-bordo ms-lg-2<?= $voce === 'account' ? ' attiva' : '' ?>" href="<?= e(url($utente ? 'account' : 'account/accedi')) ?>">
-                <i class="bi bi-person" aria-hidden="true"></i> <?= $utente ? e($utente['nome']) : 'Accedi' ?>
-            </a>
         </div>
     </nav>
 
-    <?php if ($sezioniMenu): ?>
+    <?php if ($striscia[1]): ?>
         <div class="wp-sezioni">
             <div class="container">
-                <span>Sezioni</span>
-                <?php foreach ($sezioniMenu as $nomeSezione): ?>
-                    <a href="<?= e(url('notizie', ['sezione' => $nomeSezione])) ?>"><?= e($nomeSezione) ?></a>
+                <span><?= e($striscia[0]) ?></span>
+                <?php foreach ($striscia[1] as [$etichetta, $indirizzo]): ?>
+                    <a href="<?= e($indirizzo) ?>"><?= e($etichetta) ?></a>
                 <?php endforeach; ?>
             </div>
         </div>

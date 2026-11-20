@@ -417,3 +417,17 @@
 @media (max-width: 575.98px) {
   .wp-barra-titolo { display: none; }
 }
+
+/* ---------------------------------------------------------------------
+ * Menu contestuale: gruppi di voci e colori dei tre contesti
+ * (WolfPress = verde, Giornali = colore della testata, Atlante Civico = terracotta)
+ * ------------------------------------------------------------------- */
+.wp-menu ul + .wp-menu-titolo { margin-top: 1.15rem; }
+.wp-contesto-atlante .wp-laterale-interno { background: linear-gradient(180deg, #2f1810 0%, #45251a 100%); }
+.wp-contesto-giornale .wp-laterale-interno { background: linear-gradient(180deg, #141f27 0%, #1b2f3a 100%); }
+@media (min-width: 992px) {
+  .wp-griglia.wp-contesto-atlante { background: linear-gradient(90deg, #45251a 15.5rem, transparent 15.5rem); }
+  .wp-griglia.wp-contesto-giornale { background: linear-gradient(90deg, #1b2f3a 15.5rem, transparent 15.5rem); }
+}
+.wp-contesto-atlante .wp-marchio-sigla { background: #f1dccd; color: #5a2a1c; }
+.wp-contesto-giornale .wp-marchio-sigla { background: #fff; color: var(--wp-primary); }

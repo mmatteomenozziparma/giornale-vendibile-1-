@@ -61,6 +61,25 @@ L'agenda nella scheda di un politico è l'elenco dei suoi eventi pubblici.
 partito; i tecnici gestiscono i partiti (`portale/tecnico-partiti.php`); un editore può avere più testate e
 passa dall'una all'altra dal menu in alto a destra; nel configuratore imposta i prezzi degli abbonamenti.
 
+**Atlante Civico** (`portale/atlante.php`): clienti (candidati, partiti, liste civiche, comitati) con
+referenti, siti e funzioni facoltative, offerte, campi di personalizzazione, verifiche e fascicoli
+documentali (`atlante-cliente.php`, `atlante-fascicolo.php`); catalogo dei modelli MASTER e delle loro
+versioni (`atlante-modelli.php`). Lo staff (tecnici) gestisce tutto; un referente vede solo i clienti per
+cui ha un mandato **verificato e non revocato**, entro i limiti del suo ruolo. Dati fiscali e campi
+riservati sono cifrati, i file stanno in un archivio privato e cifrato, ogni operazione (anche negata)
+finisce nel registro. Nulla di questo è una certificazione di conformità.
+
+**Menu per contesto**: sia il sito sia il portale hanno tre contesti, ognuno con nome, colore e voci
+proprie, e in alto le schede per passare dall'uno all'altro.
+
+| Contesto | Nel portale | Nel sito |
+| --- | --- | --- |
+| **WolfPress** (verde) | piattaforma del fornitore: infrastruttura, personale, account, assistenza | home, notizie di tutte le testate, ricerca, chi siamo |
+| **Giornali** (colore della testata) | redazione: configuratore, area cliente, giornalisti, eventi, ticket | una testata con il suo nome e le sue sezioni, oppure l'elenco dei giornali |
+| **Atlante Civico** (terracotta) | pagina del politico, articoli, eventi, clienti e fascicoli, modelli, partiti | partiti, candidati ed eletti, eventi |
+
+Le voci si cambiano in `portale/menu.php` e `sito/menu.php`: una riga per voce, dentro l'elenco del contesto.
+
 **Sito** (`sito/login.php`, `sito/registrazione.php`, `sito/account.php`): i lettori si registrano e sono attivi appena confermano l'email. Da
 «Segui o sostieni» (pagina Testate e schede dei politici) possono seguire, donare e abbonarsi; il
 pagamento avviene sulla pagina di Stripe. Il webhook da indicare a Stripe è
@@ -128,7 +147,8 @@ wolfpress-php/
     │   giornalista.php, politico.php, politico-articoli.php, eventi.php, evento.php,
     │   assistenza.php, assistenza-chat.php, tecnico.php, tecnico-personale.php,
     │   tecnico-account.php, tecnico-partiti.php, tecnico-clienti.php, tecnico-referente.php,
-    │   tecnico-ticket.php, tecnico-chat.php, errore.php, logo.php
+    │   tecnico-ticket.php, tecnico-chat.php, atlante.php, atlante-cliente.php,
+    │   atlante-fascicolo.php, atlante-modelli.php, errore.php, logo.php
     ├── controllers/       logica di ogni pagina
     ├── parti/             pezzi di pagina riutilizzati (barra in alto, ticket, chat, agenda)
     └── assets/            css/portale.css, js/portale.js
@@ -180,6 +200,11 @@ bozza → revisione → pubblicazione, e nel sito home, notizie, testate e ricer
 
 ## Limiti da conoscere
 
+- **Atlante Civico, cosa non fa**: i documenti non vengono compilati in automatico dal modello (si carica
+  il file già compilato); le firme non sono verificate dal programma (si carica la prova e una persona la
+  verifica); non ci sono ancora scadenze di conservazione, esportazione o cancellazione dei fascicoli.
+  Le funzioni di un sito (newsletter, donazioni, ecc.) qui si autorizzano soltanto: accenderle davvero
+  sul sito del cliente è un passo a parte.
 - **Dove sono i dati**: account, testate, articoli (dei giornali e dei politici), ticket, eventi con
   organizzatori, invitati e partecipanti, chat di redazione, letture, iscrizioni, donazioni e abbonamenti
   sono in tabelle dedicate. Restano in colonne JSON le parti «a scheda libera»: proposte e atti dei
@@ -212,8 +237,9 @@ pagine di lettura del sito.
 ## Prova automatica
 
 `php tests/prova.php` (istruzioni in cima al file, su un database **di prova**) avvia il server e una
-finta API Stripe ed esegue 158 controlli su portale e sito: accessi, permessi per ruolo, articoli, ticket,
-approvazioni, eventi e inviti, partiti, più testate, registrazione dei lettori, donazione, abbonamento e webhook.
+finta API Stripe ed esegue 211 controlli su portale e sito: accessi, permessi per ruolo, articoli, ticket,
+approvazioni, eventi e inviti, partiti, più testate, registrazione dei lettori, donazione, abbonamento, webhook,
+Atlante Civico (permessi per cliente, cifratura, archivio, documenti e firme) e menu per contesto.
 
 ## Licenze di terze parti
 

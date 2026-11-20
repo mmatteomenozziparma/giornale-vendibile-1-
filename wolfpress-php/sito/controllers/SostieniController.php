@@ -16,6 +16,9 @@ final class SostieniController extends SitoController
             $this->pagina404('La testata o il politico indicato non esiste.');
             return;
         }
+        // Il menu segue chi si sostiene: la testata oppure Atlante Civico.
+        $this->contesto = $a['tipo'] === 'testata' ? 'giornale' : 'atlante';
+        $this->testataMenu = $a['tipo'] === 'testata' ? $a['slug'] : '';
         $utente = Auth::utente();
         $lettore = $utente !== null && $utente['ruolo'] === 'user';
         $this->vista('sostieni', [
